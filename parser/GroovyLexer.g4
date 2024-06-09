@@ -34,7 +34,7 @@
 lexer grammar GroovyLexer;
 
 options {
-    superClass = AbstractLexer;
+    superClass = BaseLexer;
     language = Go;
 }
 
@@ -284,14 +284,14 @@ GStringPathPart
     ;
 RollBackOne
     :   . {
-            // a trick to handle GStrings followed by EOF properly
-            int readChar = _input.LA(-1);
-            if (EOF == _input.LA(1) && ('"' == readChar || '/' == readChar)) {
-                setType(GStringEnd);
+            readChar := l.GetInputStream().LA(-1)
+            if l.GetInputStream().LA(1) == antlr.TokenEOF && (readChar == '"' || readChar == '/') {
+                l.SetType(GroovyLexerGStringEnd)
             } else {
-                setChannel(HIDDEN);
+                l.SetChannel(antlr.TokenHiddenChannel)
             }
-          } -> popMode
+            l.PopMode()
+          }
     ;
 
 
@@ -892,7 +892,7 @@ JavaLetter
         { isJavaIdentifierStartAndNotIdentifierIgnorable(_input.LA(-1)) }?
     |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
-        { Character.isJavaIdentifierStart(Character.toCodePoint((char) _input.LA(-2), (char) _input.LA(-1))) }?
+        { isJavaIdentifierStartFromSurrogatePair(_input.LA(-2), _input.LA(-1)) }?
     ;
 
 fragment
@@ -908,7 +908,7 @@ JavaLetterOrDigit
         { isJavaIdentifierPartAndNotIdentifierIgnorable(_input.LA(-1)) }?
     |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
-        { Character.isJavaIdentifierPart(Character.toCodePoint((char) _input.LA(-2), (char) _input.LA(-1))) }?
+        { isJavaIdentifierPartFromSurrogatePair(_input.LA(-2), _input.LA(-1)) }?
     ;
 
 fragment
