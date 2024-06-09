@@ -35,210 +35,170 @@ lexer grammar GroovyLexer;
 
 options {
     superClass = AbstractLexer;
+    language = Go;
 }
 
 @header {
-    import java.util.*;
-    import org.apache.groovy.util.Maps;
-    import static org.apache.groovy.parser.antlr4.SemanticPredicates.*;
+import "sort"
 }
 
+/*
 @members {
-    private boolean errorIgnored;
-    private long tokenIndex;
-    private int  lastTokenType;
-    private int  invalidDigitCount;
+    package parser
 
-    /**
-     * Record the index and token type of the current token while emitting tokens.
-     */
-    @Override
-    public void emit(Token token) {
-        this.tokenIndex++;
+    import (
+        "github.com/antlr/antlr4/runtime/Go/antlr"
+        "sort"
+        "unicode"
+    )
 
-        int tokenType = token.getType();
-        if (Token.DEFAULT_CHANNEL == token.getChannel()) {
-            this.lastTokenType = tokenType;
-        }
-
-        if (RollBackOne == tokenType) {
-            this.rollbackOneChar();
-        }
-
-        super.emit(token);
+    type GroovyLexer struct {
+        *antlr.BaseLexer
+        errorIgnored      bool
+        tokenIndex        int64
+        lastTokenType     int
+        invalidDigitCount int
+        parenStack        []Paren
     }
 
-    private static final int[] REGEX_CHECK_ARRAY = {
-        DEC,
-        INC,
-        THIS,
-        RBRACE,
-        RBRACK,
-        RPAREN,
-        GStringEnd,
-        NullLiteral,
-        StringLiteral,
-        BooleanLiteral,
-        IntegerLiteral,
-        FloatingPointLiteral,
-        Identifier, CapitalizedIdentifier
-    };
-    static {
-        Arrays.sort(REGEX_CHECK_ARRAY);
+    type Paren struct {
+        text          string
+        lastTokenType int
+        line          int
+        column        int
     }
 
-    private boolean isRegexAllowed() {
-        return (Arrays.binarySearch(REGEX_CHECK_ARRAY, this.lastTokenType) < 0);
+    func NewGroovyLexer(input antlr.CharStream) *GroovyLexer {
+        l := new(GroovyLexer)
+        l.BaseLexer = antlr.NewBaseLexer(input)
+        l.parenStack = make([]Paren, 0, 32)
+        return l
     }
 
-    /**
-     * just a hook, which will be overrided by GroovyLangLexer
-     */
-    protected void rollbackOneChar() {}
-
-    private static class Paren {
-        private String text;
-        private int lastTokenType;
-        private int line;
-        private int column;
-
-        public Paren(String text, int lastTokenType, int line, int column) {
-            this.text = text;
-            this.lastTokenType = lastTokenType;
-            this.line = line;
-            this.column = column;
+    func (l *GroovyLexer) Emit() antlr.Token {
+        l.tokenIndex++
+        token := l.BaseLexer.Emit()
+        tokenType := token.GetTokenType()
+        if token.GetChannel() == antlr.TokenDefaultChannel {
+            l.lastTokenType = tokenType
         }
-
-        public String getText() {
-            return this.text;
+        if tokenType == RollBackOne {
+            l.rollbackOneChar()
         }
+        return token
+    }
 
-        public int getLastTokenType() {
-            return this.lastTokenType;
+    var REGEX_CHECK_ARRAY = []int{
+        DEC, INC, THIS, RBRACE, RBRACK, RPAREN, GStringEnd, NullLiteral,
+        StringLiteral, BooleanLiteral, IntegerLiteral, FloatingPointLiteral,
+        Identifier, CapitalizedIdentifier,
+    }
+
+    func init() {
+        sort.Ints(REGEX_CHECK_ARRAY)
+    }
+
+    func (l *GroovyLexer) isRegexAllowed() bool {
+        return sort.SearchInts(REGEX_CHECK_ARRAY, l.lastTokenType) < 0
+    }
+
+    func (l *GroovyLexer) rollbackOneChar() {
+        // This method is intended to be overridden
+    }
+
+    func (l *GroovyLexer) enterParen() {
+        text := l.GetText()
+        l.enterParenCallback(text)
+        l.parenStack = append(l.parenStack, Paren{text, l.lastTokenType, l.GetLine(), l.GetCharPositionInLine()})
+    }
+
+    func (l *GroovyLexer) exitParen() {
+        text := l.GetText()
+        l.exitParenCallback(text)
+        if len(l.parenStack) > 0 {
+            l.parenStack = l.parenStack[:len(l.parenStack)-1]
         }
+    }
 
-        @SuppressWarnings("unused")
-        public int getLine() {
-            return line;
+    func (l *GroovyLexer) isInsideParens() bool {
+        if len(l.parenStack) == 0 {
+            return false
         }
+        paren := l.parenStack[len(l.parenStack)-1]
+        text := paren.text
+        return (text == "(" && paren.lastTokenType != TRY) || text == "[" || text == "?["
+    }
 
-        @SuppressWarnings("unused")
-        public int getColumn() {
-            return column;
+    func (l *GroovyLexer) ignoreTokenInsideParens() {
+        if !l.isInsideParens() {
+            return
         }
+        l.SetChannel(antlr.TokenHiddenChannel)
+    }
 
-        @Override
-        public int hashCode() {
-            return (int) (text.hashCode() * line + column);
+    func (l *GroovyLexer) ignoreMultiLineCommentConditionally() {
+        if !l.isInsideParens() && l.isFollowedByWhiteSpaces() {
+            return
         }
+        l.SetChannel(antlr.TokenHiddenChannel)
+    }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof Paren)) {
-                return false;
+    func (l *GroovyLexer) GetSyntaxErrorSource() int {
+        return GroovySyntaxError_LEXER
+    }
+
+    func (l *GroovyLexer) GetErrorLine() int {
+        return l.GetLine()
+    }
+
+    func (l *GroovyLexer) GetErrorColumn() int {
+        return l.GetCharPositionInLine() + 1
+    }
+
+    func (l *GroovyLexer) PopMode() int {
+        defer func() {
+            if r := recover(); r != nil {
+                // Handle EmptyStackException
             }
-
-            Paren other = (Paren) obj;
-
-            return this.text.equals(other.text) && (this.line == other.line && this.column == other.column);
-        }
+        }()
+        return l.BaseLexer.PopMode()
     }
 
-    protected void enterParenCallback(String text) {}
-
-    protected void exitParenCallback(String text) {}
-
-    private final Deque<Paren> parenStack = new ArrayDeque<>(32);
-
-    private void enterParen() {
-        String text = getText();
-        enterParenCallback(text);
-
-        parenStack.push(new Paren(text, this.lastTokenType, getLine(), getCharPositionInLine()));
+    func (l *GroovyLexer) addComment(_type int) {
+        text := l.GetInputStream().GetText(antlr.NewInterval(l.GetTokenStartCharIndex(), l.GetCharIndex()-1))
+        // Handle the comment text as needed
     }
 
-    private void exitParen() {
-        String text = getText();
-        exitParenCallback(text);
-
-        Paren paren = parenStack.peek();
-        if (null == paren) return;
-        parenStack.pop();
-    }
-    private boolean isInsideParens() {
-        Paren paren = parenStack.peek();
-
-        // We just care about "(", "[" and "?[", inside which the new lines will be ignored.
-        // Notice: the new lines between "{" and "}" can not be ignored.
-        if (null == paren) {
-            return false;
-        }
-
-        String text = paren.getText();
-
-        return ("(".equals(text) && TRY != paren.getLastTokenType()) // we don't treat try-paren(i.e. try (....)) as parenthesis
-                    || "[".equals(text) || "?[".equals(text);
-    }
-    private void ignoreTokenInsideParens() {
-        if (!this.isInsideParens()) {
-            return;
-        }
-
-        this.setChannel(Token.HIDDEN_CHANNEL);
-    }
-    private void ignoreMultiLineCommentConditionally() {
-        if (!this.isInsideParens() && isFollowedByWhiteSpaces(_input)) {
-            return;
-        }
-
-        this.setChannel(Token.HIDDEN_CHANNEL);
+    func isJavaIdentifierStartAndNotIdentifierIgnorable(codePoint rune) bool {
+        return unicode.IsLetter(codePoint) && !unicode.Is(unicode.Cf, codePoint)
     }
 
-    @Override
-    public int getSyntaxErrorSource() {
-        return GroovySyntaxError.LEXER;
+    func isJavaIdentifierPartAndNotIdentifierIgnorable(codePoint rune) bool {
+        return unicode.IsLetter(codePoint) || unicode.IsDigit(codePoint) && !unicode.Is(unicode.Cf, codePoint)
     }
 
-    @Override
-    public int getErrorLine() {
-        return getLine();
+    func (l *GroovyLexer) IsErrorIgnored() bool {
+        return l.errorIgnored
     }
 
-    @Override
-    public int getErrorColumn() {
-        return getCharPositionInLine() + 1;
+    func (l *GroovyLexer) SetErrorIgnored(errorIgnored bool) {
+        l.errorIgnored = errorIgnored
     }
 
-    @Override
-    public int popMode() {
-        try {
-            return super.popMode();
-        } catch (EmptyStackException ignore) { // raised when parens are unmatched: too many ), ], or }
-        }
-
-        return Integer.MIN_VALUE;
+    func (l *GroovyLexer) enterParenCallback(text string) {
+        // This method is intended to be overridden
     }
 
-    private void addComment(int type) {
-        String text = _input.getText(Interval.of(_tokenStartCharIndex, getCharIndex() - 1));
+    func (l *GroovyLexer) exitParenCallback(text string) {
+        // This method is intended to be overridden
     }
 
-    private static boolean isJavaIdentifierStartAndNotIdentifierIgnorable(int codePoint) {
-        return Character.isJavaIdentifierStart(codePoint) && !Character.isIdentifierIgnorable(codePoint);
-    }
-
-    private static boolean isJavaIdentifierPartAndNotIdentifierIgnorable(int codePoint) {
-        return Character.isJavaIdentifierPart(codePoint) && !Character.isIdentifierIgnorable(codePoint);
-    }
-
-    public boolean isErrorIgnored() {
-        return errorIgnored;
-    }
-
-    public void setErrorIgnored(boolean errorIgnored) {
-        this.errorIgnored = errorIgnored;
+    func (l *GroovyLexer) isFollowedByWhiteSpaces() bool {
+        // Implement this method based on your requirements
+        return false
     }
 }
+*/
 
 
 // §3.10.5 String Literals
