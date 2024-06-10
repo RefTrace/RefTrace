@@ -1357,7 +1357,7 @@ func (l *GroovyLexer) SH_COMMENT_Action(localctx antlr.RuleContext, actionIndex 
 func (l *GroovyLexer) UNEXPECTED_CHAR_Action(localctx antlr.RuleContext, actionIndex int) {
 	switch actionIndex {
 	case 17:
-		require(l.errorIgnored, "Unexpected character: '"+l.getText().replace("'", "\\'")+"'", -1, l)
+		require(l.errorIgnored, "Unexpected character: '"+escapeSingleQuotes(l.GetText())+"'", -1, l)
 
 	default:
 		panic("No registered action for: " + fmt.Sprint(actionIndex))
@@ -1422,7 +1422,7 @@ func (l *GroovyLexer) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex i
 func (p *GroovyLexer) StringLiteral_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 0:
-		return this.isRegexAllowed() && _input.LA(1) != '*'
+		return p.isRegexAllowed() && p.GetInputStream().LA(1) != '*'
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1432,10 +1432,10 @@ func (p *GroovyLexer) StringLiteral_Sempred(localctx antlr.RuleContext, predInde
 func (p *GroovyLexer) SlashyGStringBegin_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 1:
-		return this.isRegexAllowed() && _input.LA(1) != '*'
+		return p.isRegexAllowed() && p.GetInputStream().LA(1) != '*'
 
 	case 2:
-		return isFollowedByJavaLetterInGString(_input)
+		return isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1445,7 +1445,7 @@ func (p *GroovyLexer) SlashyGStringBegin_Sempred(localctx antlr.RuleContext, pre
 func (p *GroovyLexer) DollarSlashyGStringBegin_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 3:
-		return isFollowedByJavaLetterInGString(_input)
+		return isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1455,7 +1455,7 @@ func (p *GroovyLexer) DollarSlashyGStringBegin_Sempred(localctx antlr.RuleContex
 func (p *GroovyLexer) SlashyGStringPart_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 4:
-		return isFollowedByJavaLetterInGString(_input)
+		return isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1465,7 +1465,7 @@ func (p *GroovyLexer) SlashyGStringPart_Sempred(localctx antlr.RuleContext, pred
 func (p *GroovyLexer) DollarSlashyGStringPart_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 5:
-		return isFollowedByJavaLetterInGString(_input)
+		return isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1475,7 +1475,7 @@ func (p *GroovyLexer) DollarSlashyGStringPart_Sempred(localctx antlr.RuleContext
 func (p *GroovyLexer) TdqStringCharacter_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 6:
-		return _input.LA(1) != '"' || _input.LA(2) != '"' || _input.LA(3) == '"' && (_input.LA(4) != '"' || _input.LA(5) != '"')
+		return p.GetInputStream().LA(1) != '"' || p.GetInputStream().LA(2) != '"' || p.GetInputStream().LA(3) == '"' && (p.GetInputStream().LA(4) != '"' || p.GetInputStream().LA(5) != '"')
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1485,7 +1485,7 @@ func (p *GroovyLexer) TdqStringCharacter_Sempred(localctx antlr.RuleContext, pre
 func (p *GroovyLexer) TsqStringCharacter_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 7:
-		return _input.LA(1) != '\'' || _input.LA(2) != '\'' || _input.LA(3) == '\'' && (_input.LA(4) != '\'' || _input.LA(5) != '\'')
+		return p.GetInputStream().LA(1) != '\'' || p.GetInputStream().LA(2) != '\'' || p.GetInputStream().LA(3) == '\'' && (p.GetInputStream().LA(4) != '\'' || p.GetInputStream().LA(5) != '\'')
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1495,7 +1495,7 @@ func (p *GroovyLexer) TsqStringCharacter_Sempred(localctx antlr.RuleContext, pre
 func (p *GroovyLexer) SlashyStringCharacter_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 8:
-		return !isFollowedByJavaLetterInGString(_input)
+		return !isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1514,7 +1514,7 @@ func (p *GroovyLexer) DollarSlashyStringCharacter_Sempred(localctx antlr.RuleCon
 		return _input.LA(1) != '$'
 
 	case 12:
-		return !isFollowedByJavaLetterInGString(_input)
+		return !isFollowedByJavaLetterInGString(p.GetInputStream())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))

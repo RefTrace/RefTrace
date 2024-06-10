@@ -201,7 +201,7 @@ options {
 StringLiteral
     :   GStringQuotationMark  DqStringCharacter*  GStringQuotationMark
     |   SqStringQuotationMark  SqStringCharacter*  SqStringQuotationMark
-    |   Slash { this.isRegexAllowed() && _input.LA(1) != '*' }?  SlashyStringCharacter+  Slash
+    |   Slash { p.isRegexAllowed() && p.GetInputStream().LA(1) != '*' }?  SlashyStringCharacter+  Slash
 
     |   TdqStringQuotationMark  TdqStringCharacter*  TdqStringQuotationMark
     |   TsqStringQuotationMark  TsqStringCharacter*  TsqStringQuotationMark
@@ -215,10 +215,10 @@ TdqGStringBegin
     :   TdqStringQuotationMark   TdqStringCharacter* Dollar -> type(GStringBegin), pushMode(TDQ_GSTRING_MODE), pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 SlashyGStringBegin
-    :   Slash { this.isRegexAllowed() && _input.LA(1) != '*' }? SlashyStringCharacter* Dollar { isFollowedByJavaLetterInGString(_input) }? -> type(GStringBegin), pushMode(SLASHY_GSTRING_MODE), pushMode(GSTRING_TYPE_SELECTOR_MODE)
+    :   Slash { p.isRegexAllowed() && p.GetInputStream().LA(1) != '*' }? SlashyStringCharacter* Dollar { isFollowedByJavaLetterInGString(p.GetInputStream()) }? -> type(GStringBegin), pushMode(SLASHY_GSTRING_MODE), pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 DollarSlashyGStringBegin
-    :   DollarSlashyGStringQuotationMarkBegin DollarSlashyStringCharacter* Dollar { isFollowedByJavaLetterInGString(_input) }? -> type(GStringBegin), pushMode(DOLLAR_SLASHY_GSTRING_MODE), pushMode(GSTRING_TYPE_SELECTOR_MODE)
+    :   DollarSlashyGStringQuotationMarkBegin DollarSlashyStringCharacter* Dollar { isFollowedByJavaLetterInGString(p.GetInputStream()) }? -> type(GStringBegin), pushMode(DOLLAR_SLASHY_GSTRING_MODE), pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 
 mode DQ_GSTRING_MODE;
@@ -248,7 +248,7 @@ SlashyGStringEnd
     :   Dollar? Slash  -> type(GStringEnd), popMode
     ;
 SlashyGStringPart
-    :   Dollar { isFollowedByJavaLetterInGString(_input) }?   -> type(GStringPart), pushMode(GSTRING_TYPE_SELECTOR_MODE)
+    :   Dollar { isFollowedByJavaLetterInGString(p.GetInputStream()) }?   -> type(GStringPart), pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 SlashyGStringCharacter
     :   SlashyStringCharacter -> more
@@ -259,7 +259,7 @@ DollarSlashyGStringEnd
     :   DollarSlashyGStringQuotationMarkEnd      -> type(GStringEnd), popMode
     ;
 DollarSlashyGStringPart
-    :   Dollar { isFollowedByJavaLetterInGString(_input) }?   -> type(GStringPart), pushMode(GSTRING_TYPE_SELECTOR_MODE)
+    :   Dollar { isFollowedByJavaLetterInGString(p.GetInputStream()) }?   -> type(GStringPart), pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 DollarSlashyGStringCharacter
     :   DollarSlashyStringCharacter -> more
@@ -308,21 +308,21 @@ SqStringCharacter
 // character in the triple double quotation string. e.g. """a"""
 fragment TdqStringCharacter
     :   ~["\\$]
-    |   GStringQuotationMark { _input.LA(1) != '"' || _input.LA(2) != '"' || _input.LA(3) == '"' && (_input.LA(4) != '"' || _input.LA(5) != '"') }?
+    |   GStringQuotationMark { p.GetInputStream().LA(1) != '"' || p.GetInputStream().LA(2) != '"' || p.GetInputStream().LA(3) == '"' && (p.GetInputStream().LA(4) != '"' || p.GetInputStream().LA(5) != '"') }?
     |   EscapeSequence
     ;
 
 // character in the triple single quotation string. e.g. '''a'''
 fragment TsqStringCharacter
     :   ~['\\]
-    |   SqStringQuotationMark { _input.LA(1) != '\'' || _input.LA(2) != '\'' || _input.LA(3) == '\'' && (_input.LA(4) != '\'' || _input.LA(5) != '\'') }?
+    |   SqStringQuotationMark { p.GetInputStream().LA(1) != '\'' || p.GetInputStream().LA(2) != '\'' || p.GetInputStream().LA(3) == '\'' && (p.GetInputStream().LA(4) != '\'' || p.GetInputStream().LA(5) != '\'') }?
     |   EscapeSequence
     ;
 
 // character in the slashy string. e.g. /a/
 fragment SlashyStringCharacter
     :   SlashEscape
-    |   Dollar { !isFollowedByJavaLetterInGString(_input) }?
+    |   Dollar { !isFollowedByJavaLetterInGString(p.GetInputStream()) }?
     |   ~[/$\u0000]
     ;
 
@@ -332,7 +332,7 @@ fragment DollarSlashyStringCharacter
     |   DollarSlashDollarEscape { _input.LA(-4) != '$' }?
     |   DollarSlashEscape { _input.LA(1) != '$' }?
     |   Slash { _input.LA(1) != '$' }?
-    |   Dollar { !isFollowedByJavaLetterInGString(_input) }?
+    |   Dollar { !isFollowedByJavaLetterInGString(p.GetInputStream()) }?
     |   ~[/$\u0000]
     ;
 
@@ -951,5 +951,5 @@ SH_COMMENT
 
 // Unexpected characters will be handled by groovy parser later.
 UNEXPECTED_CHAR
-    :   . { require(l.errorIgnored, "Unexpected character: '" + l.getText().replace("'", "\\'") + "'", -1, l); }
+    :   . { require(l.errorIgnored, "Unexpected character: '" + escapeSingleQuotes(l.GetText()) + "'", -1, l); }
     ;

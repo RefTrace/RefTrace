@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"unicode"
 	"unicode/utf16"
 
@@ -167,4 +168,77 @@ var REGEX_CHECK_ARRAY = []int{
 
 func (l *GroovyLexer) isRegexAllowed() bool {
 	return sort.SearchInts(REGEX_CHECK_ARRAY, l.lastTokenType) < 0
+}
+
+// matches is a helper function to check if a string matches a given pattern.
+func matches(str string, pattern *unicode.RangeTable) bool {
+	for _, r := range str {
+		if unicode.Is(pattern, r) {
+			return true
+		}
+	}
+	return false
+}
+
+// Define the patterns used in the function
+var (
+	LETTER_AND_LEFTCURLY_PATTERN = &unicode.RangeTable{
+		R16: []unicode.Range16{
+			{Lo: 'a', Hi: 'z', Stride: 1},
+			{Lo: 'A', Hi: 'Z', Stride: 1},
+			{Lo: '_', Hi: '_', Stride: 1},
+			{Lo: '{', Hi: '{', Stride: 1},
+		},
+	}
+	NONSURROGATE_PATTERN = &unicode.RangeTable{
+		R16: []unicode.Range16{
+			{Lo: 0x0000, Hi: 0x007F, Stride: 1},
+			{Lo: 0xE000, Hi: 0xFFFF, Stride: 1},
+		},
+	}
+	SURROGATE_PAIR1_PATTERN = &unicode.RangeTable{
+		R16: []unicode.Range16{
+			{Lo: 0xD800, Hi: 0xDBFF, Stride: 1},
+		},
+	}
+	SURROGATE_PAIR2_PATTERN = &unicode.RangeTable{
+		R16: []unicode.Range16{
+			{Lo: 0xDC00, Hi: 0xDFFF, Stride: 1},
+		},
+	}
+)
+
+// isFollowedByJavaLetterInGString checks if the character following the current position in the CharStream is a valid Java identifier part.
+func isFollowedByJavaLetterInGString(cs antlr.CharStream) bool {
+	c1 := cs.LA(1)
+
+	if c1 == '$' { // single $ is not a valid identifier
+		return false
+	}
+
+	str1 := string(rune(c1))
+
+	if matches(str1, LETTER_AND_LEFTCURLY_PATTERN) {
+		return true
+	}
+
+	if matches(str1, NONSURROGATE_PATTERN) && isJavaIdentifierPart(rune(c1)) {
+		return true
+	}
+
+	c2 := cs.LA(2)
+	str2 := string(rune(c2))
+
+	if matches(str1, SURROGATE_PAIR1_PATTERN) && matches(str2, SURROGATE_PAIR2_PATTERN) {
+		codePoint := utf16.DecodeRune(rune(c1), rune(c2))
+		if isJavaIdentifierPart(codePoint) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func escapeSingleQuotes(input string) string {
+	return strings.Replace(input, "'", "\\'", -1)
 }
