@@ -1,9 +1,29 @@
 package parser
 
 import (
+	"fmt"
+	"sort"
 	"unicode"
 	"unicode/utf16"
+
+	"github.com/antlr4-go/antlr/v4"
 )
+
+type Paren struct {
+	text          string
+	lastTokenType int
+	line          int
+	column        int
+}
+
+type MyGroovyLexer struct {
+	*antlr.BaseLexer
+	errorIgnored      bool
+	tokenIndex        int64
+	lastTokenType     int
+	invalidDigitCount int
+	parenStack        []Paren
+}
 
 // isJavaIdentifierStart checks if a given code point is a valid start character for a Java identifier.
 // https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/lang/Character.html#isJavaIdentifierStart-char-
@@ -60,4 +80,91 @@ func isJavaIdentifierPartFromSurrogatePair(laMinus2, laMinus1 int) bool {
 		return isJavaIdentifierPart(codePoint)
 	}
 	return false
+}
+
+func require(condition bool, message string, offset int, lexer *GroovyLexer) {
+	if !condition {
+		line := lexer.GetLine()
+		column := lexer.GetCharPositionInLine() + offset
+		errorMsg := fmt.Sprintf("line %d:%d %s", line, column, message)
+		panic(antlr.NewBaseRecognitionException(errorMsg, lexer, lexer.GetInputStream(), nil))
+	}
+}
+
+func (l *GroovyLexer) enterParenCallback(text string) {
+	// This method is intended to be overridden
+}
+
+func (l *GroovyLexer) enterParen() {
+	text := l.GetText()
+	l.enterParenCallback(text)
+	l.parenStack = append(l.parenStack, Paren{text, l.lastTokenType, l.GetLine(), l.GetCharPositionInLine()})
+}
+
+func (l *GroovyLexer) exitParenCallback(text string) {
+	// This method is intended to be overridden
+}
+
+func (l *GroovyLexer) exitParen() {
+	text := l.GetText()
+	l.exitParenCallback(text)
+	if len(l.parenStack) > 0 {
+		l.parenStack = l.parenStack[:len(l.parenStack)-1]
+	}
+}
+
+func (l *GroovyLexer) isInsideParens() bool {
+	if len(l.parenStack) == 0 {
+		return false
+	}
+	paren := l.parenStack[len(l.parenStack)-1]
+	text := paren.text
+	return (text == "(" && paren.lastTokenType != GroovyLexerTRY) || text == "[" || text == "?["
+}
+
+func (l *GroovyLexer) ignoreTokenInsideParens() {
+	if !l.isInsideParens() {
+		return
+	}
+	l.SetChannel(antlr.TokenHiddenChannel)
+}
+
+func (l *GroovyLexer) addComment(_type int) {
+	// TODO: implement this
+	//text := l.GetInputStream().GetText(antlr.NewInterval(l.GetTokenStartCharIndex(), l.GetCharIndex()-1))
+	// Handle the comment text as needed
+}
+
+func (l *GroovyLexer) isFollowedByWhiteSpaces() bool {
+	input := l.GetInputStream()
+	for i := l.GetCharIndex(); i < input.Size(); i++ {
+		ch := input.LA(i + 1)
+		if ch == antlr.TokenEOF {
+			break
+		}
+		if !unicode.IsSpace(rune(ch)) {
+			return false
+		}
+		if unicode.IsSpace(rune(ch)) {
+			return true
+		}
+	}
+	return false
+}
+
+func (l *GroovyLexer) ignoreMultiLineCommentConditionally() {
+	if !l.isInsideParens() && l.isFollowedByWhiteSpaces() {
+		return
+	}
+	l.SetChannel(antlr.TokenHiddenChannel)
+}
+
+var REGEX_CHECK_ARRAY = []int{
+	GroovyLexerDEC, GroovyLexerINC, GroovyLexerTHIS, GroovyLexerRBRACE, GroovyLexerRBRACK, GroovyLexerRPAREN, GroovyLexerGStringEnd, GroovyLexerNullLiteral,
+	GroovyLexerStringLiteral, GroovyLexerBooleanLiteral, GroovyLexerIntegerLiteral, GroovyLexerFloatingPointLiteral,
+	GroovyLexerIdentifier, GroovyLexerCapitalizedIdentifier,
+}
+
+func (l *GroovyLexer) isRegexAllowed() bool {
+	return sort.SearchInts(REGEX_CHECK_ARRAY, l.lastTokenType) < 0
 }

@@ -34,12 +34,8 @@
 lexer grammar GroovyLexer;
 
 options {
-    superClass = BaseLexer;
     language = Go;
-}
-
-@header {
-import "sort"
+    superClass = MyGroovyLexer;
 }
 
 /*
@@ -271,7 +267,7 @@ DollarSlashyGStringCharacter
 
 mode GSTRING_TYPE_SELECTOR_MODE;
 GStringLBrace
-    :   '{' { this.enterParen();  } -> type(LBRACE), popMode, pushMode(DEFAULT_MODE)
+    :   '{' { l.enterParen();  } -> type(LBRACE), popMode, pushMode(DEFAULT_MODE)
     ;
 GStringIdentifier
     :   IdentifierInGString -> type(Identifier), popMode, pushMode(GSTRING_PATH_MODE)
@@ -290,8 +286,7 @@ RollBackOne
             } else {
                 l.SetChannel(antlr.TokenHiddenChannel)
             }
-            l.PopMode()
-          }
+          } -> popMode
     ;
 
 
@@ -456,10 +451,10 @@ IntegerLiteral
         |   HexIntegerLiteral
         |   OctalIntegerLiteral
         |   BinaryIntegerLiteral
-        ) (Underscore { require(errorIgnored, "Number ending with underscores is invalid", -1, true); })?
+        ) (Underscore { require(l.errorIgnored, "Number ending with underscores is invalid", -1, l); })?
 
     // !!! Error Alternative !!!
-    |   Zero ([0-9] { invalidDigitCount++; })+ { require(errorIgnored, "Invalid octal number", -(invalidDigitCount + 1), true); } IntegerTypeSuffix?
+    |   Zero ([0-9] { l.invalidDigitCount++; })+ { require(l.errorIgnored, "Invalid octal number", -(l.invalidDigitCount + 1), l); } IntegerTypeSuffix?
     ;
 
 fragment
@@ -598,7 +593,7 @@ BinaryDigitOrUnderscore
 FloatingPointLiteral
     :   (   DecimalFloatingPointLiteral
         |   HexadecimalFloatingPointLiteral
-        ) (Underscore { require(errorIgnored, "Number ending with underscores is invalid", -1, true); })?
+        ) (Underscore { require(l.errorIgnored, "Number ending with underscores is invalid", -1, l); })?
     ;
 
 fragment
@@ -794,7 +789,7 @@ RANGE_EXCLUSIVE_RIGHT   : '..<';
 RANGE_EXCLUSIVE_FULL    : '<..<';
 SPREAD_DOT              : '*.';
 SAFE_DOT                : '?.';
-SAFE_INDEX              : '?[' { this.enterParen();     } -> pushMode(DEFAULT_MODE);
+SAFE_INDEX              : '?[' { l.enterParen();     } -> pushMode(DEFAULT_MODE);
 SAFE_CHAIN_DOT          : '??.';
 ELVIS                   : '?:';
 METHOD_POINTER          : '.&';
@@ -816,14 +811,14 @@ NOT_IN              : '!in'         { isFollowedBy(_input, ' ', '\t', '\r', '\n'
 
 // §3.11 Separators
 
-LPAREN          : '('  { this.enterParen();     } -> pushMode(DEFAULT_MODE);
-RPAREN          : ')'  { this.exitParen();      } -> popMode;
+LPAREN          : '('  { l.enterParen();     } -> pushMode(DEFAULT_MODE);
+RPAREN          : ')'  { l.exitParen();      } -> popMode;
 
-LBRACE          : '{'  { this.enterParen();     } -> pushMode(DEFAULT_MODE);
-RBRACE          : '}'  { this.exitParen();      } -> popMode;
+LBRACE          : '{'  { l.enterParen();     } -> pushMode(DEFAULT_MODE);
+RBRACE          : '}'  { l.exitParen();      } -> popMode;
 
-LBRACK          : '['  { this.enterParen();     } -> pushMode(DEFAULT_MODE);
-RBRACK          : ']'  { this.exitParen();      } -> popMode;
+LBRACK          : '['  { l.enterParen();     } -> pushMode(DEFAULT_MODE);
+RBRACK          : ']'  { l.exitParen();      } -> popMode;
 
 SEMI            : ';';
 COMMA           : ',';
@@ -935,26 +930,26 @@ WS  : ([ \t]+ | LineEscape+) -> skip
     ;
 
 // Inside (...) and [...] but not {...}, ignore newlines.
-NL  : LineTerminator   { ignoreTokenInsideParens(); }
+NL  : LineTerminator   { l.ignoreTokenInsideParens(); }
     ;
 
 // Multiple-line comments (including groovydoc comments)
 ML_COMMENT
-    :   '/*' .*? '*/'       { addComment(0); ignoreMultiLineCommentConditionally(); } -> type(NL)
+    :   '/*' .*? '*/'       { l.addComment(0); l.ignoreMultiLineCommentConditionally(); } -> type(NL)
     ;
 
 // Single-line comments
 SL_COMMENT
-    :   '//' ~[\r\n\uFFFF]* { addComment(1); ignoreTokenInsideParens(); }             -> type(NL)
+    :   '//' ~[\r\n\uFFFF]* { l.addComment(1); l.ignoreTokenInsideParens(); }             -> type(NL)
     ;
 
 // Script-header comments.
 // The very first characters of the file may be "#!".  If so, ignore the first line.
 SH_COMMENT
-    :   '#!' { require(errorIgnored || 0 == this.tokenIndex, "Shebang comment should appear at the first line", -2, true); } ShCommand (LineTerminator '#!' ShCommand)* -> skip
+    :   '#!' { require(l.errorIgnored || l.tokenIndex == 0, "Shebang comment should appear at the first line", -2, l); } ShCommand (LineTerminator '#!' ShCommand)* -> skip
     ;
 
 // Unexpected characters will be handled by groovy parser later.
 UNEXPECTED_CHAR
-    :   . { require(errorIgnored, "Unexpected character: '" + getText().replace("'", "\\'") + "'", -1, false); }
+    :   . { require(l.errorIgnored, "Unexpected character: '" + l.getText().replace("'", "\\'") + "'", -1, l); }
     ;
