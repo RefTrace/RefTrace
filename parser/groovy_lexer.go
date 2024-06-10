@@ -1505,13 +1505,13 @@ func (p *GroovyLexer) SlashyStringCharacter_Sempred(localctx antlr.RuleContext, 
 func (p *GroovyLexer) DollarSlashyStringCharacter_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 9:
-		return _input.LA(-4) != '$'
+		return p.GetInputStream().LA(-4) != '$'
 
 	case 10:
-		return _input.LA(1) != '$'
+		return p.GetInputStream().LA(1) != '$'
 
 	case 11:
-		return _input.LA(1) != '$'
+		return p.GetInputStream().LA(1) != '$'
 
 	case 12:
 		return !isFollowedByJavaLetterInGString(p.GetInputStream())
@@ -1524,7 +1524,7 @@ func (p *GroovyLexer) DollarSlashyStringCharacter_Sempred(localctx antlr.RuleCon
 func (p *GroovyLexer) NOT_INSTANCEOF_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 13:
-		return isFollowedBy(_input, ' ', '\t', '\r', '\n')
+		return isFollowedBy(p.GetInputStream(), ' ', '\t', '\r', '\n')
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1534,7 +1534,7 @@ func (p *GroovyLexer) NOT_INSTANCEOF_Sempred(localctx antlr.RuleContext, predInd
 func (p *GroovyLexer) NOT_IN_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 14:
-		return isFollowedBy(_input, ' ', '\t', '\r', '\n', '[', '(', '{')
+		return isFollowedBy(p.GetInputStream(), ' ', '\t', '\r', '\n', '[', '(', '{')
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1544,7 +1544,7 @@ func (p *GroovyLexer) NOT_IN_Sempred(localctx antlr.RuleContext, predIndex int) 
 func (p *GroovyLexer) CapitalizedIdentifier_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 15:
-		return Character.isUpperCase(_input.LA(-1))
+		return isUpperCase(p.GetInputStream().LA(-1))
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1554,10 +1554,10 @@ func (p *GroovyLexer) CapitalizedIdentifier_Sempred(localctx antlr.RuleContext, 
 func (p *GroovyLexer) JavaLetter_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 16:
-		return isJavaIdentifierStartAndNotIdentifierIgnorable(_input.LA(-1))
+		return isJavaIdentifierStartAndNotIdentifierIgnorable(p.GetInputStream().LA(-1))
 
 	case 17:
-		return isJavaIdentifierStartFromSurrogatePair(_input.LA(-2), _input.LA(-1))
+		return isJavaIdentifierStartFromSurrogatePair(p.GetInputStream().LA(-2), p.GetInputStream().LA(-1))
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1567,7 +1567,7 @@ func (p *GroovyLexer) JavaLetter_Sempred(localctx antlr.RuleContext, predIndex i
 func (p *GroovyLexer) JavaLetterInGString_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 18:
-		return _input.LA(-1) != '$'
+		return p.GetInputStream().LA(-1) != '$'
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1577,10 +1577,10 @@ func (p *GroovyLexer) JavaLetterInGString_Sempred(localctx antlr.RuleContext, pr
 func (p *GroovyLexer) JavaLetterOrDigit_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 19:
-		return isJavaIdentifierPartAndNotIdentifierIgnorable(_input.LA(-1))
+		return isJavaIdentifierPartAndNotIdentifierIgnorable(p.GetInputStream().LA(-1))
 
 	case 20:
-		return isJavaIdentifierPartFromSurrogatePair(_input.LA(-2), _input.LA(-1))
+		return isJavaIdentifierPartFromSurrogatePair(p.GetInputStream().LA(-2), p.GetInputStream().LA(-1))
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))
@@ -1590,7 +1590,7 @@ func (p *GroovyLexer) JavaLetterOrDigit_Sempred(localctx antlr.RuleContext, pred
 func (p *GroovyLexer) JavaLetterOrDigitInGString_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 21:
-		return _input.LA(-1) != '$'
+		return p.GetInputStream().LA(-1) != '$'
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))

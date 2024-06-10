@@ -44,12 +44,12 @@ func isIdentifierIgnorable(ch rune) bool {
 }
 
 // isJavaIdentifierStartAndNotIdentifierIgnorable checks if a given rune is a valid start character for a Java identifier and not ignorable.
-func isJavaIdentifierStartAndNotIdentifierIgnorable(ch rune) bool {
-	return isJavaIdentifierStart(ch) && !isIdentifierIgnorable(ch)
+func isJavaIdentifierStartAndNotIdentifierIgnorable(ch int) bool {
+	return isJavaIdentifierStart(rune(ch)) && !isIdentifierIgnorable(rune(ch))
 }
 
-func isJavaIdentifierPartAndNotIdentifierIgnorable(ch rune) bool {
-	return isJavaIdentifierPart(ch) && !isIdentifierIgnorable(ch)
+func isJavaIdentifierPartAndNotIdentifierIgnorable(ch int) bool {
+	return isJavaIdentifierPart(rune(ch)) && !isIdentifierIgnorable(rune(ch))
 }
 
 // isJavaIdentifierStartFromSurrogatePair checks if the characters at positions laMinus2 and laMinus1 form a valid surrogate pair and if the resulting code point is a valid start character for a Java identifier.
@@ -241,4 +241,22 @@ func isFollowedByJavaLetterInGString(cs antlr.CharStream) bool {
 
 func escapeSingleQuotes(input string) string {
 	return strings.Replace(input, "'", "\\'", -1)
+}
+
+// isFollowedBy checks if the character following the current position in the CharStream matches any of the provided characters.
+func isFollowedBy(cs antlr.CharStream, chars ...rune) bool {
+	c1 := cs.LA(1)
+
+	for _, c := range chars {
+		if c1 == int(c) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// isUpperCase checks if a given rune is an uppercase letter.
+func isUpperCase(ch int) bool {
+	return unicode.IsUpper(rune(ch))
 }

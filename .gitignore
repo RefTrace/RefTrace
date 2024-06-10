@@ -2,3 +2,4 @@
 parser/.antlr
 parser/GroovyLexer.interp
 parser/groovy_lexer.go
+reft-go

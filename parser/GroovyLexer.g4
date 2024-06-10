@@ -329,9 +329,9 @@ fragment SlashyStringCharacter
 // character in the dollar slashy string. e.g. $/a/$
 fragment DollarSlashyStringCharacter
     :   DollarDollarEscape
-    |   DollarSlashDollarEscape { _input.LA(-4) != '$' }?
-    |   DollarSlashEscape { _input.LA(1) != '$' }?
-    |   Slash { _input.LA(1) != '$' }?
+    |   DollarSlashDollarEscape { p.GetInputStream().LA(-4) != '$' }?
+    |   DollarSlashEscape { p.GetInputStream().LA(1) != '$' }?
+    |   Slash { p.GetInputStream().LA(1) != '$' }?
     |   Dollar { !isFollowedByJavaLetterInGString(p.GetInputStream()) }?
     |   ~[/$\u0000]
     ;
@@ -805,8 +805,8 @@ NOT_IDENTICAL           : '!==';
 ARROW                   : '->';
 
 // !internalPromise will be parsed as !in ternalPromise, so semantic predicates are necessary
-NOT_INSTANCEOF      : '!instanceof' { isFollowedBy(_input, ' ', '\t', '\r', '\n') }?;
-NOT_IN              : '!in'         { isFollowedBy(_input, ' ', '\t', '\r', '\n', '[', '(', '{') }?;
+NOT_INSTANCEOF      : '!instanceof' { isFollowedBy(p.GetInputStream(), ' ', '\t', '\r', '\n') }?;
+NOT_IN              : '!in'         { isFollowedBy(p.GetInputStream(), ' ', '\t', '\r', '\n', '[', '(', '{') }?;
 
 
 // §3.11 Separators
@@ -867,7 +867,7 @@ ELVIS_ASSIGN    : '?=';
 
 // §3.8 Identifiers (must appear after all keywords in the grammar)
 CapitalizedIdentifier
-    :   JavaLetter {Character.isUpperCase(_input.LA(-1))}? JavaLetterOrDigit*
+    :   JavaLetter {isUpperCase(p.GetInputStream().LA(-1))}? JavaLetterOrDigit*
     ;
 
 Identifier
@@ -884,15 +884,15 @@ JavaLetter
     :   [a-zA-Z$_] // these are the "java letters" below 0x7F
     |   // covers all characters above 0x7F which are not a surrogate
         ~[\u0000-\u007F\uD800-\uDBFF]
-        { isJavaIdentifierStartAndNotIdentifierIgnorable(_input.LA(-1)) }?
+        { isJavaIdentifierStartAndNotIdentifierIgnorable(p.GetInputStream().LA(-1)) }?
     |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
-        { isJavaIdentifierStartFromSurrogatePair(_input.LA(-2), _input.LA(-1)) }?
+        { isJavaIdentifierStartFromSurrogatePair(p.GetInputStream().LA(-2), p.GetInputStream().LA(-1)) }?
     ;
 
 fragment
 JavaLetterInGString
-    :   JavaLetter { _input.LA(-1) != '$' }?
+    :   JavaLetter { p.GetInputStream().LA(-1) != '$' }?
     ;
 
 fragment
@@ -900,15 +900,15 @@ JavaLetterOrDigit
     :   [a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
     |   // covers all characters above 0x7F which are not a surrogate
         ~[\u0000-\u007F\uD800-\uDBFF]
-        { isJavaIdentifierPartAndNotIdentifierIgnorable(_input.LA(-1)) }?
+        { isJavaIdentifierPartAndNotIdentifierIgnorable(p.GetInputStream().LA(-1)) }?
     |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
-        { isJavaIdentifierPartFromSurrogatePair(_input.LA(-2), _input.LA(-1)) }?
+        { isJavaIdentifierPartFromSurrogatePair(p.GetInputStream().LA(-2), p.GetInputStream().LA(-1)) }?
     ;
 
 fragment
 JavaLetterOrDigitInGString
-    :   JavaLetterOrDigit  { _input.LA(-1) != '$' }?
+    :   JavaLetterOrDigit  { p.GetInputStream().LA(-1) != '$' }?
     ;
 
 fragment
