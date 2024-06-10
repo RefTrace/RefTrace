@@ -39,14 +39,44 @@ func (l *GroovyLexer) Emit() antlr.Token {
 	return token
 }
 
+func (l *GroovyLexer) rollbackOneChar() {
+	interpreter := l.GetInterpreter().(*PositionAdjustingLexerATNSimulator)
+	interpreter.resetAcceptPosition(l.GetInputStream(), l.TokenStartCharIndex-1, l.TokenStartLine, l.GetInterpreter().GetCharPositionInLine()-1)
+}
+
+func (b *GroovyLexer) Recover(re antlr.RecognitionException) {
+	if _, ok := re.(*antlr.LexerNoViableAltException); ok {
+		panic(re)
+	} else {
+		b.BaseLexer.Recover(re)
+	}
+}
+
+type PositionAdjustingLexerATNSimulator struct {
+	*antlr.LexerATNSimulator
+}
+
+func NewPositionAdjustingLexerATNSimulator(recog antlr.Lexer, atn *antlr.ATN, decisionToDFA []*antlr.DFA, sharedContextCache *antlr.PredictionContextCache) *PositionAdjustingLexerATNSimulator {
+	return &PositionAdjustingLexerATNSimulator{
+		LexerATNSimulator: antlr.NewLexerATNSimulator(recog, atn, decisionToDFA, sharedContextCache),
+	}
+}
+
+func (sim *PositionAdjustingLexerATNSimulator) resetAcceptPosition(input antlr.CharStream, index, line, charPositionInLine int) {
+	input.Seek(index)
+	sim.Line = line
+	sim.CharPositionInLine = charPositionInLine
+	sim.Consume(input)
+}
+
 // isJavaIdentifierStart checks if a given code point is a valid start character for a Java identifier.
-// https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/lang/Character.html#isJavaIdentifierStart-char-
+// https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html#isJavaIdentifierStart-char-
 func isJavaIdentifierStart(codePoint rune) bool {
 	return unicode.IsLetter(codePoint) || unicode.Is(unicode.Lm, codePoint) || unicode.Is(unicode.Nl, codePoint) || unicode.Is(unicode.Pc, codePoint)
 }
 
 // isIdentifierIgnorable checks if a given rune is an ignorable character in a Java identifier or a Unicode identifier.
-// https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/lang/Character.html#isIdentifierIgnorable-char-
+// https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html#isIdentifierIgnorable-char-
 func isIdentifierIgnorable(ch rune) bool {
 	// Check if the character is an ISO control character that is not whitespace
 	if (ch >= '\u0000' && ch <= '\u0008') || (ch >= '\u000E' && ch <= '\u001B') || (ch >= '\u007F' && ch <= '\u009F') {
@@ -75,7 +105,7 @@ func isJavaIdentifierStartFromSurrogatePair(laMinus2, laMinus1 int) bool {
 }
 
 // isJavaIdentifierPart checks if a given code point is a valid part character for a Java identifier.
-// https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/lang/Character.html#isJavaIdentifierPart-char-
+// https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html#isJavaIdentifierPart-char-
 func isJavaIdentifierPart(codePoint rune) bool {
 	return unicode.IsLetter(codePoint) ||
 		unicode.IsDigit(codePoint) ||
