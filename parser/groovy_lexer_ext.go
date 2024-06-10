@@ -26,6 +26,19 @@ type MyGroovyLexer struct {
 	parenStack        []Paren
 }
 
+func (l *GroovyLexer) Emit() antlr.Token {
+	l.tokenIndex++
+	token := l.BaseLexer.Emit()
+	tokenType := token.GetTokenType()
+	if token.GetChannel() == antlr.TokenDefaultChannel {
+		l.lastTokenType = tokenType
+	}
+	if tokenType == GroovyLexerRollBackOne {
+		l.rollbackOneChar()
+	}
+	return token
+}
+
 // isJavaIdentifierStart checks if a given code point is a valid start character for a Java identifier.
 // https://docs.oracle.com/javase%2F8%2Fdocs%2Fapi%2F%2F/java/lang/Character.html#isJavaIdentifierStart-char-
 func isJavaIdentifierStart(codePoint rune) bool {
