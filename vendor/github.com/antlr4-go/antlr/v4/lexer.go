@@ -139,6 +139,67 @@ func (b *BaseLexer) Reset() {
 	b.Interpreter.reset()
 }
 
+// Getter methods for necessary fields
+func (b *BaseLexer) GetInput() CharStream {
+	return b.input
+}
+
+func (b *BaseLexer) GetHitEOF() bool {
+	return b.hitEOF
+}
+
+func (b *BaseLexer) SetHitEOF(hitEOF bool) {
+	b.hitEOF = hitEOF
+}
+
+func (b *BaseLexer) GetToken() Token {
+	return b.token
+}
+
+func (b *BaseLexer) SetToken(token Token) {
+	b.token = token
+}
+
+func (b *BaseLexer) GetChannel() int {
+	return b.channel
+}
+
+func (b *BaseLexer) GetTokenStartCharIndex() int {
+	return b.TokenStartCharIndex
+}
+
+func (b *BaseLexer) SetTokenStartCharIndex(index int) {
+	b.TokenStartCharIndex = index
+}
+
+func (b *BaseLexer) GetTokenStartColumn() int {
+	return b.TokenStartColumn
+}
+
+func (b *BaseLexer) SetTokenStartColumn(column int) {
+	b.TokenStartColumn = column
+}
+
+func (b *BaseLexer) GetTokenStartLine() int {
+	return b.TokenStartLine
+}
+
+func (b *BaseLexer) SetTokenStartLine(line int) {
+	b.TokenStartLine = line
+}
+
+func (b *BaseLexer) GetTextDirect() string {
+	return b.text
+}
+
+func (b *BaseLexer) GetTheType() int {
+	return b.thetype
+}
+
+func (b *BaseLexer) SetTheType(thetype int) {
+	b.thetype = thetype
+}
+
 func (b *BaseLexer) GetInterpreter() ILexerATNSimulator {
 	return b.Interpreter
 }
@@ -161,6 +222,10 @@ func (b *BaseLexer) GetTokenFactory() TokenFactory {
 
 func (b *BaseLexer) setTokenFactory(f TokenFactory) {
 	b.factory = f
+}
+
+func (b *BaseLexer) SafeMatch() (ret int) {
+	return b.safeMatch()
 }
 
 func (b *BaseLexer) safeMatch() (ret int) {

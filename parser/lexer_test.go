@@ -23,16 +23,49 @@ func TestGroovyLexer(t *testing.T) {
 	}
 }
 
+func TestGString(t *testing.T) {
+	input := antlr.NewInputStream(`"Hello, ${name}!"`)
+	lexer := NewGroovyLexer(input)
+
+	for {
+		token := lexer.NextToken()
+		if token.GetTokenType() == antlr.TokenEOF {
+			break
+		}
+		if token.GetTokenType() == antlr.TokenInvalidType {
+			t.Fatalf("Token recognition error: %s", token.GetText())
+		}
+		t.Logf("Token: %s, Type: %d", token.GetText(), token.GetTokenType())
+	}
+}
+
 func TestGroovyLexer2(t *testing.T) {
 	s := `
-    def subject = "[$workflow.manifest.name] Successful: $workflow.runName"
-    if (!workflow.success) {
-        subject = "[$workflow.manifest.name] FAILED: $workflow.runName"
-    }
+    def subject = "$workflow.runName"
 	`
 	input := antlr.NewInputStream(s)
 	lexer := NewGroovyLexer(input)
 
+	for {
+		token := lexer.NextToken()
+		if token.GetTokenType() == antlr.TokenEOF {
+			break
+		}
+		if token.GetTokenType() == antlr.TokenInvalidType {
+			t.Fatalf("Token recognition error: %s", token.GetText())
+		}
+		t.Logf("Token: %s, Type: %d", token.GetText(), token.GetTokenType())
+	}
+}
+
+func TestGStringFile(t *testing.T) {
+	filePath := filepath.Join("testdata", "gstring.groovy")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
 	for {
 		token := lexer.NextToken()
 		if token.GetTokenType() == antlr.TokenEOF {

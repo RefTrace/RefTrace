@@ -39,9 +39,88 @@ func (l *GroovyLexer) Emit() antlr.Token {
 	return token
 }
 
+func (b *GroovyLexer) GetAllTokens() []antlr.Token {
+	vl := b // the base class uses b.Virt which resolves wrong
+	tokens := make([]antlr.Token, 0)
+	t := vl.NextToken()
+	for t.GetTokenType() != antlr.TokenEOF {
+		tokens = append(tokens, t)
+		t = vl.NextToken()
+	}
+	return tokens
+}
+
+func (g *GroovyLexer) NextToken() antlr.Token {
+	input := g.GetInput()
+	if input == nil {
+		panic("NextToken requires a non-nil input stream.")
+	}
+
+	tokenStartMarker := input.Mark()
+
+	// previously in finally block
+	defer func() {
+		// make sure we release marker after Match or
+		// unbuffered char stream will keep buffering
+		input.Release(tokenStartMarker)
+	}()
+
+	for {
+		if g.GetHitEOF() {
+			g.EmitEOF()
+			return g.GetToken()
+		}
+		g.SetToken(nil)
+		g.SetChannel(antlr.TokenDefaultChannel)
+		g.SetTokenStartCharIndex(input.Index())
+		g.SetTokenStartColumn(g.Interpreter.GetCharPositionInLine())
+		g.SetTokenStartLine(g.Interpreter.GetLine())
+		g.SetText("")
+		continueOuter := false
+		for {
+			g.SetTheType(antlr.TokenInvalidType)
+
+			ttype := g.BaseLexer.SafeMatch() // Defaults to LexerSkip
+
+			if input.LA(1) == antlr.TokenEOF {
+				g.SetHitEOF(true)
+			}
+			if g.GetTheType() == antlr.TokenInvalidType {
+				g.SetTheType(ttype)
+			}
+			if g.GetTheType() == antlr.LexerSkip {
+				continueOuter = true
+				break
+			}
+			if g.GetTheType() != antlr.LexerMore {
+				break
+			}
+		}
+
+		if continueOuter {
+			continue
+		}
+		if g.GetToken() == nil {
+			g.Emit()
+		}
+		return g.GetToken()
+	}
+}
+
 func (l *GroovyLexer) rollbackOneChar() {
-	interpreter := l.GetInterpreter().(*PositionAdjustingLexerATNSimulator)
-	interpreter.resetAcceptPosition(l.GetInputStream(), l.TokenStartCharIndex-1, l.TokenStartLine, l.GetInterpreter().GetCharPositionInLine()-1)
+	interpreter := l.GetInterpreter().(*antlr.LexerATNSimulator)
+	resetAcceptPosition(interpreter, l.GetInputStream(), l.TokenStartCharIndex-1, l.TokenStartLine, l.GetInterpreter().GetCharPositionInLine()-1)
+}
+
+func (l *GroovyLexer) handleRollBackOne() {
+	istream := l.GetInputStream()
+	readChar := istream.LA(-1)
+	if l.GetInputStream().LA(1) == antlr.TokenEOF && (readChar == '"' || readChar == '/') {
+		l.SetType(GroovyLexerGStringEnd)
+	} else {
+		l.SetChannel(antlr.TokenHiddenChannel)
+	}
+	l.PopMode()
 }
 
 func (b *GroovyLexer) Recover(re antlr.RecognitionException) {
@@ -62,7 +141,7 @@ func NewPositionAdjustingLexerATNSimulator(recog antlr.Lexer, atn *antlr.ATN, de
 	}
 }
 
-func (sim *PositionAdjustingLexerATNSimulator) resetAcceptPosition(input antlr.CharStream, index, line, charPositionInLine int) {
+func resetAcceptPosition(sim *antlr.LexerATNSimulator, input antlr.CharStream, index, line, charPositionInLine int) {
 	input.Seek(index)
 	sim.Line = line
 	sim.CharPositionInLine = charPositionInLine

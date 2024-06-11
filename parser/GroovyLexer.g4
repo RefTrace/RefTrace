@@ -223,10 +223,10 @@ DollarSlashyGStringBegin
 
 mode DQ_GSTRING_MODE;
 GStringEnd
-    :   GStringQuotationMark     -> popMode
+    :   GStringQuotationMark -> popMode
     ;
 GStringPart
-    :   Dollar  -> pushMode(GSTRING_TYPE_SELECTOR_MODE)
+    :   Dollar -> pushMode(GSTRING_TYPE_SELECTOR_MODE)
     ;
 GStringCharacter
     :   DqStringCharacter -> more
@@ -280,13 +280,8 @@ GStringPathPart
     ;
 RollBackOne
     :   . {
-            readChar := l.GetInputStream().LA(-1)
-            if l.GetInputStream().LA(1) == antlr.TokenEOF && (readChar == '"' || readChar == '/') {
-                l.SetType(GroovyLexerGStringEnd)
-            } else {
-                l.SetChannel(antlr.TokenHiddenChannel)
-            }
-          } -> popMode
+            l.handleRollBackOne()
+          }
     ;
 
 
