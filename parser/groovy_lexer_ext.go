@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 	"unicode"
 	"unicode/utf16"
@@ -288,8 +287,20 @@ var REGEX_CHECK_ARRAY = []int{
 	GroovyLexerIdentifier, GroovyLexerCapitalizedIdentifier,
 }
 
+// searchArray searches for a target integer in the given array.
+// It returns true if the target is found, otherwise false.
+func searchArray(arr []int, target int) bool {
+	for _, value := range arr {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
+// allowed iff not in REGEX_CHECK_ARRAY
 func (l *GroovyLexer) isRegexAllowed() bool {
-	return sort.SearchInts(REGEX_CHECK_ARRAY, l.lastTokenType) < 0
+	return !searchArray(REGEX_CHECK_ARRAY, l.lastTokenType)
 }
 
 // matches is a helper function to check if a string matches a given pattern.

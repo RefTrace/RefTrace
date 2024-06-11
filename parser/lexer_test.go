@@ -78,6 +78,26 @@ func TestGStringFile(t *testing.T) {
 	}
 }
 
+func TestBWAMem2File(t *testing.T) {
+	filePath := filepath.Join("testdata", "bwamem2_mem.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	for {
+		token := lexer.NextToken()
+		if token.GetTokenType() == antlr.TokenEOF {
+			break
+		}
+		if token.GetTokenType() == antlr.TokenInvalidType {
+			t.Fatalf("Token recognition error: %s", token.GetText())
+		}
+		t.Logf("Token: %s, Type: %d", token.GetText(), token.GetTokenType())
+	}
+}
+
 func TestGroovyLexerFromFile(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nfcore_pipeline.nf")
 	input, err := antlr.NewFileStream(filePath)
