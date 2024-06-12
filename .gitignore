@@ -1,5 +1,5 @@
 .idea
 parser/.antlr
-parser/GroovyLexer.interp
-parser/groovy_lexer.go
+lexer/GroovyLexer.interp
+lexer/groovy_lexer.go
 reft-go

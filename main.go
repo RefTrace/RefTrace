@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reft-go/parser" // Adjust the import path based on your module name and structure
+	"reft-go/lexer"
 
+	// Adjust the import path based on your module name and structure
 	"github.com/antlr4-go/antlr/v4" // Ensure this import path is correct based on your setup
 )
 
@@ -45,11 +46,11 @@ func processFile(filePath string) {
 	}
 
 	// Create a new instance of the lexer
-	lexer := parser.NewGroovyLexer(input)
-	lexer.RemoveErrorListeners()
-	errorListener := parser.NewCustomErrorListener(filePath)
-	lexer.AddErrorListener(errorListener)
-	_ = lexer.GetAllTokens()
+	l := lexer.NewGroovyLexer(input)
+	l.RemoveErrorListeners()
+	errorListener := lexer.NewCustomErrorListener(filePath)
+	l.AddErrorListener(errorListener)
+	_ = l.GetAllTokens()
 
 	// Check for lexing errors
 	if errorListener.HasError() {
