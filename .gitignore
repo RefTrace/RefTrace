@@ -3,3 +3,4 @@ parser/.antlr
 lexer/GroovyLexer.interp
 lexer/groovy_lexer.go
 reft-go
+lexer/.antlr
