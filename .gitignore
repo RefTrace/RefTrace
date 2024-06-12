@@ -4,3 +4,8 @@ lexer/GroovyLexer.interp
 lexer/groovy_lexer.go
 reft-go
 lexer/.antlr
+lexer/GroovyParser.interp
+lexer/GroovyParser.tokens
+lexer/groovy_parser.go
+lexer/groovyparser_listener.go
+lexer/groovyparser_base_listener.go

@@ -50,10 +50,23 @@ func processFile(filePath string) {
 	l.RemoveErrorListeners()
 	errorListener := lexer.NewCustomErrorListener(filePath)
 	l.AddErrorListener(errorListener)
-	_ = l.GetAllTokens()
+	//tokens := l.GetAllTokens()
+	stream := antlr.NewCommonTokenStream(l, 0)
+	stream.Fill()
+
+	// Print the token type for each token
+	/*
+		for _, token := range tokens {
+			fmt.Printf("Token: %s, Type: %d\n", token.GetText(), token.GetTokenType())
+		}
+	*/
 
 	// Check for lexing errors
-	if errorListener.HasError() {
-		fmt.Printf("File: %s has errors.\n", filePath)
+	if !errorListener.HasError() {
+		fmt.Printf("File: %s has no errors.\n", filePath)
+		//tokenStream := lexer.NewPreloadedTokenStream(tokens, l)
+		p := lexer.NewGroovyParser(stream)
+		p.CompilationUnit()
+		fmt.Println("Parsed Successfully")
 	}
 }

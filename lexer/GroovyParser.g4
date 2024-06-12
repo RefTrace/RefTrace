@@ -35,15 +35,10 @@ parser grammar GroovyParser;
 
 options {
     tokenVocab = GroovyLexer;
-    contextSuperClass = GroovyParserRuleContext;
-    superClass = AbstractParser;
+    superClass = MyGroovyParser;
 }
 
-@header {
-    import java.util.Map;
-    import org.codehaus.groovy.ast.NodeMetaDataHandler;
-}
-
+/*
 @members {
     private int inSwitchExpressionLevel = 0;
 
@@ -94,6 +89,7 @@ options {
         return token.getCharPositionInLine() + 1 + token.getText().length();
     }
 }
+*/
 
 // starting point for parsing a groovy file
 compilationUnit
@@ -108,7 +104,7 @@ scriptStatement
     :   importDeclaration // Import statement.  Can be used in any scope.  Has "import x as y" also.
     |   typeDeclaration
     // validate the method in the AstBuilder#visitMethodDeclaration, e.g. method without method body is not allowed
-    |   { !SemanticPredicates.isInvalidMethodDeclaration(_input) }?
+    |   { !isInvalidMethodDeclaration(p.GetTokenStream()) }?
         methodDeclaration[3, 9]
     |   statement
     ;
@@ -333,7 +329,6 @@ emptyDimsOpt
     ;
 
 standardType
-options { baseContext = type; }
     :   annotationsOpt
         (
             primitiveType
@@ -358,19 +353,11 @@ type
         emptyDimsOpt
     ;
 
-classOrInterfaceType
-    :   (   qualifiedClassName
-        |   qualifiedStandardClassName
-        ) typeArguments?
-    ;
-
 generalClassOrInterfaceType
-options { baseContext = classOrInterfaceType; }
     :   qualifiedClassName typeArguments?
     ;
 
 standardClassOrInterfaceType
-options { baseContext = classOrInterfaceType; }
     :   qualifiedStandardClassName typeArguments?
     ;
 
@@ -469,7 +456,6 @@ gstringPath
 
 // LAMBDA EXPRESSION
 lambdaExpression
-options { baseContext = standardLambdaExpression; }
     :   lambdaParameters nls ARROW nls lambdaBody
     ;
 
@@ -479,7 +465,6 @@ standardLambdaExpression
     ;
 
 lambdaParameters
-options { baseContext = standardLambdaParameters; }
     :   formalParameters
 
     // { a -> a * 2 } can be parsed as a lambda expression in a block, but we expect a closure.
@@ -569,7 +554,7 @@ blockStatement
     ;
 
 localVariableDeclaration
-    :   { !SemanticPredicates.isInvalidLocalVariableDeclaration(_input) }?
+    :   { !isInvalidLocalVariableDeclaration(p.GetTokenStream()) }?
         variableDeclaration[0]
     ;
 
@@ -651,7 +636,7 @@ statement
     |   THROW expression                                                                                    #throwStmtAlt
     |   breakStatement                                                                                      #breakStmtAlt
     |   continueStatement                                                                                   #continueStmtAlt
-    |   { inSwitchExpressionLevel > 0 }?
+    |   { p.inSwitchExpressionLevel > 0 }?
         yieldStatement                                                                                      #yieldStmtAlt
     |   identifier COLON nls statement                                                                      #labeledStmtAlt
     |   assertStatement                                                                                     #assertStmtAlt
@@ -735,11 +720,11 @@ expressionInPar
     :   LPAREN enhancedStatementExpression rparen
     ;
 
-expressionList[boolean canSpread]
+expressionList[bool canSpread]
     :   expressionListElement[$canSpread] (COMMA nls expressionListElement[$canSpread])*
     ;
 
-expressionListElement[boolean canSpread]
+expressionListElement[bool canSpread]
     :   MUL? expression
     ;
 
@@ -753,15 +738,15 @@ statementExpression
     ;
 
 postfixExpression
-    :   pathExpression op=(INC | DEC)?
+    :   pathExpression op=(INC | DEC)? { fmt.Println("POSTFIX") }
     ;
 
 switchExpression
 @init {
-    inSwitchExpressionLevel++;
+    p.inSwitchExpressionLevel++
 }
 @after {
-    inSwitchExpressionLevel--;
+    p.inSwitchExpressionLevel--
 }
     :   SWITCH expressionInPar nls LBRACE nls switchBlockStatementExpressionGroup* nls RBRACE
     ;
@@ -881,22 +866,21 @@ expression
     ;
 
 castOperandExpression
-options { baseContext = expression; }
-    :   castParExpression castOperandExpression                                             #castExprAlt
+    :   castParExpression castOperandExpression                                             #castExprAltOperand
 
-    |   postfixExpression                                                                   #postfixExprAlt
+    |   postfixExpression                                                                   #postfixExprAltOperand
 
     // ~(BNOT)/!(LNOT)
-    |   (BITNOT | NOT) nls castOperandExpression                                            #unaryNotExprAlt
+    |   (BITNOT | NOT) nls castOperandExpression                                            #unaryNotExprAltOperand
 
     // ++(prefix)/--(prefix)/+(unary)/-(unary)
-    |   op=(INC | DEC | ADD | SUB) castOperandExpression                                    #unaryAddExprAlt
+    |   op=(INC | DEC | ADD | SUB) castOperandExpression                                    #unaryAddExprAltOperand
     ;
 
 commandExpression
     :   expression
         (
-            { !SemanticPredicates.isFollowingArgumentsOrClosure($expression.ctx) }?
+            { !isFollowingArgumentsOrClosure($expression.ctx) }?
             argumentList
         |
             /* if pathExpression is a method call, no need to have any more arguments */
@@ -943,7 +927,7 @@ pathExpression returns [int t]
             primary
         |
             // if 'static' followed by DOT, we can treat them as identifiers, e.g. static.unused = { -> }
-            { _input.LT(2).getType() == DOT }?
+            { p.GetTokenStream().LT(2).GetTokenType() == GroovyParserDOT }?
             STATIC
         ) (pathElement { $t = $pathElement.t; })*
     ;
@@ -1051,27 +1035,24 @@ primary
     ;
 
 namedPropertyArgPrimary
-options { baseContext = primary; }
-    :   identifier                                                                          #identifierPrmrAlt
-    |   literal                                                                             #literalPrmrAlt
-    |   gstring                                                                             #gstringPrmrAlt
-    |   parExpression                                                                       #parenPrmrAlt
-    |   list                                                                                #listPrmrAlt
-    |   map                                                                                 #mapPrmrAlt
+    :   identifier                                                                          #identifierPrmrAltNamedPropertyArgPrimary
+    |   literal                                                                             #literalPrmrAltNamedPropertyArgPrimary
+    |   gstring                                                                             #gstringPrmrAltNamedPropertyArgPrimary
+    |   parExpression                                                                       #parenPrmrAltNamedPropertyArgPrimary
+    |   list                                                                                #listPrmrAltNamedPropertyArgPrimary
+    |   map                                                                                 #mapPrmrAltNamedPropertyArgPrimary
     ;
 
 namedArgPrimary
-options { baseContext = primary; }
-    :   identifier                                                                          #identifierPrmrAlt
-    |   literal                                                                             #literalPrmrAlt
-    |   gstring                                                                             #gstringPrmrAlt
+    :   identifier                                                                          #identifierPrmrAltNamedArgPrimary
+    |   literal                                                                             #literalPrmrAltNamedArgPrimary
+    |   gstring                                                                             #gstringPrmrAltNamedArgPrimary
     ;
 
 commandPrimary
-options { baseContext = primary; }
-    :   identifier                                                                          #identifierPrmrAlt
-    |   literal                                                                             #literalPrmrAlt
-    |   gstring                                                                             #gstringPrmrAlt
+    :   identifier                                                                          #identifierPrmrAltCommandPrimary
+    |   literal                                                                             #literalPrmrAltCommandPrimary
+    |   gstring                                                                             #gstringPrmrAltCommandPrimary
     ;
 
 list
@@ -1091,7 +1072,6 @@ mapEntryList
     ;
 
 namedPropertyArgList
-options { baseContext = mapEntryList; }
     :   namedPropertyArg (COMMA namedPropertyArg)*
     ;
 
@@ -1101,13 +1081,11 @@ mapEntry
     ;
 
 namedPropertyArg
-options { baseContext = mapEntry; }
     :   namedPropertyArgLabel COLON nls expression
     |   MUL COLON nls expression
     ;
 
 namedArg
-options { baseContext = mapEntry; }
     :   namedArgLabel COLON nls expression
     |   MUL COLON nls expression
     ;
@@ -1118,13 +1096,11 @@ mapEntryLabel
     ;
 
 namedPropertyArgLabel
-options { baseContext = mapEntryLabel; }
     :   keywords
     |   namedPropertyArgPrimary
     ;
 
 namedArgLabel
-options { baseContext = mapEntryLabel; }
     :   keywords
     |   namedArgPrimary
     ;
@@ -1175,7 +1151,6 @@ arguments
     ;
 
 argumentList
-options { baseContext = enhancedArgumentListInPar; }
     :   firstArgumentListElement
         (   COMMA nls
             argumentListElement
@@ -1190,13 +1165,11 @@ enhancedArgumentListInPar
     ;
 
 firstArgumentListElement
-options { baseContext = enhancedArgumentListElement; }
     :   expressionListElement[true]
     |   namedArg
     ;
 
 argumentListElement
-options { baseContext = enhancedArgumentListElement; }
     :   expressionListElement[true]
     |   namedPropertyArg
     ;

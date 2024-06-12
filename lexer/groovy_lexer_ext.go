@@ -43,7 +43,9 @@ func (b *GroovyLexer) GetAllTokens() []antlr.Token {
 	tokens := make([]antlr.Token, 0)
 	t := vl.NextToken()
 	for t.GetTokenType() != antlr.TokenEOF {
-		tokens = append(tokens, t)
+		if t.GetChannel() == antlr.TokenDefaultChannel {
+			tokens = append(tokens, t)
+		}
 		t = vl.NextToken()
 	}
 	return tokens
