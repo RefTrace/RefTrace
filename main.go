@@ -46,6 +46,8 @@ func processFile(filePath string) {
 
 	// Create a new instance of the lexer
 	lexer := parser.NewGroovyLexer(input)
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(parser.NewCustomErrorListener(filePath))
 	tokens := lexer.GetAllTokens()
 
 	// Check for lexing errors

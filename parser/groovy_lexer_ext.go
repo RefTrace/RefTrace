@@ -393,3 +393,28 @@ func isFollowedBy(cs antlr.CharStream, chars ...rune) bool {
 func isUpperCase(ch int) bool {
 	return unicode.IsUpper(rune(ch))
 }
+
+type CustomErrorListener struct {
+	*antlr.DefaultErrorListener
+	filename string
+}
+
+func NewCustomErrorListener(filename string) *CustomErrorListener {
+	return &CustomErrorListener{filename: filename}
+}
+
+func (c *CustomErrorListener) SyntaxError(_ antlr.Recognizer, _ interface{}, line, column int, msg string, _ antlr.RecognitionException) {
+	fmt.Printf("File: %s - line %d:%d %s\n", c.filename, line, column, msg)
+}
+
+func (c *CustomErrorListener) ReportAmbiguity(_ antlr.Parser, _ *antlr.DFA, _, _ int, _ bool, _ *antlr.BitSet, _ *antlr.ATNConfigSet) {
+	fmt.Printf("File: %s - Ambiguity detected\n", c.filename)
+}
+
+func (c *CustomErrorListener) ReportAttemptingFullContext(_ antlr.Parser, _ *antlr.DFA, _, _ int, _ *antlr.BitSet, _ *antlr.ATNConfigSet) {
+	fmt.Printf("File: %s - Attempting full context\n", c.filename)
+}
+
+func (c *CustomErrorListener) ReportContextSensitivity(_ antlr.Parser, _ *antlr.DFA, _, _, _ int, _ *antlr.ATNConfigSet) {
+	fmt.Printf("File: %s - Context sensitivity\n", c.filename)
+}
