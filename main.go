@@ -47,14 +47,12 @@ func processFile(filePath string) {
 	// Create a new instance of the lexer
 	lexer := parser.NewGroovyLexer(input)
 	lexer.RemoveErrorListeners()
-	lexer.AddErrorListener(parser.NewCustomErrorListener(filePath))
-	tokens := lexer.GetAllTokens()
+	errorListener := parser.NewCustomErrorListener(filePath)
+	lexer.AddErrorListener(errorListener)
+	_ = lexer.GetAllTokens()
 
 	// Check for lexing errors
-	for _, token := range tokens {
-		if token.GetTokenType() == antlr.TokenInvalidType {
-			fmt.Printf("File: %s, encountered lexing error\n", filePath)
-			return
-		}
+	if errorListener.HasError() {
+		fmt.Printf("File: %s has errors.\n", filePath)
 	}
 }
