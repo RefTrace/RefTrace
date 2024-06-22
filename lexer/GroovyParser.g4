@@ -738,7 +738,7 @@ statementExpression
     ;
 
 postfixExpression
-    :   pathExpression op=(INC | DEC)? { fmt.Println("POSTFIX") }
+    :   pathExpression op=(INC | DEC)?
     ;
 
 switchExpression
