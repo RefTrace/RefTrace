@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"fmt"
 	"unicode"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -12,33 +11,29 @@ type MyGroovyParser struct {
 	inSwitchExpressionLevel int
 }
 
-func isFollowingArgumentsOrClosure(context antlr.ParserRuleContext) bool {
-	if postfixExprAltContext, ok := context.(*PostfixExprAltContext); ok {
-		peacChildren := postfixExprAltContext.GetChildren()
+func isFollowingArgumentsOrClosure() bool {
+	/*
+		if postfixExprAltContext, ok := context.(*PostfixExprAltContext); ok {
+			peacChildren := postfixExprAltContext.GetChildren()
 
-		defer func() {
-			if r := recover(); r != nil {
-				panic(fmt.Sprintf("Unexpected structure of expression context: %v", context))
-			}
-		}()
+			defer func() {
+				if r := recover(); r != nil {
+					panic(fmt.Sprintf("Unexpected structure of expression context: %v", context))
+				}
+			}()
 
-		peacChild := peacChildren[0]
-		pecChildren := peacChild.(*PostfixExpressionContext).GetChildren()
+			peacChild := peacChildren[0]
+			pecChildren := peacChild.(*PostfixExpressionContext).GetChildren()
 
-		pecChild := pecChildren[0]
-		pec := pecChild.(*PathExpressionContext)
+			pecChild := pecChildren[0]
+			pec := pecChild.(*PathExpressionContext)
 
-		t := pec.GetT()
+			t := pec.GetT()
 
-		if t == 2 || t == 3 {
-			fmt.Println("TRUE - FOLLOWING ARGS")
-		} else {
-			fmt.Println("FALSE - FOLLOWING ARGS")
+			return t == 2 || t == 3
 		}
+	*/
 
-		return t == 2 || t == 3
-	}
-	fmt.Println("FALSE - FOLLOWING ARGS")
 	return false
 }
 

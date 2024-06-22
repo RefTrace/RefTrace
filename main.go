@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reft-go/lexer"
+	"sync"
 
 	// Adjust the import path based on your module name and structure
 	"github.com/antlr4-go/antlr/v4" // Ensure this import path is correct based on your setup
@@ -19,6 +20,8 @@ func main() {
 
 	dir := os.Args[1]
 
+	var wg sync.WaitGroup
+
 	// Walk the directory and process each .nf or .groovy file
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -27,7 +30,11 @@ func main() {
 
 		// Check if the file has a .nf or .groovy extension
 		if !info.IsDir() && (filepath.Ext(path) == ".nf" || filepath.Ext(path) == ".groovy") {
-			processFile(path)
+			wg.Add(1)
+			go func(path string) {
+				defer wg.Done()
+				processFile(path)
+			}(path)
 		}
 		return nil
 	})
@@ -36,6 +43,20 @@ func main() {
 		fmt.Printf("Error walking the path %s: %v\n", dir, err)
 		os.Exit(1)
 	}
+
+	wg.Wait()
+}
+
+type TreeShapeListener struct {
+	*lexer.BaseGroovyParserListener
+}
+
+func NewTreeShapeListener() *TreeShapeListener {
+	return new(TreeShapeListener)
+}
+
+func (tsl *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
+	fmt.Println(ctx.GetText())
 }
 
 func processFile(filePath string) {
@@ -68,5 +89,6 @@ func processFile(filePath string) {
 		p := lexer.NewGroovyParser(stream)
 		p.CompilationUnit()
 		fmt.Println("Parsed Successfully")
+		//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
 	}
 }
