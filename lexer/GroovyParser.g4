@@ -880,7 +880,6 @@ castOperandExpression
 commandExpression
     :   expression
         (
-            { !isFollowingArgumentsOrClosure($expression.ctx) }?
             argumentList
         |
             /* if pathExpression is a method call, no need to have any more arguments */
