@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reft-go/lexer"
+	"reft-go/parser"
 	"sync"
 
 	// Adjust the import path based on your module name and structure
@@ -48,7 +48,7 @@ func main() {
 }
 
 type TreeShapeListener struct {
-	*lexer.BaseGroovyParserListener
+	*parser.BaseGroovyParserListener
 }
 
 func NewTreeShapeListener() *TreeShapeListener {
@@ -67,9 +67,9 @@ func processFile(filePath string) {
 	}
 
 	// Create a new instance of the lexer
-	l := lexer.NewGroovyLexer(input)
+	l := parser.NewGroovyLexer(input)
 	l.RemoveErrorListeners()
-	errorListener := lexer.NewCustomErrorListener(filePath)
+	errorListener := parser.NewCustomErrorListener(filePath)
 	l.AddErrorListener(errorListener)
 	//tokens := l.GetAllTokens()
 	stream := antlr.NewCommonTokenStream(l, 0)
@@ -86,7 +86,7 @@ func processFile(filePath string) {
 	if !errorListener.HasError() {
 		fmt.Printf("File: %s has no errors.\n", filePath)
 		//tokenStream := lexer.NewPreloadedTokenStream(tokens, l)
-		p := lexer.NewGroovyParser(stream)
+		p := parser.NewGroovyParser(stream)
 		p.CompilationUnit()
 		fmt.Println("Parsed Successfully")
 		//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
