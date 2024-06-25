@@ -6,6 +6,3 @@ reft-go
 parser/.antlr
 parser/GroovyParser.interp
 parser/GroovyParser.tokens
-parser/groovy_parser.go
-parser/groovyparser_listener.go
-parser/groovyparser_base_listener.go
