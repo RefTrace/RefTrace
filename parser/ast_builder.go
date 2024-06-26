@@ -2,8 +2,16 @@ package parser
 
 import (
 	"fmt"
+	"strings"
+
+	ast "reft-go/parser/ast"
 
 	"github.com/antlr4-go/antlr/v4"
+)
+
+const (
+	PACKAGE_INFO           = "package-info"
+	PACKAGE_INFO_FILE_NAME = PACKAGE_INFO + ".groovy"
 )
 
 type NumberFormatError struct {
@@ -45,8 +53,9 @@ func createParsingFailedException(msg string, ctx *antlr.ParserRuleContext) *Syn
 type ASTBuilder struct {
 	BaseGroovyParserVisitor
 	moduleNode        *ModuleNode
-	classNodeList     []*ClassNode
+	classNodeList     []*ast.ClassNode
 	numberFormatError *NumberFormatError
+	sourceUnitName    string
 }
 
 func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *ModuleNode {
@@ -56,7 +65,7 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *Mo
 		switch n := node.(type) {
 		case *DeclarationListStatement:
 			for _, stmt := range n.GetDeclarationStatements() {
-				builder.moduleNode.AddStatement(stmt)
+				builder.moduleNode.AddStatement(&stmt.Statement)
 			}
 		case *Statement:
 			builder.moduleNode.AddStatement(n)
@@ -87,15 +96,26 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *Mo
 	return builder.moduleNode
 }
 
-func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) []ASTNode {
+func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) []ast.ASTNode {
 	if ctx == nil {
-		return []ASTNode{}
+		return []ast.ASTNode{}
 	}
 
-	var nodes []ASTNode
+	var nodes []ast.ASTNode
 	for _, stmt := range ctx.AllScriptStatement() {
-		nodes = append(nodes, builder.Visit(stmt).(ASTNode))
+		nodes = append(nodes, builder.Visit(stmt).(ast.ASTNode))
 	}
 
 	return nodes
+}
+
+func (builder *ASTBuilder) isPackageInfoDeclaration() bool {
+	name := builder.sourceUnitName
+	return name != "" && strings.HasSuffix(name, PACKAGE_INFO_FILE_NAME)
+}
+
+func (builder *ASTBuilder) isBlankScript() bool {
+	return len(builder.moduleNode.GetStatementBlock()) == 0 &&
+		len(builder.moduleNode.GetMethods()) == 0 &&
+		len(builder.moduleNode.GetClasses()) == 0
 }

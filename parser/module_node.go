@@ -1,39 +1,5 @@
 package parser
 
-import (
-	"fmt"
-)
-
-// Embed BaseASTNode in all node types
-type ClassNode struct {
-	BaseASTNode
-	Name       string
-	SuperClass *ClassNode
-	Methods    []*MethodNode
-	Fields     []*FieldNode
-}
-
-type MethodNode struct {
-	BaseASTNode
-	Name       string
-	IsStatic   bool
-	IsAbstract bool
-	Parameters []string
-	ReturnType string
-}
-
-type FieldNode struct {
-	BaseASTNode
-	Name string
-	Type string
-}
-
-type ImportNode struct {
-	BaseASTNode
-	Name string
-	Type *ClassNode
-}
-
 type ModuleNode struct {
 	BaseASTNode
 	Classes           []*ClassNode
@@ -43,11 +9,6 @@ type ModuleNode struct {
 	StaticStarImports map[string]*ImportNode
 	MainClassName     string
 	StatementBlock    []*Statement
-}
-
-type Statement struct {
-	BaseASTNode
-	Content string
 }
 
 func NewModuleNode() *ModuleNode {
@@ -117,23 +78,4 @@ func (m *ModuleNode) GetMainClassName() string {
 
 func (m *ModuleNode) GetStatementBlock() []*Statement {
 	return m.StatementBlock
-}
-
-func main() {
-	module := NewModuleNode()
-	classNode := &ClassNode{Name: "ExampleClass"}
-	module.AddClass(classNode)
-	module.AddMethod(&MethodNode{Name: "exampleMethod", IsStatic: true, ReturnType: "void"})
-	module.AddImport("exampleImport", classNode)
-	module.AddStaticImport("exampleStaticImport", classNode)
-	module.AddStaticStarImport("exampleStaticStarImport", classNode)
-	module.AddStatement(&Statement{Content: "example statement"})
-
-	fmt.Println("Main Class Name:", module.GetMainClassName())
-	fmt.Println("Classes:", module.GetClasses())
-	fmt.Println("Methods:", module.GetMethods())
-	fmt.Println("Imports:", module.GetImports())
-	fmt.Println("Static Imports:", module.GetStaticImports())
-	fmt.Println("Static Star Imports:", module.GetStaticStarImports())
-	fmt.Println("Statement Block:", module.GetStatementBlock())
 }

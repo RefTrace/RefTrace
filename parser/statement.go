@@ -2,16 +2,16 @@ package parser
 
 import "fmt"
 
-type StatementNode struct {
+type Statement struct {
 	BaseASTNode
 	statementLabels []string
 }
 
-func NewStatementNode() *StatementNode {
-	return &StatementNode{}
+func NewStatement() *Statement {
+	return &Statement{}
 }
 
-func (s *StatementNode) GetStatementLabels() []string {
+func (s *Statement) GetStatementLabels() []string {
 	if s.statementLabels == nil {
 		return nil
 	}
@@ -21,27 +21,27 @@ func (s *StatementNode) GetStatementLabels() []string {
 	return labels
 }
 
-func (s *StatementNode) GetStatementLabel() string {
+func (s *Statement) GetStatementLabel() string {
 	if len(s.statementLabels) == 0 {
 		return ""
 	}
 	return s.statementLabels[0]
 }
 
-func (s *StatementNode) SetStatementLabel(label string) {
+func (s *Statement) SetStatementLabel(label string) {
 	if label != "" {
 		s.AddStatementLabel(label)
 	}
 }
 
-func (s *StatementNode) AddStatementLabel(label string) {
+func (s *Statement) AddStatementLabel(label string) {
 	if s.statementLabels == nil {
 		s.statementLabels = make([]string, 0)
 	}
 	s.statementLabels = append(s.statementLabels, label)
 }
 
-func (s *StatementNode) CopyStatementLabels(other *StatementNode) {
+func (s *Statement) CopyStatementLabels(other *Statement) {
 	otherLabels := other.GetStatementLabels()
 	if otherLabels != nil {
 		for _, label := range otherLabels {
@@ -50,16 +50,16 @@ func (s *StatementNode) CopyStatementLabels(other *StatementNode) {
 	}
 }
 
-func (s *StatementNode) IsEmpty() bool {
+func (s *Statement) IsEmpty() bool {
 	return false
 }
 
-func (s *StatementNode) String() string {
-	return fmt.Sprintf("StatementNode[labels:%v]", s.statementLabels)
+func (s *Statement) String() string {
+	return fmt.Sprintf("Statement[labels:%v]", s.statementLabels)
 }
 
 type DeclarationListStatement struct {
-	StatementNode
+	Statement
 	declarationStatements []*ExpressionStatement
 }
 
@@ -110,19 +110,13 @@ func ConfigureAST(stmt *ExpressionStatement, expr ASTNode) *ExpressionStatement 
 	return stmt
 }
 
-// Additional types (you might want to define these in separate files)
-type Expression interface {
-	ASTNode
-	// Add any additional methods specific to expressions
-}
-
 type DeclarationExpression struct {
 	Expression
 	// Add fields and methods specific to DeclarationExpression
 }
 
 type ExpressionStatement struct {
-	StatementNode
+	Statement
 	expression Expression
 }
 

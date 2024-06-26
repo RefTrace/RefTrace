@@ -5,7 +5,6 @@ import (
 )
 
 type ASTNode interface {
-	Visit(visitor GroovyParserVisitor)
 	GetText() string
 	GetLineNumber() int
 	SetLineNumber(int)
@@ -24,15 +23,12 @@ type ASTNode interface {
 }
 
 type BaseASTNode struct {
+	DefaultNodeMetaDataHandler
 	lineNumber       int
 	columnNumber     int
 	lastLineNumber   int
 	lastColumnNumber int
 	metaDataMap      map[interface{}]interface{}
-}
-
-func (node *BaseASTNode) Visit(visitor GroovyParserVisitor) {
-	panic("No visit() method implemented for class: " + reflect.TypeOf(node).String())
 }
 
 func (node *BaseASTNode) GetText() string {
