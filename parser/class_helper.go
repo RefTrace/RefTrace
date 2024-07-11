@@ -18,6 +18,13 @@ var (
 	DOUBLE_TYPE  = NewClassNode("double", 0, nil)
 	STRING_TYPE  = NewClassNode("java.lang.String", ACC_PUBLIC, OBJECT_TYPE)
 	LIST_TYPE    = NewClassNode("java.util.List", ACC_PUBLIC, OBJECT_TYPE)
+	// New additions
+	SCRIPT_TYPE  = NewClassNode("groovy.lang.Script", ACC_PUBLIC, OBJECT_TYPE)
+	GSTRING_TYPE = NewClassNode("groovy.lang.GString", ACC_PUBLIC, OBJECT_TYPE)
+	CLOSURE_TYPE = NewClassNode("groovy.lang.Closure", ACC_PUBLIC, OBJECT_TYPE)
+	RANGE_TYPE   = NewClassNode("groovy.lang.Range", ACC_PUBLIC, OBJECT_TYPE)
+	PATTERN_TYPE = NewClassNode("java.util.regex.Pattern", ACC_PUBLIC, OBJECT_TYPE)
+	BINDING_TYPE = NewClassNode("groovy.lang.Binding", ACC_PUBLIC, OBJECT_TYPE)
 )
 
 var (

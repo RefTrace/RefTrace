@@ -1,141 +1,60 @@
 package parser
 
-import "fmt"
+import (
+	"container/list"
+)
 
+// Statement represents the base struct for any statement.
 type Statement struct {
-	BaseASTNode
-	statementLabels []string
+	ASTNode
+	statementLabels *list.List
 }
 
-func NewStatement() *Statement {
-	return &Statement{}
+// GetStatementLabels returns the list of statement labels.
+func (s *Statement) GetStatementLabels() *list.List {
+	return s.statementLabels
 }
 
-func (s *Statement) GetStatementLabels() []string {
-	if s.statementLabels == nil {
-		return nil
-	}
-	// Return a copy to prevent external modifications
-	labels := make([]string, len(s.statementLabels))
-	copy(labels, s.statementLabels)
-	return labels
-}
-
+// GetStatementLabel returns the first statement label (deprecated).
 func (s *Statement) GetStatementLabel() string {
-	if len(s.statementLabels) == 0 {
+	if s.statementLabels == nil || s.statementLabels.Len() == 0 {
 		return ""
 	}
-	return s.statementLabels[0]
+	return s.statementLabels.Front().Value.(string)
 }
 
+// SetStatementLabel sets a single statement label (deprecated).
 func (s *Statement) SetStatementLabel(label string) {
 	if label != "" {
 		s.AddStatementLabel(label)
 	}
 }
 
+// AddStatementLabel adds a statement label to the list.
 func (s *Statement) AddStatementLabel(label string) {
 	if s.statementLabels == nil {
-		s.statementLabels = make([]string, 0)
+		s.statementLabels = list.New()
 	}
-	s.statementLabels = append(s.statementLabels, label)
+	s.statementLabels.PushBack(label)
 }
 
-func (s *Statement) CopyStatementLabels(other *Statement) {
-	otherLabels := other.GetStatementLabels()
-	if otherLabels != nil {
-		for _, label := range otherLabels {
-			s.AddStatementLabel(label)
+// CopyStatementLabels copies statement labels from another Statement.
+func (s *Statement) CopyStatementLabels(that *Statement) {
+	if that.statementLabels != nil {
+		for e := that.statementLabels.Front(); e != nil; e = e.Next() {
+			s.AddStatementLabel(e.Value.(string))
 		}
 	}
 }
 
+// ClearStatementLabels removes all statement labels from the list.
+func (s *Statement) ClearStatementLabels() {
+	if s.statementLabels != nil {
+		s.statementLabels.Init()
+	}
+}
+
+// IsEmpty returns whether the statement is empty.
 func (s *Statement) IsEmpty() bool {
 	return false
-}
-
-func (s *Statement) String() string {
-	return fmt.Sprintf("Statement[labels:%v]", s.statementLabels)
-}
-
-type DeclarationListStatement struct {
-	Statement
-	declarationStatements []*ExpressionStatement
-}
-
-func NewDeclarationListStatement(declarations ...*DeclarationExpression) *DeclarationListStatement {
-	return NewDeclarationListStatementFromSlice(declarations)
-}
-
-func NewDeclarationListStatementFromSlice(declarations []*DeclarationExpression) *DeclarationListStatement {
-	dls := &DeclarationListStatement{}
-	dls.declarationStatements = make([]*ExpressionStatement, len(declarations))
-	for i, decl := range declarations {
-		dls.declarationStatements[i] = ConfigureAST(NewExpressionStatement(decl), decl)
-	}
-	return dls
-}
-
-func (d *DeclarationListStatement) GetDeclarationStatements() []*ExpressionStatement {
-	declarationListStatementLabels := d.GetStatementLabels()
-
-	for _, e := range d.declarationStatements {
-		if declarationListStatementLabels != nil {
-			// Clear existing statement labels before setting labels
-			e.statementLabels = nil
-			for _, label := range declarationListStatementLabels {
-				e.AddStatementLabel(label)
-			}
-		}
-	}
-
-	return d.declarationStatements
-}
-
-func (d *DeclarationListStatement) GetDeclarationExpressions() []*DeclarationExpression {
-	result := make([]*DeclarationExpression, len(d.declarationStatements))
-	for i, e := range d.declarationStatements {
-		result[i] = e.GetExpression().(*DeclarationExpression)
-	}
-	return result
-}
-
-// Helper functions (you might want to move these to a separate file)
-func NewExpressionStatement(expr Expression) *ExpressionStatement {
-	return &ExpressionStatement{expression: expr}
-}
-
-func ConfigureAST(stmt *ExpressionStatement, expr ASTNode) *ExpressionStatement {
-	stmt.SetSourcePosition(expr)
-	return stmt
-}
-
-type DeclarationExpression struct {
-	Expression
-	// Add fields and methods specific to DeclarationExpression
-}
-
-type ExpressionStatement struct {
-	Statement
-	expression Expression
-}
-
-func (e *ExpressionStatement) Visit(visitor GroovyCodeVisitor) {
-	visitor.VisitExpressionStatement(e)
-}
-
-func (e *ExpressionStatement) GetExpression() Expression {
-	return e.expression
-}
-
-func (e *ExpressionStatement) SetExpression(expression Expression) {
-	e.expression = expression
-}
-
-func (e *ExpressionStatement) GetText() string {
-	return e.expression.GetText()
-}
-
-func (e *ExpressionStatement) String() string {
-	return fmt.Sprintf("%s[expression:%v]", e.String(), e.expression)
 }

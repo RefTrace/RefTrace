@@ -1,6 +1,9 @@
 package parser
 
+import "strings"
+
 type ClassNode struct {
+	BaseASTNode
 	DefaultNodeMetaDataHandler
 	name                string
 	modifiers           int
@@ -17,6 +20,8 @@ type ClassNode struct {
 	permittedSubclasses []*ClassNode
 	recordComponents    []*RecordComponentNode
 	placeholder         bool
+	script              bool
+	scriptBody          bool
 }
 
 func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode {
@@ -28,11 +33,41 @@ func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode 
 	}
 }
 
+func (cn *ClassNode) Equals(that interface{}) bool {
+	other, ok := that.(*ClassNode)
+	if !ok {
+		return false
+	}
+	if cn == other {
+		return true
+	}
+	if cn.redirect != nil {
+		return cn.redirect.Equals(that)
+	}
+	if cn.componentType != nil {
+		return cn.componentType.Equals(other.componentType)
+	}
+	return other.GetText() == cn.GetText() // arrays could be "T[]" or "[LT;"
+}
+
+func (cn *ClassNode) GetText() string {
+	return cn.GetName()
+}
+
 func (cn *ClassNode) GetName() string {
 	if cn.redirect != nil {
 		return cn.redirect.GetName()
 	}
 	return cn.name
+}
+
+func (cn *ClassNode) GetNameWithoutPackage() string {
+	name := cn.GetName()
+	idx := strings.LastIndex(name, ".")
+	if idx > 0 {
+		return name[idx+1:]
+	}
+	return name
 }
 
 func (cn *ClassNode) IsPrimaryNode() bool {
@@ -127,4 +162,20 @@ func (cn *ClassNode) Redirect() *ClassNode {
 
 func (cn *ClassNode) GetPlainNodeReference() *ClassNode {
 	return cn.GetPlainNodeReferenceHelper(true)
+}
+
+func (cn *ClassNode) SetScript(isScript bool) {
+	if cn.redirect != nil {
+		cn.redirect.SetScript(isScript)
+	} else {
+		cn.script = isScript
+	}
+}
+
+func (cn *ClassNode) SetScriptBody(isScriptBody bool) {
+	if cn.redirect != nil {
+		cn.redirect.SetScriptBody(isScriptBody)
+	} else {
+		cn.scriptBody = isScriptBody
+	}
 }
