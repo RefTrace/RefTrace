@@ -16,12 +16,10 @@ type LambdaExpression struct {
 
 // NewLambdaExpression creates a new LambdaExpression
 func NewLambdaExpression(parameters []*Parameter, code Statement) *LambdaExpression {
-	return &LambdaExpression{
-		ClosureExpression: ClosureExpression{
-			parameters: parameters,
-			code:       code,
-		},
+	le := &LambdaExpression{
+		ClosureExpression: *NewClosureExpression(parameters, code),
 	}
+	return le
 }
 
 // Visit implements the GroovyCodeVisitor interface

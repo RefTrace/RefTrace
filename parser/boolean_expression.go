@@ -11,7 +11,7 @@ func NewBooleanExpression(expression Expression) *BooleanExpression {
 	be := &BooleanExpression{
 		expression: expression,
 	}
-	be.SetType(BooleanType) // Assuming BooleanType is defined elsewhere
+	be.SetType(BOOLEAN_TYPE) // Assuming BooleanType is defined elsewhere
 	return be
 }
 

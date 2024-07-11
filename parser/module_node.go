@@ -21,7 +21,7 @@ type ModuleNode struct {
 	PackageNode       *PackageNode
 	Description       string
 	MainClassName     string
-	StatementBlock    []*Statement
+	StatementBlock    *BlockStatement
 	ScriptDummy       *ClassNode
 	ImportsResolved   bool
 }
@@ -34,7 +34,6 @@ func NewModuleNode() *ModuleNode {
 		StarImports:       []*ImportNode{},
 		StaticImports:     make(map[string]*ImportNode),
 		StaticStarImports: make(map[string]*ImportNode),
-		StatementBlock:    []*Statement{},
 	}
 }
 
@@ -184,7 +183,7 @@ func (m *ModuleNode) AddStaticImport(classNode *ClassNode, memberName, simpleNam
 	// Create a new ClassNode for the member
 	memberType := NewClassNode(classNode.GetName()+"."+memberName, 0, nil)
 	memberType.SetRedirect(classNode)
-	memberType.SetSourcePosition(&classNode.BaseASTNode)
+	memberType.SetSourcePosition(classNode)
 
 	// Check usage
 	m.checkUsage(simpleName, memberType)
@@ -223,8 +222,8 @@ func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode *
 	m.storeLastAddedImportNode(importNode)
 }
 
-func (m *ModuleNode) AddStatement(statement *Statement) {
-	m.StatementBlock = append(m.StatementBlock, statement)
+func (m *ModuleNode) AddStatement(statement Statement) {
+	m.StatementBlock.AddStatement(statement)
 }
 
 func (m *ModuleNode) GetClasses() []*ClassNode {
@@ -255,7 +254,7 @@ func (m *ModuleNode) GetMainClassName() string {
 	return m.MainClassName
 }
 
-func (m *ModuleNode) GetStatementBlock() []*Statement {
+func (m *ModuleNode) GetStatementBlock() *BlockStatement {
 	return m.StatementBlock
 }
 
@@ -274,7 +273,7 @@ func (m *ModuleNode) checkUsage(name string, typ *ClassNode) {
 	// Check classes
 	for _, node := range m.Classes {
 		if node.GetNameWithoutPackage() == name && !node.Equals(typ) {
-			m.addErrorAndContinue(fmt.Errorf("the name %s is already declared", name), &typ.BaseASTNode)
+			m.addErrorAndContinue(fmt.Errorf("the name %s is already declared", name), typ)
 			return
 		}
 	}
@@ -282,7 +281,7 @@ func (m *ModuleNode) checkUsage(name string, typ *ClassNode) {
 	// Check imports
 	for _, node := range m.Imports {
 		if node.Alias == name && !node.Type.Equals(typ) {
-			m.addErrorAndContinue(fmt.Errorf("the name %s is already declared", name), &typ.BaseASTNode)
+			m.addErrorAndContinue(fmt.Errorf("the name %s is already declared", name), typ)
 			return
 		}
 	}

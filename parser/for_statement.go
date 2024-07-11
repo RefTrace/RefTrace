@@ -8,7 +8,7 @@ type ForStatement struct {
 	Scope                *VariableScope
 }
 
-var ForLoopDummy = &Parameter{Type: ObjectType, Name: "forLoopDummyParameter"}
+var ForLoopDummy = &Parameter{paramType: OBJECT_TYPE, name: "forLoopDummyParameter"}
 
 func NewForStatement(variable *Parameter, collectionExpression Expression, loopBlock Statement) *ForStatement {
 	return &ForStatement{
@@ -35,7 +35,7 @@ func (f *ForStatement) GetVariable() *Parameter {
 }
 
 func (f *ForStatement) GetVariableType() *ClassNode {
-	return f.Variable.Type
+	return f.Variable.Type()
 }
 
 func (f *ForStatement) SetCollectionExpression(collectionExpression Expression) {

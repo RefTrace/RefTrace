@@ -119,19 +119,19 @@ func (vs *VariableScope) GetReferencedLocalVariablesCount() int {
 func (vs *VariableScope) PutDeclaredVariable(v *Variable) {
 	vs.mu.Lock()
 	defer vs.mu.Unlock()
-	vs.declaredVariables[v.GetName()] = v
+	vs.declaredVariables[(*v).Name()] = v
 }
 
 func (vs *VariableScope) PutReferencedLocalVariable(v *Variable) {
 	vs.mu.Lock()
 	defer vs.mu.Unlock()
-	vs.referencedLocalVariables[v.GetName()] = v
+	vs.referencedLocalVariables[(*v).Name()] = v
 }
 
 func (vs *VariableScope) PutReferencedClassVariable(v *Variable) {
 	vs.mu.Lock()
 	defer vs.mu.Unlock()
-	vs.referencedClassVariables[v.GetName()] = v
+	vs.referencedClassVariables[(*v).Name()] = v
 }
 
 func (vs *VariableScope) RemoveReferencedClassVariable(name string) *Variable {

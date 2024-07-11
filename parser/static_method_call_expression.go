@@ -7,10 +7,9 @@ import (
 // StaticMethodCallExpression represents a static method call on a class
 type StaticMethodCallExpression struct {
 	Expression
-	ownerType  *ClassNode
-	method     string
-	arguments  Expression
-	metaMethod *MetaMethod
+	ownerType *ClassNode
+	method    string
+	arguments Expression
 }
 
 func NewStaticMethodCallExpression(ownerType *ClassNode, method string, arguments Expression) *StaticMethodCallExpression {
@@ -53,7 +52,7 @@ func (s *StaticMethodCallExpression) GetText() string {
 }
 
 func (s *StaticMethodCallExpression) String() string {
-	return fmt.Sprintf("%s[%s#%s arguments: %v]", s.Expression.String(), s.GetOwnerType().GetName(), s.method, s.arguments)
+	return fmt.Sprintf("%s[%s#%s arguments: %v]", s.Expression.GetText(), s.GetOwnerType().GetName(), s.method, s.arguments)
 }
 
 func (s *StaticMethodCallExpression) GetOwnerType() *ClassNode {
@@ -62,12 +61,4 @@ func (s *StaticMethodCallExpression) GetOwnerType() *ClassNode {
 
 func (s *StaticMethodCallExpression) SetOwnerType(ownerType *ClassNode) {
 	s.ownerType = ownerType
-}
-
-func (s *StaticMethodCallExpression) SetMetaMethod(metaMethod *MetaMethod) {
-	s.metaMethod = metaMethod
-}
-
-func (s *StaticMethodCallExpression) GetMetaMethod() *MetaMethod {
-	return s.metaMethod
 }

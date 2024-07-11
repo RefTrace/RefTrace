@@ -25,5 +25,5 @@ func (ce *ClassExpression) GetText() string {
 }
 
 func (ce *ClassExpression) String() string {
-	return ce.Expression.String() + "[type: " + ce.GetType().GetName() + "]"
+	return ce.Expression.GetText() + "[type: " + ce.GetType().GetName() + "]"
 }

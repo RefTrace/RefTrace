@@ -9,17 +9,8 @@ func NewNamedArgumentListExpression() *NamedArgumentListExpression {
 	return &NamedArgumentListExpression{}
 }
 
-func NewNamedArgumentListExpressionWithEntries(mapEntryExpressions []MapEntryExpression) *NamedArgumentListExpression {
+func NewNamedArgumentListExpressionWithEntries(mapEntryExpressions []*MapEntryExpression) *NamedArgumentListExpression {
 	return &NamedArgumentListExpression{
-		MapExpression: MapExpression{MapEntryExpressions: mapEntryExpressions},
+		MapExpression: MapExpression{mapEntryExpressions: mapEntryExpressions},
 	}
-}
-
-func (n *NamedArgumentListExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewNamedArgumentListExpressionWithEntries(
-		TransformExpressions(n.GetMapEntryExpressions(), transformer, func() Expression { return &MapEntryExpression{} }),
-	)
-	ret.SetSourcePosition(n)
-	ret.CopyNodeMetaData(n)
-	return ret
 }

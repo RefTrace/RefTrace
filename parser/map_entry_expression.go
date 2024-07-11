@@ -29,7 +29,7 @@ func (m *MapEntryExpression) TransformExpression(transformer ExpressionTransform
 }
 
 func (m *MapEntryExpression) String() string {
-	return m.Expression.String() + "(key: " + m.keyExpression.String() + ", value: " + m.valueExpression.String() + ")"
+	return m.Expression.GetText() + "(key: " + m.keyExpression.GetText() + ", value: " + m.valueExpression.GetText() + ")"
 }
 
 func (m *MapEntryExpression) GetKeyExpression() Expression {

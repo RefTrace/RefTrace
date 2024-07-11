@@ -10,7 +10,7 @@ func GetClassText(node *ClassNode) string {
 	if node == nil {
 		return "<unknown>"
 	}
-	return node.ToString(false)
+	return node.GetText()
 }
 
 // GetParameterText returns a string representation of a Parameter
@@ -19,15 +19,15 @@ func GetParameterText(node *Parameter) string {
 		return "<unknown>"
 	}
 
-	name := node.GetName()
+	name := node.Name()
 	if name == "" {
 		name = "<unknown>"
 	}
-	typeStr := GetClassText(node.GetType())
+	typeStr := GetClassText(node.Type())
 
 	text := fmt.Sprintf("%s %s", typeStr, name)
 	if node.HasInitialExpression() {
-		text += fmt.Sprintf(" = %s", node.GetInitialExpression().Text())
+		text += fmt.Sprintf(" = %s", node.GetInitialExpression().GetText())
 	}
 	return text
 }
@@ -96,18 +96,3 @@ func GetModifiersText(modifiers int) string {
 
 	return strings.Join(result, " ")
 }
-
-// Constants for modifiers (you may need to adjust these values based on your ASM opcodes)
-const (
-	ACC_PUBLIC       = 0x0001
-	ACC_PRIVATE      = 0x0002
-	ACC_PROTECTED    = 0x0004
-	ACC_STATIC       = 0x0008
-	ACC_FINAL        = 0x0010
-	ACC_SYNCHRONIZED = 0x0020
-	ACC_VOLATILE     = 0x0040
-	ACC_TRANSIENT    = 0x0080
-	ACC_NATIVE       = 0x0100
-	ACC_INTERFACE    = 0x0200
-	ACC_ABSTRACT     = 0x0400
-)

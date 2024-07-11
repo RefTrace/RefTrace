@@ -34,19 +34,8 @@ func (g *GStringExpression) Visit(visitor GroovyCodeVisitor) {
 	visitor.VisitGStringExpression(g)
 }
 
-func (g *GStringExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewGStringExpressionWithValues(
-		g.verbatimText,
-		TransformExpressions(g.strings, transformer),
-		TransformExpressions(g.values, transformer),
-	)
-	ret.SetSourcePosition(g.GetSourcePosition())
-	ret.CopyNodeMetaData(g)
-	return ret
-}
-
 func (g *GStringExpression) String() string {
-	return fmt.Sprintf("%s[strings: %v values: %v]", g.Expression.String(), g.strings, g.values)
+	return fmt.Sprintf("%s[strings: %v values: %v]", g.Expression.GetText(), g.strings, g.values)
 }
 
 func (g *GStringExpression) GetText() string {
@@ -72,7 +61,7 @@ func (g *GStringExpression) AddValue(value Expression) {
 	// If the first thing is a value, then we need a dummy empty string in front of it so that when we
 	// toString it they come out in the correct order.
 	if len(g.strings) == 0 {
-		g.strings = append(g.strings, EmptyStringConstant)
+		g.strings = append(g.strings, EMPTY_STRING)
 	}
 	g.values = append(g.values, value)
 }

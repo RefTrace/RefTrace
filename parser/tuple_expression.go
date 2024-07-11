@@ -55,9 +55,9 @@ func (t *TupleExpression) GetText() string {
 		buffer.WriteString(expression.GetText())
 	}
 	buffer.WriteString(")")
-	return buffer.ToString()
+	return buffer.String()
 }
 
 func (t *TupleExpression) String() string {
-	return t.Expression.String() + t.GetText()
+	return t.Expression.GetText() + t.GetText()
 }

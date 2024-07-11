@@ -20,25 +20,25 @@ const (
 )
 
 var ModifierOpcodeMap = map[int]int{
-	AnnotationType: 0,
-	DEF:            0,
-	VAR:            0,
+	AnnotationType:  0,
+	GroovyParserDEF: 0,
+	GroovyParserVAR: 0,
 
-	NATIVE:       ACC_NATIVE,
-	SYNCHRONIZED: ACC_SYNCHRONIZED,
-	TRANSIENT:    ACC_TRANSIENT,
-	VOLATILE:     ACC_VOLATILE,
+	GroovyParserNATIVE:       ACC_NATIVE,
+	GroovyParserSYNCHRONIZED: ACC_SYNCHRONIZED,
+	GroovyParserTRANSIENT:    ACC_TRANSIENT,
+	GroovyParserVOLATILE:     ACC_VOLATILE,
 
-	PUBLIC:     ACC_PUBLIC,
-	PROTECTED:  ACC_PROTECTED,
-	PRIVATE:    ACC_PRIVATE,
-	STATIC:     ACC_STATIC,
-	ABSTRACT:   ACC_ABSTRACT,
-	SEALED:     0,
-	NON_SEALED: 0,
-	FINAL:      ACC_FINAL,
-	STRICTFP:   ACC_STRICT,
-	DEFAULT:    0,
+	GroovyParserPUBLIC:     ACC_PUBLIC,
+	GroovyParserPROTECTED:  ACC_PROTECTED,
+	GroovyParserPRIVATE:    ACC_PRIVATE,
+	GroovyParserSTATIC:     ACC_STATIC,
+	GroovyParserABSTRACT:   ACC_ABSTRACT,
+	GroovyParserSEALED:     0,
+	GroovyParserNON_SEALED: 0,
+	GroovyParserFINAL:      ACC_FINAL,
+	GroovyParserSTRICTFP:   ACC_STRICT,
+	GroovyParserDEFAULT:    0,
 }
 
 func NewModifierNode(modType int) *ModifierNode {
@@ -75,7 +75,7 @@ func (mn *ModifierNode) IsModifier() bool {
 }
 
 func (mn *ModifierNode) IsVisibilityModifier() bool {
-	return mn.Type == PUBLIC || mn.Type == PROTECTED || mn.Type == PRIVATE
+	return mn.Type == GroovyParserPUBLIC || mn.Type == GroovyParserPROTECTED || mn.Type == GroovyParserPRIVATE
 }
 
 func (mn *ModifierNode) IsNonVisibilityModifier() bool {
@@ -87,7 +87,7 @@ func (mn *ModifierNode) IsAnnotation() bool {
 }
 
 func (mn *ModifierNode) IsDef() bool {
-	return mn.Type == DEF || mn.Type == VAR
+	return mn.Type == GroovyParserDEF || mn.Type == GroovyParserVAR
 }
 
 func (mn *ModifierNode) GetType() int {

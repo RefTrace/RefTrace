@@ -19,13 +19,13 @@ func NewMethodPointerExpression(expression, methodName Expression) *MethodPointe
 		expression: expression,
 		methodName: methodName,
 	}
-	mpe.SetType(ClassHelper.CLOSURE_TYPE.GetPlainNodeReference())
+	mpe.SetType(CLOSURE_TYPE.GetPlainNodeReference())
 	return mpe
 }
 
 func (m *MethodPointerExpression) GetExpression() Expression {
 	if m.expression == nil {
-		return VariableExpression.THIS_EXPRESSION
+		return THIS_EXPRESSION
 	}
 	return m.expression
 }
@@ -42,7 +42,7 @@ func (m *MethodPointerExpression) TransformExpression(transformer ExpressionTran
 	mname := transformer.Transform(m.methodName)
 	var ret Expression
 	if m.expression == nil {
-		ret = NewMethodPointerExpression(VariableExpression.THIS_EXPRESSION, mname)
+		ret = NewMethodPointerExpression(THIS_EXPRESSION, mname)
 	} else {
 		ret = NewMethodPointerExpression(transformer.Transform(m.expression), mname)
 	}

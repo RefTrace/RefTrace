@@ -15,23 +15,23 @@ func NewArgumentListExpression() *ArgumentListExpression {
 }
 
 func NewArgumentListExpressionFromList(expressions []Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{TupleExpression{Expressions: expressions}}
+	return &ArgumentListExpression{TupleExpression{expressions: expressions}}
 }
 
 func NewArgumentListExpressionFromSlice(expressions ...Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{TupleExpression{Expressions: expressions}}
+	return &ArgumentListExpression{TupleExpression{expressions: expressions}}
 }
 
 func NewArgumentListExpressionFromParameters(parameters []*Parameter) *ArgumentListExpression {
 	ale := NewArgumentListExpression()
 	for _, param := range parameters {
-		ale.AddExpression(NewVariableExpression(param))
+		ale.AddExpression(NewVariableExpressionWithVariable(param))
 	}
 	return ale
 }
 
 func (a *ArgumentListExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewArgumentListExpressionFromList(a.TransformExpressions(a.Expressions, transformer))
+	ret := NewArgumentListExpressionFromList(TransformExpressions(a.expressions, transformer))
 	ret.SetSourcePosition(a)
 	ret.CopyNodeMetaData(a)
 	return ret

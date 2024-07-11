@@ -1,13 +1,9 @@
 package parser
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
-)
-
-const (
-	ACC_ENUM   = 0x4000
-	ACC_PUBLIC = 0x0001
-	ACC_STATIC = 0x0008
 )
 
 type FieldNode struct {
@@ -24,16 +20,16 @@ type FieldNode struct {
 }
 
 func NewStatic(theClass reflect.Type, name string) (*FieldNode, error) {
-	field, err := theClass.FieldByName(name)
-	if err != nil {
-		return nil, err
+	field, found := theClass.FieldByName(name)
+	if !found {
+		return nil, errors.New(fmt.Sprintf("%s field not found", name))
 	}
-	fldType := MakeClassNode(field.Type)
+	fldType := Make(field.Type)
 	return &FieldNode{
 		name:      name,
 		modifiers: ACC_PUBLIC | ACC_STATIC,
 		fieldType: fldType,
-		owner:     MakeClassNode(theClass),
+		owner:     Make(theClass),
 	}, nil
 }
 
@@ -118,7 +114,7 @@ func (f *FieldNode) Equals(obj interface{}) bool {
 	if obj != nil && reflect.TypeOf(obj).String() == "org.codehaus.groovy.ast.decompiled.LazyFieldNode" {
 		return obj.(interface{ Equals(*FieldNode) bool }).Equals(f)
 	}
-	return f.AnnotatedNode.Equals(obj)
+	return f.AnnotatedNode.declaringClass.Equals(obj)
 }
 
 func (f *FieldNode) GetOriginType() *ClassNode {

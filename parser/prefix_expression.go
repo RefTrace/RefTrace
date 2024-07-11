@@ -7,11 +7,11 @@ import (
 // PrefixExpression represents a prefix expression like ++foo or --bar
 type PrefixExpression struct {
 	Expression
-	operation  Token
+	operation  *Token
 	expression Expression
 }
 
-func NewPrefixExpression(operation Token, expression Expression) *PrefixExpression {
+func NewPrefixExpression(operation *Token, expression Expression) *PrefixExpression {
 	pe := &PrefixExpression{
 		operation: operation,
 	}
@@ -27,7 +27,7 @@ func (pe *PrefixExpression) GetExpression() Expression {
 	return pe.expression
 }
 
-func (pe *PrefixExpression) GetOperation() Token {
+func (pe *PrefixExpression) GetOperation() *Token {
 	return pe.operation
 }
 
@@ -40,7 +40,7 @@ func (pe *PrefixExpression) GetType() *ClassNode {
 }
 
 func (pe *PrefixExpression) String() string {
-	return fmt.Sprintf("%s[%s%s]", pe.Expression.String(), pe.GetOperation(), pe.GetExpression())
+	return fmt.Sprintf("%s[%s%s]", pe.Expression.GetText(), pe.GetOperation(), pe.GetExpression())
 }
 
 func (pe *PrefixExpression) TransformExpression(transformer ExpressionTransformer) Expression {

@@ -6,6 +6,8 @@ type NodeMetaDataHandler interface {
 	GetMetaDataMap() map[interface{}]interface{}
 	SetMetaDataMap(metaDataMap map[interface{}]interface{})
 	NewMetaDataMap() map[interface{}]interface{}
+	GetNodeMetaData(key interface{}) interface{}
+	SetNodeMetaData(key, value interface{})
 }
 
 type DefaultNodeMetaDataHandler struct {

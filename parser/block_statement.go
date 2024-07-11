@@ -51,14 +51,14 @@ func (bs *BlockStatement) AddStatements(listOfStatements []Statement) {
 func (bs *BlockStatement) GetText() string {
 	var texts []string
 	for _, statement := range bs.statements {
-		texts = append(texts, statement.GetText())
+		texts = append(texts, (statement).GetText())
 	}
 	return "{ " + strings.Join(texts, "; ") + " }"
 }
 
 // String returns a string representation of the BlockStatement.
 func (bs *BlockStatement) String() string {
-	return bs.Statement.String() + strings.Join(statementsToStrings(bs.statements), ", ")
+	return bs.Statement.GetText() + strings.Join(statementsToStrings(bs.statements), ", ")
 }
 
 // IsEmpty returns true if the block statement has no statements.
@@ -80,7 +80,7 @@ func (bs *BlockStatement) SetVariableScope(scope *VariableScope) {
 func statementsToStrings(statements []Statement) []string {
 	var strs []string
 	for _, stmt := range statements {
-		strs = append(strs, stmt.String())
+		strs = append(strs, stmt.GetText())
 	}
 	return strs
 }

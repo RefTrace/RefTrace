@@ -37,22 +37,12 @@ func (t *TernaryExpression) GetText() string {
 }
 
 func (t *TernaryExpression) GetType() *ClassNode {
-	return WideningCategories.LowestUpperBound(t.truthExpression.GetType(), t.falseExpression.GetType())
+	w := WideningCategories{}
+	return w.lowestUpperBound(t.truthExpression.GetType(), t.falseExpression.GetType())
 }
 
 func (t *TernaryExpression) String() string {
-	return fmt.Sprintf("%s[%s ? %s : %s]", t.Expression.String(), t.booleanExpression, t.truthExpression, t.falseExpression)
-}
-
-func (t *TernaryExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewTernaryExpression(
-		transformer.Transform(t.booleanExpression).(BooleanExpression),
-		transformer.Transform(t.truthExpression),
-		transformer.Transform(t.falseExpression),
-	)
-	ret.SetSourcePosition(t)
-	ret.CopyNodeMetaData(t)
-	return ret
+	return fmt.Sprintf("%s[%s ? %s : %s]", t.Expression.GetText(), t.booleanExpression, t.truthExpression, t.falseExpression)
 }
 
 func (t *TernaryExpression) Visit(visitor GroovyCodeVisitor) {

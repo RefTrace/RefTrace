@@ -1,9 +1,5 @@
 package parser
 
-import (
-	"strings"
-)
-
 // ClosureExpression represents a closure expression such as { statement }
 // or { i -> statement } or { i, x, String y ->  statement }
 type ClosureExpression struct {
@@ -19,7 +15,7 @@ func NewClosureExpression(parameters []*Parameter, code Statement) *ClosureExpre
 		Parameters: parameters,
 		Code:       code,
 	}
-	ce.SetType(ClassHelper.CLOSURE_TYPE.GetPlainNodeReference())
+	ce.SetType(CLOSURE_TYPE.GetPlainNodeReference())
 	return ce
 }
 
@@ -63,9 +59,9 @@ func (ce *ClosureExpression) GetText() string {
 func (ce *ClosureExpression) String() string {
 	codeStr := "<null>"
 	if ce.Code != nil {
-		codeStr = ce.Code.String()
+		codeStr = ce.Code.GetText()
 	}
-	return ce.Expression.String() + ce.toString(codeStr)
+	return ce.Expression.GetText() + ce.toString(codeStr)
 }
 
 func (ce *ClosureExpression) toString(bodyText string) string {
@@ -89,10 +85,4 @@ func (ce *ClosureExpression) Visit(visitor GroovyCodeVisitor) {
 func HasImplicitParameter(ce *ClosureExpression) bool {
 	// Implement this function based on the ClosureUtils.hasImplicitParameter logic
 	return false // Placeholder implementation
-}
-
-// GetParametersText returns a string representation of the parameters
-func GetParametersText(parameters []*Parameter) string {
-	// Implement this function based on the AstToTextHelper.getParametersText logic
-	return strings.Join([]string{"param1", "param2"}, ", ") // Placeholder implementation
 }

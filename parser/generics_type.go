@@ -25,7 +25,11 @@ func NewGenericsType(typ *ClassNode, upperBounds []*ClassNode, lowerBound *Class
 		upperBounds: upperBounds,
 		placeholder: typ.IsGenericsPlaceHolder(),
 	}
-	gt.SetName(gt.placeholder, typ.GetUnresolvedName(), typ.GetName())
+	if gt.placeholder {
+		gt.SetName(typ.GetUnresolvedName())
+	} else {
+		gt.SetName(typ.GetName())
+	}
 	return gt
 }
 
@@ -82,9 +86,10 @@ func (gt *GenericsType) toString(visited map[string]bool) string {
 }
 
 func genericsBounds(theType *ClassNode, visited map[string]bool) string {
-	if lub, ok := theType.AsGenericsType().(*LowestUpperBoundClassNode); ok {
+	var gen interface{} = theType.AsGenericsType()
+	if _, ok := gen.(*LowestUpperBoundClassNode); ok {
 		var ret strings.Builder
-		for i, t := range lub.GetUpperBounds() {
+		for i, t := range theType.AsGenericsType().GetUpperBounds() {
 			if i != 0 {
 				ret.WriteString(" & ")
 			}
@@ -124,7 +129,7 @@ func appendName(theType *ClassNode, sb *strings.Builder) {
 		if theType.IsStatic() || theType.IsInterface() {
 			sb.WriteString(parentClassNodeName)
 		} else {
-			outerClass := theType.GetNodeMetaData("outer.class")
+			var outerClass *ClassNode = (theType.GetNodeMetaData("outer.class")).(*ClassNode)
 			if outerClass == nil {
 				outerClass = theType.GetOuterClass()
 			}
@@ -185,6 +190,7 @@ func (gt *GenericsType) GetUpperBounds() []*ClassNode {
 }
 
 // IsCompatibleWith determines if the provided type is compatible with this specification.
+/*
 func (gt *GenericsType) IsCompatibleWith(classNode *ClassNode) bool {
 	genericsTypes := classNode.GetGenericsTypes()
 	if len(genericsTypes) == 0 {
@@ -233,6 +239,7 @@ func (gt *GenericsType) IsCompatibleWith(classNode *ClassNode) bool {
 	}
 	return classNode.Equals(gt.GetType()) && compareGenericsWithBound(classNode, gt.GetType())
 }
+*/
 
 func (gt *GenericsType) checkGenerics(classNode *ClassNode) bool {
 	lowerBound := gt.GetLowerBound()

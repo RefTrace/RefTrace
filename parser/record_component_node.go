@@ -25,7 +25,7 @@ func NewRecordComponentNodeWithAnnotations(declaringClass *ClassNode, name strin
 		declaringClass: declaringClass,
 	}
 	for _, annotation := range annotations {
-		rcn.AddAnnotation(annotation)
+		rcn.AddAnnotationNode(annotation)
 	}
 	return rcn
 }

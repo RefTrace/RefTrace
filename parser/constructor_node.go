@@ -11,22 +11,22 @@ func NewConstructorNode(modifiers int, code Statement) *ConstructorNode {
 }
 
 // NewConstructorNodeWithParams creates a new ConstructorNode with the given modifiers, parameters, exceptions, and code
-func NewConstructorNodeWithParams(modifiers int, parameters []*Parameter, exceptions []*ClassNode, code stmt.Statement) *ConstructorNode {
+func NewConstructorNodeWithParams(modifiers int, parameters []*Parameter, exceptions []*ClassNode, code Statement) *ConstructorNode {
 	return &ConstructorNode{
-		MethodNode: *NewMethodNode("<init>", modifiers, VoidType, parameters, exceptions, code),
+		MethodNode: *NewMethodNode("<init>", modifiers, VOID_TYPE, parameters, exceptions, code),
 	}
 }
 
 // FirstStatementIsSpecialConstructorCall checks if the first statement is a special constructor call
 func (c *ConstructorNode) FirstStatementIsSpecialConstructorCall() bool {
 	code := c.GetFirstStatement()
-	exprStmt, ok := code.(*stmt.ExpressionStatement)
+	exprStmt, ok := code.(*ExpressionStatement)
 	if !ok {
 		return false
 	}
 
 	expression := exprStmt.GetExpression()
-	cce, ok := expression.(*expr.ConstructorCallExpression)
+	cce, ok := expression.(*ConstructorCallExpression)
 	if !ok {
 		return false
 	}

@@ -14,11 +14,11 @@ type DeclarationExpression struct {
 func NewDeclarationExpression(left Expression, operation *Token, right Expression) *DeclarationExpression {
 	check(left)
 	return &DeclarationExpression{
-		BinaryExpression: BinaryExpression{
-			Left:      left,
-			Operation: NewToken(ASSIGN, "=", operation.StartLine, operation.StartColumn),
-			Right:     right,
-		},
+		*NewBinaryExpression(
+			left,
+			NewToken(ASSIGN, "=", operation.startLine, operation.startColumn),
+			right,
+		),
 	}
 }
 
@@ -28,7 +28,7 @@ func check(left Expression) {
 		// all good
 	case *TupleExpression:
 		tuple := left.(*TupleExpression)
-		if len(tuple.Expressions) == 0 {
+		if len(tuple.expressions) == 0 {
 			panic("GroovyBugError: one element required for left side")
 		}
 	default:
@@ -41,14 +41,14 @@ func (d *DeclarationExpression) Visit(visitor GroovyCodeVisitor) {
 }
 
 func (d *DeclarationExpression) GetVariableExpression() *VariableExpression {
-	if v, ok := d.Left.(*VariableExpression); ok {
+	if v, ok := d.leftExpression.(*VariableExpression); ok {
 		return v
 	}
 	return nil
 }
 
 func (d *DeclarationExpression) GetTupleExpression() *TupleExpression {
-	if t, ok := d.Left.(*TupleExpression); ok {
+	if t, ok := d.leftExpression.(*TupleExpression); ok {
 		return t
 	}
 	return nil
@@ -62,58 +62,45 @@ func (d *DeclarationExpression) GetText() string {
 		if v.IsDynamicTyped() {
 			text.WriteString("def")
 		} else {
-			text.WriteString(FormatTypeName(v.Type))
+			text.WriteString(FormatTypeName(v.GetType()))
 		}
 		text.WriteString(" ")
 		text.WriteString(v.GetText())
 	} else {
 		t := d.GetTupleExpression()
 		text.WriteString("def (")
-		for i, e := range t.Expressions {
+		for i, e := range t.expressions {
 			if v, ok := e.(*VariableExpression); ok {
 				if !v.IsDynamicTyped() {
-					text.WriteString(FormatTypeName(v.Type))
+					text.WriteString(FormatTypeName(v.GetType()))
 					text.WriteString(" ")
 				}
 			}
 			text.WriteString(e.GetText())
-			if i < len(t.Expressions)-1 {
+			if i < len(t.expressions)-1 {
 				text.WriteString(", ")
 			}
 		}
 		text.WriteString(")")
 	}
 	text.WriteString(" ")
-	text.WriteString(d.Operation.Text)
+	text.WriteString(d.operation.GetText())
 	text.WriteString(" ")
-	text.WriteString(d.Right.GetText())
+	text.WriteString(d.rightExpression.GetText())
 
 	return text.String()
 }
 
 func (d *DeclarationExpression) SetLeftExpression(leftExpression Expression) {
 	check(leftExpression)
-	d.Left = leftExpression
+	d.leftExpression = leftExpression
 }
 
 func (d *DeclarationExpression) SetRightExpression(rightExpression Expression) {
-	d.Right = rightExpression
-}
-
-func (d *DeclarationExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewDeclarationExpression(
-		transformer.Transform(d.Left),
-		d.Operation,
-		transformer.Transform(d.Right),
-	)
-	ret.SetSourcePosition(d)
-	ret.AddAnnotations(d.GetAnnotations())
-	ret.SetDeclaringClass(d.GetDeclaringClass())
-	ret.CopyNodeMetaData(d)
-	return ret
+	d.rightExpression = rightExpression
 }
 
 func (d *DeclarationExpression) IsMultipleAssignmentDeclaration() bool {
-	_, ok := d.Left.(*TupleExpression)
+	_, ok := d.leftExpression.(*TupleExpression)
 	return ok
 }

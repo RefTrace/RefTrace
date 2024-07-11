@@ -10,7 +10,7 @@ var EmptyMixinNodeArray = []*MixinNode{}
 
 // NewMixinNode creates a new MixinNode with the given parameters
 func NewMixinNode(name string, modifiers int, superType *ClassNode) *MixinNode {
-	return NewMixinNodeWithInterfaces(name, modifiers, superType, EmptyClassNodeArray)
+	return NewMixinNodeWithInterfaces(name, modifiers, superType, EMPTY_ARRAY)
 }
 
 // NewMixinNodeWithInterfaces creates a new MixinNode with the given parameters including interfaces

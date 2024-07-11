@@ -27,12 +27,12 @@ func (an *AnnotatedNode) GetAnnotationsOfType(typ *ClassNode) []AnnotationNode {
 // AddAnnotation adds a new annotation of the given type
 func (an *AnnotatedNode) AddAnnotation(typ *ClassNode) *AnnotationNode {
 	node := NewAnnotationNode(typ)
-	an.addAnnotationNode(node)
+	an.AddAnnotationNode(node)
 	return node
 }
 
 // addAnnotationNode adds an existing annotation node
-func (an *AnnotatedNode) addAnnotationNode(annotation *AnnotationNode) {
+func (an *AnnotatedNode) AddAnnotationNode(annotation *AnnotationNode) {
 	if annotation != nil {
 		an.annotations = append(an.annotations, *annotation)
 	}
@@ -41,7 +41,7 @@ func (an *AnnotatedNode) addAnnotationNode(annotation *AnnotationNode) {
 // AddAnnotations adds multiple annotations
 func (an *AnnotatedNode) AddAnnotations(annotations []AnnotationNode) {
 	for _, annotation := range annotations {
-		an.addAnnotationNode(&annotation)
+		an.AddAnnotationNode(&annotation)
 	}
 }
 

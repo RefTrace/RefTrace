@@ -2,9 +2,12 @@ package parser
 
 import "strings"
 
+var EMPTY_ARRAY = []*ClassNode{}
+var THIS = OBJECT_TYPE
+var SUPER = OBJECT_TYPE
+
 type ClassNode struct {
 	BaseASTNode
-	DefaultNodeMetaDataHandler
 	name                string
 	modifiers           int
 	superClass          *ClassNode
@@ -22,6 +25,8 @@ type ClassNode struct {
 	placeholder         bool
 	script              bool
 	scriptBody          bool
+	fieldIndex          map[string]*FieldNode
+	innerClasses        []*InnerClassNode
 }
 
 func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode {
@@ -30,7 +35,58 @@ func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode 
 		modifiers:  modifiers,
 		superClass: superClass,
 		methods:    make(map[string][]*MethodNode),
+		fieldIndex: make(map[string]*FieldNode),
 	}
+}
+
+func NewClassNodeWithInterfaces(name string, modifiers int, superClass *ClassNode, interfaces []*ClassNode, mixins []*MixinNode) *ClassNode {
+	cn := NewClassNode(name, modifiers, superClass)
+	cn.interfaces = interfaces
+	// Assuming you want to add mixins to the ClassNode, you might need to add a mixins field to the ClassNode struct
+	// cn.mixins = mixins
+	return cn
+}
+
+func (cn *ClassNode) IsInnerClass() bool {
+	return false
+}
+
+func (cn *ClassNode) Visit(vistor GroovyCodeVisitor) {
+	return
+}
+
+func (cn *ClassNode) IsDerivedFrom(type_ *ClassNode) bool {
+	if IsPrimitiveVoid(cn) {
+		return IsPrimitiveVoid(type_)
+	}
+	if IsObjectType(type_) {
+		return true
+	}
+	if cn.IsArray() && type_.IsArray() &&
+		IsObjectType(type_.GetComponentType()) &&
+		!IsPrimitiveType(cn.GetComponentType()) {
+		return true
+	}
+	for node := cn; node != nil; node = node.GetSuperClass() {
+		if type_.Equals(node) {
+			return true
+		}
+	}
+	return false
+}
+
+func (cn *ClassNode) MakeArray() *ClassNode {
+	if cn.redirect != nil {
+		node := cn.redirect.MakeArray()
+		node.componentType = cn
+		return node
+	}
+
+	// Note: Go doesn't have direct equivalents for Java's reflection.
+	// You might need to adjust this part based on your specific needs.
+	node := NewClassNode(cn.name+"[]", cn.modifiers, cn.superClass)
+	node.componentType = cn
+	return node
 }
 
 func (cn *ClassNode) Equals(that interface{}) bool {
@@ -58,6 +114,10 @@ func (cn *ClassNode) GetName() string {
 	if cn.redirect != nil {
 		return cn.redirect.GetName()
 	}
+	return cn.name
+}
+
+func (cn *ClassNode) GetUnresolvedName() string {
 	return cn.name
 }
 
@@ -114,6 +174,14 @@ func (cn *ClassNode) IsInterface() bool {
 
 func (cn *ClassNode) IsArray() bool {
 	return cn.componentType != nil
+}
+
+func (cn *ClassNode) GetModifiers() int {
+	return cn.modifiers
+}
+
+func (cn *ClassNode) IsStatic() bool {
+	return (cn.modifiers & ACC_STATIC) != 0
 }
 
 func (cn *ClassNode) GetComponentType() *ClassNode {
@@ -178,4 +246,111 @@ func (cn *ClassNode) SetScriptBody(isScriptBody bool) {
 	} else {
 		cn.scriptBody = isScriptBody
 	}
+}
+
+func (cn *ClassNode) ImplementsInterface(classNode *ClassNode) bool {
+	node := cn.Redirect()
+	for node != nil {
+		if node.DeclaresInterface(classNode) {
+			return true
+		}
+		node = node.GetSuperClass()
+	}
+	return false
+}
+
+func (cn *ClassNode) DeclaresAnyInterfaces(classNodes ...*ClassNode) bool {
+	for _, classNode := range classNodes {
+		if cn.DeclaresInterface(classNode) {
+			return true
+		}
+	}
+	return false
+}
+
+func (cn *ClassNode) DeclaresInterface(classNode *ClassNode) bool {
+	interfaces := cn.GetInterfaces()
+	for _, face := range interfaces {
+		if face.Equals(classNode) {
+			return true
+		}
+	}
+	for _, face := range interfaces {
+		if face.DeclaresInterface(classNode) {
+			return true
+		}
+	}
+	return false
+}
+
+func (cn *ClassNode) GetDeclaredField(name string) *FieldNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetDeclaredField(name)
+	}
+	cn.lazyClassInit()
+	if cn.fieldIndex == nil {
+		return nil
+	}
+	return cn.fieldIndex[name]
+}
+
+func (cn *ClassNode) RenameField(oldName, newName string) {
+	r := cn.Redirect()
+	if r.fieldIndex != nil {
+		if field, exists := r.fieldIndex[oldName]; exists {
+			delete(r.fieldIndex, oldName)
+			r.fieldIndex[newName] = field
+		}
+	}
+}
+
+func (cn *ClassNode) AddInnerClass(innerClass *InnerClassNode) {
+	if cn.redirect != nil {
+		cn.redirect.AddInnerClass(innerClass)
+	} else {
+		if cn.innerClasses == nil {
+			cn.innerClasses = make([]*InnerClassNode, 0, 4)
+		}
+		cn.innerClasses = append(cn.innerClasses, innerClass)
+	}
+}
+
+func (cn *ClassNode) lazyClassInit() {
+	// Implement the lazy initialization logic here
+	// This method should populate the fieldIndex map if it hasn't been done yet
+	// For now, we'll leave it as an empty implementation
+}
+
+func (cn *ClassNode) GetGenericsTypes() []*GenericsType {
+	return cn.genericsTypes
+}
+
+func (cn *ClassNode) AsGenericsType() *GenericsType {
+	if !cn.IsGenericsPlaceHolder() {
+		return NewGenericsTypeWithBasicType(cn)
+	} else if cn.genericsTypes != nil && len(cn.genericsTypes) > 0 && cn.genericsTypes[0].GetUpperBounds() != nil {
+		return cn.genericsTypes[0]
+	} else {
+		upper := cn
+		if cn.redirect != nil {
+			upper = cn.redirect
+		}
+		return NewGenericsType(cn, []*ClassNode{upper}, nil)
+	}
+}
+
+func (cn *ClassNode) SetGenericsPlaceHolder(placeholder bool) {
+	if cn.redirect != nil {
+		cn.redirect.SetGenericsPlaceHolder(placeholder)
+	} else {
+		cn.usingGenerics = cn.usingGenerics || placeholder
+		cn.placeholder = placeholder
+	}
+}
+
+func (cn *ClassNode) GetOuterClass() *ClassNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetOuterClass()
+	}
+	return nil
 }

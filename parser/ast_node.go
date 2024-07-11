@@ -5,6 +5,7 @@ import (
 )
 
 type ASTNode interface {
+	NodeMetaDataHandler
 	GetText() string
 	GetLineNumber() int
 	SetLineNumber(int)
@@ -20,6 +21,7 @@ type ASTNode interface {
 	SetMetaDataMap(map[interface{}]interface{})
 	CopyNodeMetaDataHandler(NodeMetaDataHandler)
 	NewMetaDataMap() map[interface{}]interface{}
+	Visit(visitor GroovyCodeVisitor)
 }
 
 type BaseASTNode struct {
@@ -29,6 +31,10 @@ type BaseASTNode struct {
 	lastLineNumber   int
 	lastColumnNumber int
 	metaDataMap      map[interface{}]interface{}
+}
+
+func (node *BaseASTNode) Visit(visitor GroovyCodeVisitor) {
+	return
 }
 
 func (node *BaseASTNode) GetText() string {

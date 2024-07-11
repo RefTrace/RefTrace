@@ -72,7 +72,7 @@ func (ce *CastExpression) SetStrict(strict bool) {
 
 // String returns a string representation of the CastExpression.
 func (ce *CastExpression) String() string {
-	return fmt.Sprintf("%s[%s]", ce.Expression.String(), ce.GetText())
+	return fmt.Sprintf("%s[%s]", ce.Expression.GetText(), ce.GetText())
 }
 
 // Visit calls the appropriate visit method on the GroovyCodeVisitor.
@@ -93,9 +93,9 @@ func (ce *CastExpression) TransformExpression(transformer ExpressionTransformer)
 // GetText returns the text representation of the CastExpression.
 func (ce *CastExpression) GetText() string {
 	if ce.IsCoerce() {
-		return fmt.Sprintf("%s as %s", ce.expression.GetText(), ce.GetType().ToString(false))
+		return fmt.Sprintf("%s as %s", ce.expression.GetText(), ce.GetType().GetText())
 	}
-	return fmt.Sprintf("(%s) %s", ce.GetType().ToString(false), ce.expression.GetText())
+	return fmt.Sprintf("(%s) %s", ce.GetType().GetText(), ce.expression.GetText())
 }
 
 // SetType is not supported for CastExpression.

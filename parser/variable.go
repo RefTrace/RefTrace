@@ -1,9 +1,5 @@
 package parser
 
-import (
-	"github.com/apache/groovy/ast"
-)
-
 // Variable interface marks an AstNode as a Variable. Typically these are
 // VariableExpression, FieldNode, PropertyNode and Parameter
 type Variable interface {
@@ -11,14 +7,14 @@ type Variable interface {
 	Name() string
 
 	// Type returns the type of the variable.
-	Type() *ast.ClassNode
+	Type() *ClassNode
 
 	// OriginType returns the type before wrapping primitives type of the variable.
-	OriginType() *ast.ClassNode
+	OriginType() *ClassNode
 
 	// InitialExpression returns the expression used to initialize the variable or nil if there
 	// is no initialization.
-	InitialExpression() ast.Expression
+	GetInitialExpression() Expression
 
 	// HasInitialExpression returns true if there is an initialization expression.
 	HasInitialExpression() bool
@@ -59,21 +55,13 @@ type Variable interface {
 	IsVolatile() bool
 }
 
-// Constants for modifiers
-const (
-	ACC_FINAL     = 0x0010
-	ACC_PRIVATE   = 0x0002
-	ACC_PROTECTED = 0x0004
-	ACC_PUBLIC    = 0x0001
-	ACC_STATIC    = 0x0008
-	ACC_VOLATILE  = 0x0040
-)
-
 // DefaultVariable provides default implementations for some methods of the Variable interface
 type DefaultVariable struct{}
 
 func (DefaultVariable) IsClosureSharedVariable() bool { return false }
 func (DefaultVariable) SetClosureSharedVariable(bool) {}
+
+func (v DefaultVariable) Modifiers() int { return ACC_NONE }
 
 func (v DefaultVariable) IsFinal() bool     { return (v.Modifiers() & ACC_FINAL) != 0 }
 func (v DefaultVariable) IsPrivate() bool   { return (v.Modifiers() & ACC_PRIVATE) != 0 }

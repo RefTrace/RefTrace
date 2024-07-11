@@ -17,7 +17,7 @@ var RETURN_NULL_OR_VOID = &ReturnStatement{expression: nullX()}
 // NewReturnStatementFromExpressionStatement creates a new ReturnStatement from an ExpressionStatement
 func NewReturnStatementFromExpressionStatement(statement *ExpressionStatement) *ReturnStatement {
 	rs := &ReturnStatement{expression: statement.GetExpression()}
-	rs.CopyStatementLabels(&statement.Statement)
+	rs.CopyStatementLabels(statement)
 	return rs
 }
 

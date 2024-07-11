@@ -54,15 +54,15 @@ func (c *ConstantExpression) setTypeFromValue(value interface{}, keepPrimitive b
 		case rune:
 			c.SetType(CHAR_TYPE)
 		default:
-			c.SetType(MakeType(reflect.TypeOf(value)))
+			c.SetType(Make(reflect.TypeOf(value)))
 		}
 	} else {
-		c.SetType(MakeType(reflect.TypeOf(value)))
+		c.SetType(Make(reflect.TypeOf(value)))
 	}
 }
 
 func (c *ConstantExpression) String() string {
-	return fmt.Sprintf("%s[%v]", c.Expression.String(), c.value)
+	return fmt.Sprintf("%s[%v]", c.Expression.GetText(), c.value)
 }
 
 func (c *ConstantExpression) Visit(visitor GroovyCodeVisitor) {

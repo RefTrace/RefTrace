@@ -63,9 +63,9 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *Mo
 		switch n := node.(type) {
 		case *DeclarationListStatement:
 			for _, stmt := range n.GetDeclarationStatements() {
-				builder.moduleNode.AddStatement(&stmt.Statement)
+				builder.moduleNode.AddStatement(stmt.Statement)
 			}
-		case *Statement:
+		case Statement:
 			builder.moduleNode.AddStatement(n)
 		case *MethodNode:
 			builder.moduleNode.AddMethod(n)
@@ -82,7 +82,7 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *Mo
 			builder.moduleNode.AddClass(packageInfo)
 		}
 	} else if builder.isBlankScript() {
-		builder.moduleNode.AddStatement((&RETURN_NULL_OR_VOID.Statement))
+		builder.moduleNode.AddStatement(RETURN_NULL_OR_VOID)
 	}
 
 	builder.configureScriptClassNode()
@@ -127,7 +127,7 @@ func (builder *ASTBuilder) isPackageInfoDeclaration() bool {
 }
 
 func (builder *ASTBuilder) isBlankScript() bool {
-	return len(builder.moduleNode.GetStatementBlock()) == 0 &&
+	return len(builder.moduleNode.GetStatementBlock().GetStatements()) == 0 &&
 		len(builder.moduleNode.GetMethods()) == 0 &&
 		len(builder.moduleNode.GetClasses()) == 0
 }

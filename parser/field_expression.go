@@ -71,5 +71,5 @@ func (f *FieldExpression) SetUseReferenceDirectly(useRef bool) {
 
 // String returns a string representation of the FieldExpression
 func (f *FieldExpression) String() string {
-	return fmt.Sprintf("field(%s %s)", f.GetType().ToString(false), f.GetFieldName())
+	return fmt.Sprintf("field(%s %s)", f.GetType().GetText(), f.GetFieldName())
 }

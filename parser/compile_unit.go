@@ -6,35 +6,21 @@ import (
 
 // CompileUnit represents the entire contents of a compilation step
 type CompileUnit struct {
-	codeSource            *CodeSource
 	metaDataMap           map[interface{}]interface{}
 	modules               []*ModuleNode
 	classes               map[string]*ClassNode
 	classesToCompile      map[string]*ClassNode
-	classNameToSource     map[string]*SourceUnit
 	generatedInnerClasses map[string]*InnerClassNode
 	mu                    sync.RWMutex
 }
 
 // NewCompileUnit creates a new CompileUnit
-func NewCompileUnit(codeSource *CodeSource) *CompileUnit {
+func NewCompileUnit() *CompileUnit {
 	return &CompileUnit{
-		codeSource:            codeSource,
 		classes:               make(map[string]*ClassNode),
 		classesToCompile:      make(map[string]*ClassNode),
-		classNameToSource:     make(map[string]*SourceUnit),
 		generatedInnerClasses: make(map[string]*InnerClassNode),
 	}
-}
-
-// GetConfig returns the CompilerConfiguration
-func (cu *CompileUnit) GetConfig() *CompilerConfiguration {
-	return cu.config
-}
-
-// GetCodeSource returns the CodeSource
-func (cu *CompileUnit) GetCodeSource() *CodeSource {
-	return cu.codeSource
 }
 
 // GetMetaDataMap returns the metadata map

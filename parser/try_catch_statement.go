@@ -77,12 +77,12 @@ func (t *TryCatchStatement) AddCatch(catchStatement CatchStatement) *TryCatchSta
 
 func (t *TryCatchStatement) AddResource(resourceStatement ExpressionStatement) (*TryCatchStatement, error) {
 	resourceExpression := resourceStatement.GetExpression()
-	if _, ok := resourceExpression.(DeclarationExpression); !ok {
-		if _, ok := resourceExpression.(VariableExpression); !ok {
+	if _, ok := resourceExpression.(*DeclarationExpression); !ok {
+		if _, ok := resourceExpression.(*VariableExpression); !ok {
 			return nil, errors.New("resourceStatement should be a variable declaration statement or a variable")
 		}
 	}
-	resourceExpression.PutNodeMetaData("_IS_RESOURCE", true)
+	resourceExpression.SetNodeMetaData("_IS_RESOURCE", true)
 	t.ResourceStatements = append(t.ResourceStatements, resourceStatement)
 	return t, nil
 }

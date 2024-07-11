@@ -9,19 +9,20 @@ type ElvisOperatorExpression struct {
 func NewElvisOperatorExpression(base, falseValue Expression) *ElvisOperatorExpression {
 	return &ElvisOperatorExpression{
 		TernaryExpression: TernaryExpression{
-			BooleanExpression: asBooleanExpression(base),
-			TrueExpression:    base,
-			FalseExpression:   falseValue,
+			booleanExpression: asBooleanExpression(base),
+			truthExpression:   base,
+			falseExpression:   falseValue,
 		},
 	}
 }
 
 func asBooleanExpression(base Expression) BooleanExpression {
-	if be, ok := base.(BooleanExpression); ok {
+	baseInterface := base.(interface{})
+	if be, ok := baseInterface.(BooleanExpression); ok {
 		return be
 	}
 	be := BooleanExpression{Expression: base}
-	be.SetSourcePosition(base.GetSourcePosition())
+	be.SetSourcePosition(base)
 	return be
 }
 
@@ -31,7 +32,7 @@ func (e *ElvisOperatorExpression) TransformExpression(transformer ExpressionTran
 		transformer.Transform(e.GetTrueExpression()),
 		transformer.Transform(e.GetFalseExpression()),
 	)
-	ret.SetSourcePosition(e.GetSourcePosition())
+	ret.SetSourcePosition(e)
 	ret.CopyNodeMetaData(e)
 	return ret
 }

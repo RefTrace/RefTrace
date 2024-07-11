@@ -41,5 +41,5 @@ func (e *ExpressionStatement) GetText() string {
 
 // String implements the Stringer interface
 func (e *ExpressionStatement) String() string {
-	return fmt.Sprintf("%s[expression:%v]", e.Statement.String(), e.expression)
+	return fmt.Sprintf("%s[expression:%v]", e.Statement.GetText(), e.expression)
 }

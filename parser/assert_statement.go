@@ -11,7 +11,7 @@ type AssertStatement struct {
 
 // NewAssertStatement creates a new AssertStatement with a boolean expression
 func NewAssertStatement(booleanExpression BooleanExpression) *AssertStatement {
-	return NewAssertStatementWithMessage(booleanExpression, NullX())
+	return NewAssertStatementWithMessage(booleanExpression, nullX())
 }
 
 // NewAssertStatementWithMessage creates a new AssertStatement with a boolean expression and message

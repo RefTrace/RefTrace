@@ -43,15 +43,8 @@ func (me *MapExpression) IsDynamic() bool {
 	return false
 }
 
-func (me *MapExpression) TransformExpression(transformer ExpressionTransformer) Expression {
-	ret := NewMapExpressionWithEntries(TransformExpressions(me.GetMapEntryExpressions(), transformer))
-	ret.SetSourcePosition(me)
-	ret.CopyNodeMetaData(me)
-	return ret
-}
-
 func (me *MapExpression) String() string {
-	return fmt.Sprintf("%s%v", me.Expression.String(), me.mapEntryExpressions)
+	return fmt.Sprintf("%s%v", me.Expression.GetText(), me.mapEntryExpressions)
 }
 
 func (me *MapExpression) GetText() string {

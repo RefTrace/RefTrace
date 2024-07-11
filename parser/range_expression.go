@@ -21,7 +21,7 @@ func NewRangeExpressionWithExclusive(from, to Expression, exclusiveLeft, exclusi
 		exclusiveLeft:  exclusiveLeft,
 		exclusiveRight: exclusiveRight,
 	}
-	r.SetType(ClassHelper.RANGE_TYPE.GetPlainNodeReference())
+	r.SetType(RANGE_TYPE.GetPlainNodeReference())
 	return r
 }
 

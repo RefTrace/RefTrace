@@ -117,5 +117,5 @@ func (p *PropertyExpression) SetStatic(isStatic bool) {
 }
 
 func (p *PropertyExpression) String() string {
-	return fmt.Sprintf("%s[object: %v property: %v]", p.Expression.String(), p.GetObjectExpression(), p.GetProperty())
+	return fmt.Sprintf("%s[object: %v property: %v]", p.Expression.GetText(), p.GetObjectExpression(), p.GetProperty())
 }

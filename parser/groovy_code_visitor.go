@@ -58,35 +58,7 @@ type GroovyCodeVisitor interface {
 	VisitCastExpression(*CastExpression)
 	VisitArgumentlistExpression(*ArgumentListExpression)
 	VisitClosureListExpression(*ClosureListExpression)
-	VisitBytecodeExpression(*BytecodeExpression)
 	VisitEmptyExpression(*EmptyExpression)
 	VisitListOfExpressions([]Expression)
 	VisitExpression(Expression)
 }
-
-// DefaultGroovyCodeVisitor provides default implementations for GroovyCodeVisitor
-type DefaultGroovyCodeVisitor struct{}
-
-func (v *DefaultGroovyCodeVisitor) VisitEmptyStatement(*EmptyStatement) {}
-
-func (v *DefaultGroovyCodeVisitor) VisitStatement(stmt Statement) {
-	if stmt != nil {
-		stmt.Visit(v)
-	}
-}
-
-func (v *DefaultGroovyCodeVisitor) VisitEmptyExpression(*EmptyExpression) {}
-
-func (v *DefaultGroovyCodeVisitor) VisitListOfExpressions(list []Expression) {
-	for _, expr := range list {
-		expr.Visit(v)
-	}
-}
-
-func (v *DefaultGroovyCodeVisitor) VisitExpression(expr Expression) {
-	if expr != nil {
-		expr.Visit(v)
-	}
-}
-
-// Implement other methods of DefaultGroovyCodeVisitor as needed

@@ -34,5 +34,5 @@ func (c *CaseStatement) Visit(visitor GroovyCodeVisitor) {
 }
 
 func (c *CaseStatement) String() string {
-	return c.Statement.String() + "[expression: " + c.expression.String() + "; code: " + c.code.String() + "]"
+	return c.Statement.GetText() + "[expression: " + c.expression.GetText() + "; code: " + c.code.GetText() + "]"
 }

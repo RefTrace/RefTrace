@@ -12,27 +12,27 @@ type AttributeExpression struct {
 
 func NewAttributeExpression(objectExpression, property Expression) *AttributeExpression {
 	return &AttributeExpression{
-		PropertyExpression: PropertyExpression{
-			ObjectExpression: objectExpression,
-			Property:         property,
-			Safe:             false,
+		PropertyExpression{
+			objectExpression: objectExpression,
+			property:         property,
+			safe:             false,
 		},
 	}
 }
 
 func NewAttributeExpressionWithSafe(objectExpression, property Expression, safe bool) *AttributeExpression {
 	return &AttributeExpression{
-		PropertyExpression: PropertyExpression{
-			ObjectExpression: objectExpression,
-			Property:         property,
-			Safe:             safe,
+		PropertyExpression{
+			objectExpression: objectExpression,
+			property:         property,
+			safe:             safe,
 		},
 	}
 }
 
 func (a *AttributeExpression) GetText() string {
 	var sb strings.Builder
-	sb.WriteString(a.ObjectExpression.GetText())
+	sb.WriteString(a.objectExpression.GetText())
 	if a.IsSpreadSafe() {
 		sb.WriteRune('*')
 	}
@@ -40,14 +40,14 @@ func (a *AttributeExpression) GetText() string {
 		sb.WriteRune('?')
 	}
 	sb.WriteString(".@")
-	sb.WriteString(a.Property.GetText())
+	sb.WriteString(a.property.GetText())
 	return sb.String()
 }
 
 func (a *AttributeExpression) TransformExpression(transformer ExpressionTransformer) Expression {
 	ret := NewAttributeExpressionWithSafe(
-		transformer.Transform(a.ObjectExpression),
-		transformer.Transform(a.Property),
+		transformer.Transform(a.objectExpression),
+		transformer.Transform(a.property),
 		a.IsSafe(),
 	)
 	ret.SetImplicitThis(a.IsImplicitThis())

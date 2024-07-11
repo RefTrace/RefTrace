@@ -17,7 +17,7 @@ func NewConstructorCallExpression(typ *ClassNode, arguments Expression) *Constru
 	cce.SetType(typ)
 
 	if _, ok := arguments.(*TupleExpression); !ok {
-		cce.arguments = NewTupleExpression(arguments)
+		cce.arguments = NewTupleExpressionWithExpressions(arguments)
 		cce.arguments.SetSourcePosition(arguments)
 	} else {
 		cce.arguments = arguments
@@ -63,7 +63,7 @@ func (cce *ConstructorCallExpression) GetText() string {
 	} else if cce.IsThisCall() {
 		text = "this "
 	} else {
-		text = "new " + cce.GetType().ToString(false)
+		text = "new " + cce.GetType().GetText()
 	}
 	return text + cce.GetArguments().GetText()
 }
@@ -75,12 +75,12 @@ func (cce *ConstructorCallExpression) IsSpecialCall() bool {
 
 // IsSuperCall checks if it's a super call.
 func (cce *ConstructorCallExpression) IsSuperCall() bool {
-	return cce.GetType() == ClassNode.SUPER
+	return cce.GetType() == SUPER
 }
 
 // IsThisCall checks if it's a this call.
 func (cce *ConstructorCallExpression) IsThisCall() bool {
-	return cce.GetType() == ClassNode.THIS
+	return cce.GetType() == THIS
 }
 
 // IsUsingAnonymousInnerClass checks if it's using an anonymous inner class.
@@ -95,5 +95,5 @@ func (cce *ConstructorCallExpression) SetUsingAnonymousInnerClass(usage bool) {
 
 // String returns a string representation of the expression.
 func (cce *ConstructorCallExpression) String() string {
-	return fmt.Sprintf("%s[type: %v arguments: %v]", cce.Expression.String(), cce.GetType(), cce.arguments)
+	return fmt.Sprintf("%s[type: %v arguments: %v]", cce.Expression.GetText(), cce.GetType(), cce.arguments)
 }

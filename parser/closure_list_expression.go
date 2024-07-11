@@ -16,7 +16,7 @@ type ClosureListExpression struct {
 
 func NewClosureListExpression(expressions []Expression) *ClosureListExpression {
 	return &ClosureListExpression{
-		ListExpression: ListExpression{Expressions: expressions},
+		ListExpression: ListExpression{expressions: expressions},
 		scope:          NewVariableScope(),
 	}
 }

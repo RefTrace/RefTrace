@@ -31,7 +31,7 @@ func NewBinaryExpressionWithSafe(leftExpression Expression, operation *Token, ri
 }
 
 func (be *BinaryExpression) String() string {
-	return fmt.Sprintf("%s[%v%v%v]", be.Expression.String(), be.leftExpression, be.operation, be.rightExpression)
+	return fmt.Sprintf("%s[%v%v%v]", be.Expression.GetText(), be.leftExpression, be.operation, be.rightExpression)
 }
 
 func (be *BinaryExpression) Visit(visitor GroovyCodeVisitor) {
@@ -71,7 +71,7 @@ func (be *BinaryExpression) GetRightExpression() Expression {
 }
 
 func (be *BinaryExpression) GetText() string {
-	if be.operation.GetType() == Types.LEFT_SQUARE_BRACKET {
+	if be.operation.GetType() == LEFT_SQUARE_BRACKET {
 		safeOp := ""
 		if be.safe {
 			safeOp = "?"
@@ -91,21 +91,21 @@ func (be *BinaryExpression) SetSafe(safe bool) {
 
 // NewAssignmentExpression creates an assignment expression
 func NewAssignmentExpression(variable Variable, rhs Expression) *BinaryExpression {
-	lhs := NewVariableExpression(variable)
-	operator := NewToken(Types.ASSIGN, "=")
+	lhs := NewVariableExpressionWithVariable(variable)
+	operator := NewToken(ASSIGN, "=", rhs.GetLineNumber(), rhs.GetColumnNumber())
 
 	return NewBinaryExpression(lhs, operator, rhs)
 }
 
 // NewInitializationExpression creates a variable initialization expression
 func NewInitializationExpression(variable string, typ *ClassNode, rhs Expression) *BinaryExpression {
-	lhs := NewVariableExpression(variable)
+	lhs := NewVariableExpressionWithString(variable)
 
 	if typ != nil {
 		lhs.SetType(typ)
 	}
 
-	operator := NewToken(Types.ASSIGN, "=")
+	operator := NewToken(ASSIGN, "=", typ.GetLineNumber(), typ.GetColumnNumber())
 
 	return NewBinaryExpression(lhs, operator, rhs)
 }

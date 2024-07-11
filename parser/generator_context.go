@@ -57,9 +57,9 @@ func (gc *GeneratorContext) GetNextLambdaInnerName(owner, enclosingClass *ClassN
 func (gc *GeneratorContext) getNextInnerName(owner, enclosingClass *ClassNode, enclosingMethod *MethodNode, classifier string) string {
 	methodName := ""
 	if enclosingMethod != nil {
-		methodName = enclosingMethod.GetName()
+		methodName = enclosingMethod.name
 
-		if enclosingClass.IsDerivedFrom(ClassHelper.CLOSURE_TYPE) {
+		if enclosingClass.IsDerivedFrom(CLOSURE_TYPE) {
 			methodName = ""
 		} else {
 			methodName = "_" + EncodeAsValidClassName(methodName)
@@ -76,7 +76,7 @@ func (gc *GeneratorContext) GetNextConstructorReferenceSyntheticMethodName(enclo
 	if enclosingMethodNode == nil {
 		return "ctorRef$" + string(gc.syntheticMethodIdx-1)
 	}
-	return "ctorRef$" + strings.NewReplacer("<", "", ">", "").Replace(enclosingMethodNode.GetName()) + "$" + string(gc.syntheticMethodIdx-1)
+	return "ctorRef$" + strings.NewReplacer("<", "", ">", "").Replace(enclosingMethodNode.name) + "$" + string(gc.syntheticMethodIdx-1)
 }
 
 var charactersToEncode = map[rune]bool{

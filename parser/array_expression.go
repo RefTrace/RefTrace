@@ -8,6 +8,7 @@ import (
 // ArrayExpression represents an array object construction.
 type ArrayExpression struct {
 	Expression
+	expression      BaseExpression
 	initExpressions []Expression
 	sizeExpressions []Expression
 	elementType     *ClassNode
@@ -27,22 +28,23 @@ func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
 
 func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
 	ae := &ArrayExpression{
-		elementType: elementType,
-		Expression:  Expression{Type: makeArray(elementType, sizeExpressions)},
+		expression: BaseExpression{
+			BaseASTNode: BaseASTNode{},
+		},
+		elementType:     elementType,
+		initExpressions: EmptyExpressionArray,
+		sizeExpressions: sizeExpressions,
 	}
+	ae.SetType(makeArray(elementType, sizeExpressions))
 
-	if initExpressions == nil {
-		ae.initExpressions = []Expression{}
-	} else {
+	// Handle initExpressions
+	if initExpressions != nil {
 		ae.initExpressions = initExpressions
 	}
 
-	ae.sizeExpressions = sizeExpressions
-
-	if initExpressions == nil {
-		if sizeExpressions == nil || len(sizeExpressions) == 0 {
-			panic("Either an initializer or defined size must be given")
-		}
+	// Check for valid input
+	if initExpressions == nil && (sizeExpressions == nil || len(sizeExpressions) == 0) {
+		panic("Either an initializer or defined size must be given")
 	}
 
 	if len(ae.initExpressions) > 0 && sizeExpressions != nil && len(sizeExpressions) > 0 {
@@ -50,23 +52,29 @@ func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions
 			ae.formatInitExpressions(), ae.formatSizeExpressions()))
 	}
 
+	// Type check initExpressions
 	for _, item := range ae.initExpressions {
-		if item != nil {
-			if _, ok := item.(Expression); !ok {
-				panic(fmt.Sprintf("Item: %v is not an Expression", item))
-			}
+		if item != nil && !isExpression(item) {
+			panic(fmt.Sprintf("Item: %v is not an Expression", item))
 		}
 	}
 
-	if !ae.HasInitializer() {
+	// Type check sizeExpressions if no initializer
+	if len(ae.initExpressions) == 0 {
 		for _, item := range sizeExpressions {
-			if _, ok := item.(Expression); !ok {
+			if !isExpression(item) {
 				panic(fmt.Sprintf("Item: %v is not an Expression", item))
 			}
 		}
 	}
 
 	return ae
+}
+
+// Helper function to check if an interface{} is an Expression
+func isExpression(item interface{}) bool {
+	_, ok := item.(Expression)
+	return ok
 }
 
 func (ae *ArrayExpression) AddExpression(initExpression Expression) {
@@ -135,7 +143,7 @@ func (ae *ArrayExpression) GetSizeExpression() []Expression {
 
 func (ae *ArrayExpression) String() string {
 	if ae.HasInitializer() {
-		return fmt.Sprintf("%s[elementType: %v, init: {%s}]", ae.Expression.String(), ae.GetElementType(), ae.formatInitExpressions())
+		return fmt.Sprintf("%s[elementType: %v, init: {%s}]", ae.Expression.GetText(), ae.GetElementType(), ae.formatInitExpressions())
 	}
-	return fmt.Sprintf("%s[elementType: %v, size: %s]", ae.Expression.String(), ae.GetElementType(), ae.formatSizeExpressions())
+	return fmt.Sprintf("%s[elementType: %v, size: %s]", ae.Expression.GetText(), ae.GetElementType(), ae.formatSizeExpressions())
 }

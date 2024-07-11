@@ -16,13 +16,17 @@ func NewInnerClassNode(outerClass *ClassNode, name string, modifiers int, superC
 // NewInnerClassNodeWithInterfaces creates a new InnerClassNode with the given parameters, including interfaces and mixins.
 func NewInnerClassNodeWithInterfaces(outerClass *ClassNode, name string, modifiers int, superClass *ClassNode, interfaces []*ClassNode, mixins []*MixinNode) *InnerClassNode {
 	icn := &InnerClassNode{
-		ClassNode:  NewClassNode(name, modifiers, superClass, interfaces, mixins),
+		ClassNode:  NewClassNodeWithInterfaces(name, modifiers, superClass, interfaces, mixins),
 		outerClass: outerClass,
 	}
 	if outerClass != nil {
 		outerClass.AddInnerClass(icn)
 	}
 	return icn
+}
+
+func (icn *InnerClassNode) IsInnerClass() bool {
+	return true
 }
 
 // GetOuterClass returns the outer class of this inner class.
@@ -32,15 +36,15 @@ func (icn *InnerClassNode) GetOuterClass() *ClassNode {
 
 // GetOuterMostClass returns the outermost class containing this inner class.
 func (icn *InnerClassNode) GetOuterMostClass() *ClassNode {
-	outerClass := icn.GetOuterClass()
-	for {
-		if innerClass, ok := outerClass.(*InnerClassNode); ok {
-			outerClass = innerClass.GetOuterClass()
-		} else {
-			break
+	var outerClass interface{} = icn.GetOuterClass()
+	for outerClass != nil {
+		innerClass, isInner := outerClass.(*InnerClassNode)
+		if !isInner {
+			return outerClass.(*ClassNode)
 		}
+		outerClass = innerClass.GetOuterClass()
 	}
-	return outerClass
+	return outerClass.(*ClassNode)
 }
 
 // GetOuterField returns the declared field of the outer class with the given name.

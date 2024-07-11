@@ -19,8 +19,8 @@ type VariableExpression struct {
 }
 
 var (
-	THIS_EXPRESSION  = NewVariableExpression("this", DynamicType())
-	SUPER_EXPRESSION = NewVariableExpression("super", DynamicType())
+	THIS_EXPRESSION  = NewVariableExpression("this", dynamicType())
+	SUPER_EXPRESSION = NewVariableExpression("super", dynamicType())
 )
 
 func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
@@ -36,10 +36,14 @@ func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
 	return ve
 }
 
+func NewVariableExpressionWithString(name string) *VariableExpression {
+	return NewVariableExpression(name, dynamicType())
+}
+
 func NewVariableExpressionWithVariable(variable Variable) *VariableExpression {
-	ve := NewVariableExpression(variable.GetName(), variable.GetOriginType())
+	ve := NewVariableExpression(variable.Name(), variable.OriginType())
 	ve.SetAccessedVariable(variable)
-	ve.SetModifiers(variable.GetModifiers())
+	ve.SetModifiers(variable.Modifiers())
 	return ve
 }
 
@@ -64,7 +68,7 @@ func (ve *VariableExpression) String() string {
 	if !ve.IsDynamicTyped() {
 		typeStr = fmt.Sprintf(" type: %v", ve.GetType())
 	}
-	return fmt.Sprintf("%v[variable: %s%s]", ve.Expression.String(), ve.variable, typeStr)
+	return fmt.Sprintf("%v[variable: %s%s]", ve.Expression.GetText(), ve.variable, typeStr)
 }
 
 func (ve *VariableExpression) GetInitialExpression() Expression {
@@ -123,14 +127,14 @@ func (ve *VariableExpression) IsUseReferenceDirectly() bool {
 
 func (ve *VariableExpression) GetType() *ClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
-		return ve.accessedVariable.GetType()
+		return ve.accessedVariable.Type()
 	}
 	return ve.Expression.GetType()
 }
 
 func (ve *VariableExpression) GetOriginType() *ClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
-		return ve.accessedVariable.GetOriginType()
+		return ve.accessedVariable.OriginType()
 	}
 	return ve.originType
 }

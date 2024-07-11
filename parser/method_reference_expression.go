@@ -13,8 +13,8 @@ type MethodReferenceExpression struct {
 func NewMethodReferenceExpression(expression, methodName Expression) *MethodReferenceExpression {
 	return &MethodReferenceExpression{
 		MethodPointerExpression: MethodPointerExpression{
-			Expression: expression,
-			MethodName: methodName,
+			expression: expression,
+			methodName: methodName,
 		},
 	}
 }
@@ -25,7 +25,7 @@ func (m *MethodReferenceExpression) Visit(visitor GroovyCodeVisitor) {
 
 func (m *MethodReferenceExpression) TransformExpression(transformer ExpressionTransformer) Expression {
 	var ret Expression
-	mname := transformer.Transform(m.MethodName)
+	mname := transformer.Transform(m.methodName)
 	if m.Expression == nil {
 		ret = NewMethodReferenceExpression(THIS_EXPRESSION, mname)
 	} else {

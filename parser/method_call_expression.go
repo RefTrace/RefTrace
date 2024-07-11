@@ -64,7 +64,7 @@ func (mce *MethodCallExpression) GetArguments() Expression {
 
 func (mce *MethodCallExpression) SetArguments(arguments Expression) {
 	if _, ok := arguments.(*TupleExpression); !ok {
-		mce.Arguments = NewTupleExpression(arguments)
+		mce.Arguments = NewTupleExpressionWithExpressions(arguments)
 		mce.Arguments.SetSourcePosition(arguments)
 	} else {
 		mce.Arguments = arguments
@@ -189,10 +189,17 @@ func (mce *MethodCallExpression) GetMethodTarget() *MethodNode {
 func (mce *MethodCallExpression) SetMethodTarget(mn *MethodNode) {
 	mce.Target = mn
 	if mn != nil {
-		mce.SetType(mn.GetReturnType())
+		mce.SetType(mn.returnType)
 	} else {
-		mce.SetType(ClassHelper.OBJECT_TYPE)
+		mce.SetType(OBJECT_TYPE)
 	}
+}
+
+type MethodCall interface {
+	GetReceiver() ASTNode
+	GetMethodAsString() string
+	GetArguments() Expression
+	GetText() string
 }
 
 func (mce *MethodCallExpression) SetSourcePosition(node ASTNode) {
@@ -202,11 +209,11 @@ func (mce *MethodCallExpression) SetSourcePosition(node ASTNode) {
 	case MethodCall:
 		if mce, ok := n.(*MethodCallExpression); ok {
 			mce.Method.SetSourcePosition(mce.GetMethod())
-		} else if n.GetLineNumber() > 0 {
-			mce.Method.SetLineNumber(n.GetLineNumber())
-			mce.Method.SetColumnNumber(n.GetColumnNumber())
-			mce.Method.SetLastLineNumber(n.GetLineNumber())
-			mce.Method.SetLastColumnNumber(n.GetColumnNumber() + len(mce.GetMethodAsString()))
+		} else if node.GetLineNumber() > 0 {
+			mce.Method.SetLineNumber(node.GetLineNumber())
+			mce.Method.SetColumnNumber(node.GetColumnNumber())
+			mce.Method.SetLastLineNumber(node.GetLineNumber())
+			mce.Method.SetLastColumnNumber(node.GetColumnNumber() + len(mce.GetMethodAsString()))
 		}
 		if mce.Arguments != nil {
 			mce.Arguments.SetSourcePosition(n.GetArguments())
@@ -217,6 +224,6 @@ func (mce *MethodCallExpression) SetSourcePosition(node ASTNode) {
 }
 
 func (mce *MethodCallExpression) String() string {
-	return mce.Expression.String() + "[object: " + mce.ObjectExpression.String() +
-		" method: " + mce.Method.String() + " arguments: " + mce.Arguments.String() + "]"
+	return mce.Expression.GetText() + "[object: " + mce.ObjectExpression.GetText() +
+		" method: " + mce.Method.GetText() + " arguments: " + mce.Arguments.GetText() + "]"
 }

@@ -1,14 +1,13 @@
 package parser
 
 import (
-	ast "reft-go/parser/ast"
 	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
 )
 
 // configureAST sets the position information for any ASTNode
-func configureAST[T ast.ASTNode](astNode T, ctx antlr.ParserRuleContext) T {
+func configureAST[T ASTNode](astNode T, ctx antlr.ParserRuleContext) T {
 	start := ctx.GetStart()
 	stop := ctx.GetStop()
 
@@ -22,7 +21,7 @@ func configureAST[T ast.ASTNode](astNode T, ctx antlr.ParserRuleContext) T {
 	return astNode
 }
 
-func configureASTFromSource[T ast.ASTNode](astNode T, source ast.ASTNode) T {
+func configureASTFromSource[T ASTNode](astNode T, source ASTNode) T {
 	astNode.SetLineNumber(source.GetLineNumber())
 	astNode.SetColumnNumber(source.GetColumnNumber())
 	astNode.SetLastLineNumber(source.GetLastLineNumber())

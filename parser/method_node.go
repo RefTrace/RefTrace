@@ -35,7 +35,7 @@ func NewMethodNode(name string, modifiers int, returnType *ClassNode, parameters
 
 func (mn *MethodNode) GetTypeDescriptor() string {
 	if mn.typeDescriptor == "" {
-		mn.typeDescriptor = methodDescriptor(mn, false)
+		mn.typeDescriptor = MethodDescriptor(mn, false)
 	}
 	return mn.typeDescriptor
 }
@@ -45,6 +45,34 @@ func (mn *MethodNode) invalidateCachedData() {
 }
 
 // Getter and setter methods...
+
+func (mn *MethodNode) SetReturnType(returnType *ClassNode) {
+	mn.invalidateCachedData()
+	mn.dynamicReturnType = mn.dynamicReturnType || IsDynamicTyped(returnType)
+	if returnType != nil {
+		mn.returnType = returnType
+	} else {
+		mn.returnType = OBJECT_TYPE
+	}
+}
+
+func (mn *MethodNode) SetParameters(parameters []*Parameter) {
+	mn.invalidateCachedData()
+	scope := NewVariableScope()
+	mn.hasDefaultValue = false
+	mn.parameters = parameters
+	if parameters != nil && len(parameters) > 0 {
+		for _, para := range parameters {
+			if para.HasInitialExpression() {
+				mn.hasDefaultValue = true
+			}
+			para.SetInStaticContext(mn.IsStatic())
+			var varptr *Variable = &para.Variable
+			scope.PutDeclaredVariable(varptr)
+		}
+	}
+	mn.SetVariableScope(scope)
+}
 
 func (mn *MethodNode) IsAbstract() bool {
 	return (mn.modifiers & ACC_ABSTRACT) != 0
@@ -86,10 +114,10 @@ func (mn *MethodNode) GetFirstStatement() Statement {
 	first := mn.code
 	for {
 		if bs, ok := first.(*BlockStatement); ok {
-			if len(bs.Statements) == 0 {
+			if len(bs.statements) == 0 {
 				return nil
 			}
-			first = bs.Statements[0]
+			first = bs.statements[0]
 		} else {
 			break
 		}
@@ -125,33 +153,41 @@ func (mn *MethodNode) IsConstructor() bool {
 	return mn.name == "<init>"
 }
 
-func (mn *MethodNode) GetText() string {
-	var mask int
-	if _, ok := mn.(*ConstructorNode); ok {
-		mask = ConstructorModifiers()
-	} else {
-		mask = MethodModifiers()
+func ToGenericTypesString(genericsTypes []*GenericsType) string {
+	if genericsTypes == nil || len(genericsTypes) == 0 {
+		return ""
 	}
-	name := mn.GetName()
+	var parts []string
+	for _, genericsType := range genericsTypes {
+		parts = append(parts, genericsType.String())
+	}
+	return fmt.Sprintf("<%s> ", strings.Join(parts, ","))
+}
+
+func (mn *MethodNode) GetText() string {
+	name := mn.name
 	if strings.Contains(name, " ") {
 		name = fmt.Sprintf("\"%s\"", name)
 	}
 	return fmt.Sprintf("%s %s%s %s(%s)%s { ... }",
-		GetModifiersText(mn.GetModifiers()&mask),
-		ToGenericTypesString(mn.GetGenericsTypes()),
-		GetClassText(mn.GetReturnType()),
+		GetModifiersText(mn.modifiers),
+		ToGenericTypesString(mn.genericsTypes),
+		GetClassText(mn.returnType),
 		name,
-		GetParametersText(mn.GetParameters()),
-		GetThrowsClauseText(mn.GetExceptions()))
+		GetParametersText(mn.parameters),
+		GetThrowsClauseText(mn.exceptions))
 }
 
 func (mn *MethodNode) String() string {
 	declaringClass := mn.GetDeclaringClass()
 	declaringClassStr := ""
 	if declaringClass != nil {
-		declaringClassStr = " from " + FormatTypeName(declaringClass)
+		declaringClassStr = " from " + declaringClass.GetText()
 	}
-	return fmt.Sprintf("%s[%s%s]", mn.AnnotatedNode.String(), methodDescriptor(mn, true), declaringClassStr)
+	return fmt.Sprintf("%s[%s%s]", mn.AnnotatedNode.GetText(), MethodDescriptor(mn, true), declaringClassStr)
 }
 
-// Helper functions like methodDescriptor, GetModifiersText, etc. need to be implemented
+func (mn *MethodNode) SetVariableScope(variableScope *VariableScope) {
+	mn.variableScope = variableScope
+	variableScope.SetInStaticContext(mn.IsStatic())
+}
