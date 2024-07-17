@@ -1,8 +1,8 @@
 package parser
 
-import (
-	"reflect"
-)
+import "reflect"
+
+var _ ASTNode = (*BaseASTNode)(nil)
 
 type ASTNode interface {
 	NodeMetaDataHandler

@@ -3,6 +3,5 @@ parser/.antlr
 parser/GroovyLexer.interp
 parser/groovy_lexer.go
 reft-go
-parser/.antlr
 parser/GroovyParser.interp
 parser/GroovyParser.tokens

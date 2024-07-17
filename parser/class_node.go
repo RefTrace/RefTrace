@@ -7,7 +7,7 @@ var THIS = OBJECT_TYPE
 var SUPER = OBJECT_TYPE
 
 type ClassNode struct {
-	BaseASTNode
+	AnnotatedNode
 	name                string
 	modifiers           int
 	superClass          *ClassNode

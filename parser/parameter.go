@@ -74,7 +74,7 @@ func (p Parameter) GetInitialExpression() Expression {
 
 func (p *Parameter) SetInitialExpression(init Expression) {
 	p.defaultValue = init
-	p.hasDefaultValue = (init != nil)
+	p.hasDefaultValue = init != nil
 }
 
 func (p Parameter) IsInStaticContext() bool {

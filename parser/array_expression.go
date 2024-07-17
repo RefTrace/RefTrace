@@ -8,7 +8,6 @@ import (
 // ArrayExpression represents an array object construction.
 type ArrayExpression struct {
 	Expression
-	expression      BaseExpression
 	initExpressions []Expression
 	sizeExpressions []Expression
 	elementType     *ClassNode
@@ -28,11 +27,8 @@ func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
 
 func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
 	ae := &ArrayExpression{
-		expression: BaseExpression{
-			BaseASTNode: BaseASTNode{},
-		},
 		elementType:     elementType,
-		initExpressions: EmptyExpressionArray,
+		initExpressions: initExpressions,
 		sizeExpressions: sizeExpressions,
 	}
 	ae.SetType(makeArray(elementType, sizeExpressions))

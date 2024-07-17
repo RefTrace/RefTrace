@@ -1,18 +1,18 @@
 package parser
 
-import (
-	"fmt"
-)
+import "fmt"
+
+var _ Expression = (*BaseExpression)(nil)
+var _ ASTNode = (*BaseExpression)(nil)
 
 // Expression is the base interface for any expression
 type Expression interface {
-	ASTNode
 	GetType() *ClassNode
 	SetType(*ClassNode)
-	TransformExpression(transformer ExpressionTransformer) Expression
 }
 
 // BaseExpression provides a base implementation for Expression
+
 type BaseExpression struct {
 	BaseASTNode
 	expressionType *ClassNode

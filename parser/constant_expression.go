@@ -5,6 +5,9 @@ import (
 	"reflect"
 )
 
+// Compile-time assertion that ConstantExpression implements the Expression interface
+var _ Expression = (*ConstantExpression)(nil)
+
 // ConstantExpression represents a constant expression such as null, true, false.
 type ConstantExpression struct {
 	Expression

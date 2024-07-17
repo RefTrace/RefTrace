@@ -31,7 +31,7 @@ func (an *AnnotatedNode) AddAnnotation(typ *ClassNode) *AnnotationNode {
 	return node
 }
 
-// addAnnotationNode adds an existing annotation node
+// AddAnnotationNode addAnnotationNode adds an existing annotation node
 func (an *AnnotatedNode) AddAnnotationNode(annotation *AnnotationNode) {
 	if annotation != nil {
 		an.annotations = append(an.annotations, *annotation)

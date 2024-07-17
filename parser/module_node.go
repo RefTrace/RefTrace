@@ -9,7 +9,6 @@ import (
 )
 
 type ModuleNode struct {
-	BaseASTNode
 	DefaultNodeMetaDataHandler
 	Classes           []*ClassNode
 	Methods           []*MethodNode

@@ -17,7 +17,7 @@ type NumberFormatError struct {
 	Exception error
 }
 
-// Define the SyntaxException struct
+// SyntaxException Define the SyntaxException struct
 type SyntaxException struct {
 	Message           string
 	StartLine         int
