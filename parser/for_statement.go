@@ -35,7 +35,7 @@ func (f *ForStatement) GetVariable() *Parameter {
 }
 
 func (f *ForStatement) GetVariableType() *ClassNode {
-	return f.Variable.Type()
+	return f.Variable.GetType()
 }
 
 func (f *ForStatement) SetCollectionExpression(collectionExpression Expression) {

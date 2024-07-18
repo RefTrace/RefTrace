@@ -4,10 +4,10 @@ import (
 	"fmt"
 )
 
+var _ Variable = (*Parameter)(nil)
+
 type Parameter struct {
 	AnnotatedNode
-	Variable
-	DefaultVariable
 	paramType       *ClassNode
 	name            string
 	originType      *ClassNode
@@ -43,11 +43,11 @@ func (p *Parameter) String() string {
 	return fmt.Sprintf("%s[name: %s%s, hasDefaultValue: %t]", p.AnnotatedNode.GetText(), p.name, typeStr, p.HasInitialExpression())
 }
 
-func (p Parameter) Name() string {
+func (p Parameter) GetName() string {
 	return p.name
 }
 
-func (p Parameter) Type() *ClassNode {
+func (p Parameter) GetType() *ClassNode {
 	return p.paramType
 }
 
@@ -105,7 +105,7 @@ func (p *Parameter) SetModifiers(modifiers int) {
 	p.modifiers = modifiers
 }
 
-func (p Parameter) OriginType() *ClassNode {
+func (p Parameter) GetOriginType() *ClassNode {
 	return p.originType
 }
 

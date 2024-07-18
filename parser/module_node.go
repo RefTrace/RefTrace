@@ -9,7 +9,7 @@ import (
 )
 
 type ModuleNode struct {
-	DefaultNodeMetaDataHandler
+	*BaseASTNode
 	Classes           []*ClassNode
 	Methods           []*MethodNode
 	Imports           []*ImportNode
@@ -26,6 +26,7 @@ type ModuleNode struct {
 }
 
 func NewModuleNode() *ModuleNode {
+	// TODO: initialize the base AST node
 	return &ModuleNode{
 		Classes:           []*ClassNode{},
 		Methods:           []*MethodNode{},

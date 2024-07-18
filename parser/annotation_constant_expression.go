@@ -7,13 +7,13 @@ import (
 // AnnotationConstantExpression represents an annotation "constant" that may appear in annotation attributes
 // (mainly used as a marker).
 type AnnotationConstantExpression struct {
-	ConstantExpression
+	*ConstantExpression
 }
 
 // NewAnnotationConstantExpression creates a new AnnotationConstantExpression
 func NewAnnotationConstantExpression(node *AnnotationNode) *AnnotationConstantExpression {
 	ace := &AnnotationConstantExpression{
-		ConstantExpression: *NewConstantExpression(node),
+		ConstantExpression: NewConstantExpression(node),
 	}
 	ace.SetType(node.GetClassNode())
 	return ace

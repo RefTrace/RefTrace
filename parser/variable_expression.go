@@ -4,10 +4,11 @@ import (
 	"fmt"
 )
 
+var _ Variable = (*VariableExpression)(nil)
+
 // VariableExpression represents a local variable name, the simplest form of expression. e.g. "foo".
 type VariableExpression struct {
 	Expression
-	Variable
 	variable         string
 	modifiers        int
 	inStaticContext  bool
@@ -41,9 +42,9 @@ func NewVariableExpressionWithString(name string) *VariableExpression {
 }
 
 func NewVariableExpressionWithVariable(variable Variable) *VariableExpression {
-	ve := NewVariableExpression(variable.Name(), variable.OriginType())
+	ve := NewVariableExpression(variable.GetName(), variable.GetOriginType())
 	ve.SetAccessedVariable(variable)
-	ve.SetModifiers(variable.Modifiers())
+	ve.SetModifiers(variable.GetModifiers())
 	return ve
 }
 
@@ -127,14 +128,14 @@ func (ve *VariableExpression) IsUseReferenceDirectly() bool {
 
 func (ve *VariableExpression) GetType() *ClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
-		return ve.accessedVariable.Type()
+		return ve.accessedVariable.GetType()
 	}
 	return ve.Expression.GetType()
 }
 
 func (ve *VariableExpression) GetOriginType() *ClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
-		return ve.accessedVariable.OriginType()
+		return ve.accessedVariable.GetOriginType()
 	}
 	return ve.originType
 }
@@ -157,4 +158,29 @@ func (ve *VariableExpression) GetAccessedVariable() Variable {
 
 func (ve *VariableExpression) SetAccessedVariable(origin Variable) {
 	ve.accessedVariable = origin
+}
+
+// Implement the remaining methods from the Variable interface
+func (ve *VariableExpression) IsFinal() bool {
+	return (ve.GetModifiers() & ACC_FINAL) != 0
+}
+
+func (ve *VariableExpression) IsPrivate() bool {
+	return (ve.GetModifiers() & ACC_PRIVATE) != 0
+}
+
+func (ve *VariableExpression) IsProtected() bool {
+	return (ve.GetModifiers() & ACC_PROTECTED) != 0
+}
+
+func (ve *VariableExpression) IsPublic() bool {
+	return (ve.GetModifiers() & ACC_PUBLIC) != 0
+}
+
+func (ve *VariableExpression) IsStatic() bool {
+	return (ve.GetModifiers() & ACC_STATIC) != 0
+}
+
+func (ve *VariableExpression) IsVolatile() bool {
+	return (ve.GetModifiers() & ACC_VOLATILE) != 0
 }

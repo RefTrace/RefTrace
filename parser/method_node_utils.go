@@ -10,7 +10,7 @@ func MethodDescriptorWithoutReturnType(mNode *MethodNode) string {
 	sb.WriteString(mNode.name)
 	sb.WriteString(":")
 	for _, p := range mNode.parameters {
-		sb.WriteString(FormatTypeName(p.Type()))
+		sb.WriteString(FormatTypeName(p.GetType()))
 		sb.WriteString(",")
 	}
 	return sb.String()
@@ -38,7 +38,7 @@ func MethodDescriptor(mNode *MethodNode, pretty bool) string {
 		if i > 0 {
 			sb.WriteString(", ")
 		}
-		sb.WriteString(FormatTypeName(p.Type()))
+		sb.WriteString(FormatTypeName(p.GetType()))
 	}
 	sb.WriteString(")")
 	return sb.String()

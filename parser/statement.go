@@ -4,6 +4,8 @@ import (
 	"container/list"
 )
 
+var _ Statement = (*BaseStatement)(nil)
+
 // Statement represents the interface for any statement.
 type Statement interface {
 	ASTNode

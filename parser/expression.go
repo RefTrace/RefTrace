@@ -7,6 +7,7 @@ var _ ASTNode = (*BaseExpression)(nil)
 
 // Expression is the base interface for any expression
 type Expression interface {
+	ASTNode
 	GetType() *ClassNode
 	SetType(*ClassNode)
 }
@@ -14,7 +15,7 @@ type Expression interface {
 // BaseExpression provides a base implementation for Expression
 
 type BaseExpression struct {
-	BaseASTNode
+	*AnnotatedNode
 	expressionType *ClassNode
 }
 
@@ -22,6 +23,14 @@ var (
 	EmptyExpressionArray = []Expression{}
 	NullType             = MakeFromString("null")
 )
+
+// NewBaseExpression creates and initializes a new BaseExpression
+func NewBaseExpression() *BaseExpression {
+	return &BaseExpression{
+		AnnotatedNode:  NewAnnotatedNode(),
+		expressionType: NullType,
+	}
+}
 
 func (e *BaseExpression) GetType() *ClassNode {
 	if e.expressionType == NullType {

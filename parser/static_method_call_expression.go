@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var _ MethodCall = (*StaticMethodCallExpression)(nil)
+
 // StaticMethodCallExpression represents a static method call on a class
 type StaticMethodCallExpression struct {
 	Expression
@@ -12,11 +14,12 @@ type StaticMethodCallExpression struct {
 	arguments Expression
 }
 
-func NewStaticMethodCallExpression(ownerType *ClassNode, method string, arguments Expression) *StaticMethodCallExpression {
+func NewStaticMethodCallExpression(expr Expression, ownerType *ClassNode, method string, arguments Expression) *StaticMethodCallExpression {
 	return &StaticMethodCallExpression{
-		ownerType: ownerType,
-		method:    method,
-		arguments: arguments,
+		Expression: expr,
+		ownerType:  ownerType,
+		method:     method,
+		arguments:  arguments,
 	}
 }
 
@@ -24,12 +27,14 @@ func (s *StaticMethodCallExpression) Visit(visitor GroovyCodeVisitor) {
 	visitor.VisitStaticMethodCallExpression(s)
 }
 
+/*
 func (s *StaticMethodCallExpression) TransformExpression(transformer ExpressionTransformer) Expression {
 	ret := NewStaticMethodCallExpression(s.GetOwnerType(), s.method, transformer.Transform(s.arguments))
 	ret.SetSourcePosition(s)
 	ret.CopyNodeMetaData(s)
 	return ret
 }
+*/
 
 func (s *StaticMethodCallExpression) GetReceiver() ASTNode {
 	return s.ownerType

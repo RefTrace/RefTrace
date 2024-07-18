@@ -2,10 +2,20 @@ package parser
 
 // AnnotatedNode represents an AST node that can be annotated
 type AnnotatedNode struct {
-	BaseASTNode
+	*BaseASTNode
 	annotations    []AnnotationNode
 	declaringClass *ClassNode
 	synthetic      bool
+}
+
+// NewAnnotatedNode creates and initializes a new AnnotatedNode
+func NewAnnotatedNode() *AnnotatedNode {
+	return &AnnotatedNode{
+		BaseASTNode:    NewBaseASTNode(),
+		annotations:    make([]AnnotationNode, 0),
+		declaringClass: nil,
+		synthetic:      false,
+	}
 }
 
 // GetAnnotations returns all annotations for this node

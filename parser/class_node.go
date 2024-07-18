@@ -7,7 +7,7 @@ var THIS = OBJECT_TYPE
 var SUPER = OBJECT_TYPE
 
 type ClassNode struct {
-	AnnotatedNode
+	*AnnotatedNode
 	name                string
 	modifiers           int
 	superClass          *ClassNode
@@ -31,11 +31,12 @@ type ClassNode struct {
 
 func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode {
 	return &ClassNode{
-		name:       name,
-		modifiers:  modifiers,
-		superClass: superClass,
-		methods:    make(map[string][]*MethodNode),
-		fieldIndex: make(map[string]*FieldNode),
+		AnnotatedNode: NewAnnotatedNode(),
+		name:          name,
+		modifiers:     modifiers,
+		superClass:    superClass,
+		methods:       make(map[string][]*MethodNode),
+		fieldIndex:    make(map[string]*FieldNode),
 	}
 }
 

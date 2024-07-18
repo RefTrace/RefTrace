@@ -1,18 +1,20 @@
 package parser
 
+// var _ Variable = (*DefaultVariable)(nil)
+
 // Variable interface marks an AstNode as a Variable. Typically these are
 // VariableExpression, FieldNode, PropertyNode and Parameter
 type Variable interface {
-	// Name returns the name of the variable.
-	Name() string
+	// GetName returns the name of the variable.
+	GetName() string
 
-	// Type returns the type of the variable.
-	Type() *ClassNode
+	// GetType returns the type of the variable.
+	GetType() *ClassNode
 
-	// OriginType returns the type before wrapping primitives type of the variable.
-	OriginType() *ClassNode
+	// GetOriginType returns the type before wrapping primitives type of the variable.
+	GetOriginType() *ClassNode
 
-	// InitialExpression returns the expression used to initialize the variable or nil if there
+	// GetInitialExpression returns the expression used to initialize the variable or nil if there
 	// is no initialization.
 	GetInitialExpression() Expression
 
@@ -33,8 +35,8 @@ type Variable interface {
 	// IsDynamicTyped returns true if the variable is dynamically typed.
 	IsDynamicTyped() bool
 
-	// Modifiers returns the modifiers of the variable.
-	Modifiers() int
+	// GetModifiers returns the modifiers of the variable.
+	GetModifiers() int
 
 	// IsFinal returns true if the variable is final.
 	IsFinal() bool
@@ -56,16 +58,30 @@ type Variable interface {
 }
 
 // DefaultVariable provides default implementations for some methods of the Variable interface
+/*
 type DefaultVariable struct{}
 
-func (DefaultVariable) IsClosureSharedVariable() bool { return false }
-func (DefaultVariable) SetClosureSharedVariable(bool) {}
+func (*DefaultVariable) IsClosureSharedVariable() bool { return false }
+func (*DefaultVariable) SetClosureSharedVariable(bool) {}
 
-func (v DefaultVariable) Modifiers() int { return ACC_NONE }
+func (v *DefaultVariable) GetModifiers() int { return ACC_NONE }
 
-func (v DefaultVariable) IsFinal() bool     { return (v.Modifiers() & ACC_FINAL) != 0 }
-func (v DefaultVariable) IsPrivate() bool   { return (v.Modifiers() & ACC_PRIVATE) != 0 }
-func (v DefaultVariable) IsProtected() bool { return (v.Modifiers() & ACC_PROTECTED) != 0 }
-func (v DefaultVariable) IsPublic() bool    { return (v.Modifiers() & ACC_PUBLIC) != 0 }
-func (v DefaultVariable) IsStatic() bool    { return (v.Modifiers() & ACC_STATIC) != 0 }
-func (v DefaultVariable) IsVolatile() bool  { return (v.Modifiers() & ACC_VOLATILE) != 0 }
+func (v *DefaultVariable) IsFinal() bool     { return (v.GetModifiers() & ACC_FINAL) != 0 }
+func (v *DefaultVariable) IsPrivate() bool   { return (v.GetModifiers() & ACC_PRIVATE) != 0 }
+func (v *DefaultVariable) IsProtected() bool { return (v.GetModifiers() & ACC_PROTECTED) != 0 }
+func (v *DefaultVariable) IsPublic() bool    { return (v.GetModifiers() & ACC_PUBLIC) != 0 }
+func (v *DefaultVariable) IsStatic() bool    { return (v.GetModifiers() & ACC_STATIC) != 0 }
+func (v *DefaultVariable) IsVolatile() bool  { return (v.GetModifiers() & ACC_VOLATILE) != 0 }
+
+func (*DefaultVariable) GetInitialExpression() Expression { return nil }
+func (*DefaultVariable) HasInitialExpression() bool       { return false }
+
+func (*DefaultVariable) IsDynamicTyped() bool { return false }
+
+func (*DefaultVariable) IsInStaticContext() bool { return false }
+
+// Implement missing methods
+func (*DefaultVariable) GetName() string           { return "" }
+func (*DefaultVariable) GetType() *ClassNode       { return nil }
+func (*DefaultVariable) GetOriginType() *ClassNode { return nil }
+*/

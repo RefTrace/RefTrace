@@ -27,6 +27,7 @@ func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
 
 func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
 	ae := &ArrayExpression{
+		Expression:      NewBaseExpression(),
 		elementType:     elementType,
 		initExpressions: initExpressions,
 		sizeExpressions: sizeExpressions,

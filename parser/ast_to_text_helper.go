@@ -19,11 +19,11 @@ func GetParameterText(node *Parameter) string {
 		return "<unknown>"
 	}
 
-	name := node.Name()
+	name := node.GetName()
 	if name == "" {
 		name = "<unknown>"
 	}
-	typeStr := GetClassText(node.Type())
+	typeStr := GetClassText(node.GetType())
 
 	text := fmt.Sprintf("%s %s", typeStr, name)
 	if node.HasInitialExpression() {

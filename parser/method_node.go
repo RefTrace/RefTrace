@@ -67,8 +67,7 @@ func (mn *MethodNode) SetParameters(parameters []*Parameter) {
 				mn.hasDefaultValue = true
 			}
 			para.SetInStaticContext(mn.IsStatic())
-			var varptr *Variable = &para.Variable
-			scope.PutDeclaredVariable(varptr)
+			scope.PutDeclaredVariable(para)
 		}
 	}
 	mn.SetVariableScope(scope)

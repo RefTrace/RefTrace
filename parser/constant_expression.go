@@ -34,7 +34,7 @@ func NewConstantExpression(value interface{}) *ConstantExpression {
 
 // NewConstantExpressionPrimitive creates a new ConstantExpression with primitive type preservation
 func NewConstantExpressionPrimitive(value interface{}) *ConstantExpression {
-	expr := &ConstantExpression{value: value}
+	expr := &ConstantExpression{Expression: NewBaseExpression(), value: value}
 	if value != nil {
 		expr.setTypeFromValue(value, true)
 	}

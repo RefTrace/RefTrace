@@ -27,7 +27,7 @@ func (c *CatchStatement) GetCode() Statement {
 
 // GetExceptionType returns the exception type of the catch statement
 func (c *CatchStatement) GetExceptionType() *ClassNode {
-	return c.variable.Type()
+	return c.variable.GetType()
 }
 
 // GetVariable returns the variable of the catch statement

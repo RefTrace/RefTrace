@@ -1,9 +1,10 @@
 package parser
 
+var _ Variable = (*DynamicVariable)(nil)
+
 // DynamicVariable represents an implicitly created variable, such as a variable in a script
 // that doesn't have an explicit declaration, or the "it" argument to a closure.
 type DynamicVariable struct {
-	Variable
 	name          string
 	closureShare  bool
 	staticContext bool
@@ -63,6 +64,31 @@ func (d *DynamicVariable) GetModifiers() int {
 }
 
 // GetOriginType returns the origin type of the variable (same as GetType for DynamicVariable)
-func (d *DynamicVariable) OriginType() *ClassNode {
-	return d.Type()
+func (d *DynamicVariable) GetOriginType() *ClassNode {
+	return d.GetType()
+}
+
+// Implement the remaining methods from the Variable interface
+func (d *DynamicVariable) IsFinal() bool {
+	return false
+}
+
+func (d *DynamicVariable) IsPrivate() bool {
+	return false
+}
+
+func (d *DynamicVariable) IsProtected() bool {
+	return false
+}
+
+func (d *DynamicVariable) IsPublic() bool {
+	return true
+}
+
+func (d *DynamicVariable) IsStatic() bool {
+	return false
+}
+
+func (d *DynamicVariable) IsVolatile() bool {
+	return false
 }

@@ -25,16 +25,15 @@ type ASTNode interface {
 }
 
 type BaseASTNode struct {
-	DefaultNodeMetaDataHandler
+	*DefaultNodeMetaDataHandler
 	lineNumber       int
 	columnNumber     int
 	lastLineNumber   int
 	lastColumnNumber int
-	metaDataMap      map[interface{}]interface{}
 }
 
 func (node *BaseASTNode) Visit(visitor GroovyCodeVisitor) {
-	return
+
 }
 
 func (node *BaseASTNode) GetText() string {
@@ -103,4 +102,17 @@ func (node *BaseASTNode) CopyNodeMetaDataHandler(handler NodeMetaDataHandler) {
 func (node *BaseASTNode) NewMetaDataMap() map[interface{}]interface{} {
 	node.metaDataMap = make(map[interface{}]interface{})
 	return node.metaDataMap
+}
+
+// NewBaseASTNode creates and initializes a new BaseASTNode
+func NewBaseASTNode() *BaseASTNode {
+	return &BaseASTNode{
+		DefaultNodeMetaDataHandler: &DefaultNodeMetaDataHandler{
+			metaDataMap: make(map[interface{}]interface{}),
+		},
+		lineNumber:       0,
+		columnNumber:     0,
+		lastLineNumber:   0,
+		lastColumnNumber: 0,
+	}
 }
