@@ -5,7 +5,7 @@ import "github.com/antlr4-go/antlr/v4"
 
 type BaseGroovyParserVisitor struct {
 	*antlr.BaseParseTreeVisitor
-	VisitChildren func (node antlr.RuleNode) interface{}
+	VisitChildren func(node antlr.RuleNode) interface{}
 }
 
 func (v *BaseGroovyParserVisitor) VisitCompilationUnit(ctx *CompilationUnitContext) interface{} {
