@@ -26,6 +26,7 @@ var (
 
 func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
 	ve := &VariableExpression{
+		Expression: NewBaseExpression(),
 		variable:   name,
 		originType: typ,
 	}

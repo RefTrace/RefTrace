@@ -47,6 +47,8 @@ func main() {
 	wg.Wait()
 }
 
+/*
+
 type TreeShapeListener struct {
 	*parser.BaseGroovyParserListener
 }
@@ -58,6 +60,7 @@ func NewTreeShapeListener() *TreeShapeListener {
 func (tsl *TreeShapeListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	fmt.Println(ctx.GetText())
 }
+*/
 
 func processFile(filePath string) {
 	input, err := antlr.NewFileStream(filePath)
@@ -87,8 +90,11 @@ func processFile(filePath string) {
 		fmt.Printf("File: %s has no errors.\n", filePath)
 		//tokenStream := lexer.NewPreloadedTokenStream(tokens, l)
 		p := parser.NewGroovyParser(stream)
-		p.CompilationUnit()
+		unit := p.CompilationUnit()
 		fmt.Println("Parsed Successfully")
+		builder := parser.NewASTBuilder(filePath)
+		builder.Visit(unit)
+		//builder.VisitCompilationUnit(unit.(*parser.CompilationUnitContext))
 		//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
 	}
 }

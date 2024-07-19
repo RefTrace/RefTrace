@@ -7,6 +7,8 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 )
 
+var _ GroovyParserVisitor = (*ASTBuilder)(nil)
+
 const (
 	PACKAGE_INFO           = "package-info"
 	PACKAGE_INFO_FILE_NAME = PACKAGE_INFO + ".groovy"
@@ -56,10 +58,38 @@ type ASTBuilder struct {
 	sourceUnitName    string
 }
 
-func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) *ModuleNode {
+// NewASTBuilder creates and initializes a new ASTBuilder instance
+func NewASTBuilder(sourceUnitName string) *ASTBuilder {
+	builder := &ASTBuilder{
+		moduleNode:        NewModuleNode(), // Assuming you have a NewModuleNode function
+		classNodeList:     make([]*ClassNode, 0),
+		numberFormatError: nil,
+		sourceUnitName:    sourceUnitName,
+	}
+	builder.BaseGroovyParserVisitor.VisitChildren = builder.VisitChildren
+	return builder
+}
+
+func (builder *ASTBuilder) Visit(tree antlr.ParseTree) interface{} {
+	if tree != nil {
+		return tree.Accept(builder)
+	}
+	return nil
+}
+
+func (builder *ASTBuilder) VisitChildren(tree antlr.RuleNode) interface{} {
+	for _, c := range tree.GetChildren() {
+		v := c.(antlr.ParseTree)
+		builder.Visit(v)
+	}
+	return nil
+}
+
+func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) interface{} {
+	//builder.VisitPackageDeclaration(ctx.PackageDeclaration().(*PackageDeclarationContext))
 	builder.Visit(ctx.PackageDeclaration())
 
-	for _, node := range builder.VisitScriptStatements(ctx.ScriptStatements().(*ScriptStatementsContext)) {
+	for _, node := range builder.VisitScriptStatements(ctx.ScriptStatements().(*ScriptStatementsContext)).([]ASTNode) {
 		switch n := node.(type) {
 		case *DeclarationListStatement:
 			for _, stmt := range n.GetDeclarationStatements() {
@@ -108,7 +138,7 @@ func (builder *ASTBuilder) configureScriptClassNode() {
 	}
 }
 
-func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) []ASTNode {
+func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) interface{} {
 	if ctx == nil {
 		return []ASTNode{}
 	}
@@ -130,6 +160,10 @@ func (builder *ASTBuilder) isBlankScript() bool {
 	return len(builder.moduleNode.GetStatementBlock().GetStatements()) == 0 &&
 		len(builder.moduleNode.GetMethods()) == 0 &&
 		len(builder.moduleNode.GetClasses()) == 0
+}
+
+func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) interface{} {
+	return nil
 }
 
 // DeclarationListStatement represents a list of declaration statements

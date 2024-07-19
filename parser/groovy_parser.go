@@ -1466,18 +1466,6 @@ func (s *CompilationUnitContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CompilationUnitContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCompilationUnit(s)
-	}
-}
-
-func (s *CompilationUnitContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCompilationUnit(s)
-	}
-}
-
 func (s *CompilationUnitContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -1693,18 +1681,6 @@ func (s *ScriptStatementsContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ScriptStatementsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterScriptStatements(s)
-	}
-}
-
-func (s *ScriptStatementsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitScriptStatements(s)
-	}
-}
-
 func (s *ScriptStatementsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -1907,18 +1883,6 @@ func (s *ScriptStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ScriptStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterScriptStatement(s)
-	}
-}
-
-func (s *ScriptStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitScriptStatement(s)
-	}
-}
-
 func (s *ScriptStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -2080,18 +2044,6 @@ func (s *PackageDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *PackageDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *PackageDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPackageDeclaration(s)
-	}
-}
-
-func (s *PackageDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPackageDeclaration(s)
-	}
 }
 
 func (s *PackageDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -2276,18 +2228,6 @@ func (s *ImportDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ImportDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ImportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterImportDeclaration(s)
-	}
-}
-
-func (s *ImportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitImportDeclaration(s)
-	}
 }
 
 func (s *ImportDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -2486,18 +2426,6 @@ func (s *TypeDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeDeclaration(s)
-	}
-}
-
-func (s *TypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeDeclaration(s)
-	}
-}
-
 func (s *TypeDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -2643,18 +2571,6 @@ func (s *ModifierContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ModifierContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterModifier(s)
-	}
-}
-
-func (s *ModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitModifier(s)
-	}
 }
 
 func (s *ModifierContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -2810,18 +2726,6 @@ func (s *ModifiersOptContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ModifiersOptContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ModifiersOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterModifiersOpt(s)
-	}
-}
-
-func (s *ModifiersOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitModifiersOpt(s)
-	}
 }
 
 func (s *ModifiersOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -3007,18 +2911,6 @@ func (s *ModifiersContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ModifiersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterModifiers(s)
-	}
-}
-
-func (s *ModifiersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitModifiers(s)
-	}
-}
-
 func (s *ModifiersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -3162,18 +3054,6 @@ func (s *ClassOrInterfaceModifiersOptContext) GetRuleContext() antlr.RuleContext
 
 func (s *ClassOrInterfaceModifiersOptContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ClassOrInterfaceModifiersOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassOrInterfaceModifiersOpt(s)
-	}
-}
-
-func (s *ClassOrInterfaceModifiersOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassOrInterfaceModifiersOpt(s)
-	}
 }
 
 func (s *ClassOrInterfaceModifiersOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -3381,18 +3261,6 @@ func (s *ClassOrInterfaceModifiersContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassOrInterfaceModifiersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassOrInterfaceModifiers(s)
-	}
-}
-
-func (s *ClassOrInterfaceModifiersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassOrInterfaceModifiers(s)
-	}
-}
-
 func (s *ClassOrInterfaceModifiersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -3589,18 +3457,6 @@ func (s *ClassOrInterfaceModifierContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassOrInterfaceModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassOrInterfaceModifier(s)
-	}
-}
-
-func (s *ClassOrInterfaceModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassOrInterfaceModifier(s)
-	}
-}
-
 func (s *ClassOrInterfaceModifierContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -3795,18 +3651,6 @@ func (s *VariableModifierContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableModifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableModifier(s)
-	}
-}
-
-func (s *VariableModifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableModifier(s)
-	}
-}
-
 func (s *VariableModifierContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -3960,18 +3804,6 @@ func (s *VariableModifiersOptContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableModifiersOptContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableModifiersOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableModifiersOpt(s)
-	}
-}
-
-func (s *VariableModifiersOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableModifiersOpt(s)
-	}
 }
 
 func (s *VariableModifiersOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -4155,18 +3987,6 @@ func (s *VariableModifiersContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableModifiersContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableModifiersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableModifiers(s)
-	}
-}
-
-func (s *VariableModifiersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableModifiers(s)
-	}
 }
 
 func (s *VariableModifiersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -4393,18 +4213,6 @@ func (s *TypeParametersContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeParameters(s)
-	}
-}
-
-func (s *TypeParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeParameters(s)
-	}
-}
-
 func (s *TypeParametersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -4621,18 +4429,6 @@ func (s *TypeParameterContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeParameter(s)
-	}
-}
-
-func (s *TypeParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeParameter(s)
-	}
-}
-
 func (s *TypeParameterContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -4844,18 +4640,6 @@ func (s *TypeBoundContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TypeBoundContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TypeBoundContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeBound(s)
-	}
-}
-
-func (s *TypeBoundContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeBound(s)
-	}
 }
 
 func (s *TypeBoundContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -5071,18 +4855,6 @@ func (s *TypeListContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TypeListContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TypeListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeList(s)
-	}
-}
-
-func (s *TypeListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeList(s)
-	}
 }
 
 func (s *TypeListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -5445,18 +5217,6 @@ func (s *ClassDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ClassDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ClassDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassDeclaration(s)
-	}
-}
-
-func (s *ClassDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassDeclaration(s)
-	}
 }
 
 func (s *ClassDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -5936,18 +5696,6 @@ func (s *ClassBodyContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassBody(s)
-	}
-}
-
-func (s *ClassBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassBody(s)
-	}
-}
-
 func (s *ClassBodyContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -6264,18 +6012,6 @@ func (s *EnumConstantsContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumConstantsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnumConstants(s)
-	}
-}
-
-func (s *EnumConstantsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnumConstants(s)
-	}
-}
-
 func (s *EnumConstantsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -6474,18 +6210,6 @@ func (s *EnumConstantContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnumConstantContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnumConstant(s)
-	}
-}
-
-func (s *EnumConstantContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnumConstant(s)
-	}
-}
-
 func (s *EnumConstantContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -6670,18 +6394,6 @@ func (s *ClassBodyDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ClassBodyDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ClassBodyDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassBodyDeclaration(s)
-	}
-}
-
-func (s *ClassBodyDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassBodyDeclaration(s)
-	}
 }
 
 func (s *ClassBodyDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -6908,18 +6620,6 @@ func (s *MemberDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *MemberDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *MemberDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMemberDeclaration(s)
-	}
-}
-
-func (s *MemberDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMemberDeclaration(s)
-	}
 }
 
 func (s *MemberDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -7269,18 +6969,6 @@ func (s *MethodDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MethodDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMethodDeclaration(s)
-	}
-}
-
-func (s *MethodDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMethodDeclaration(s)
-	}
-}
-
 func (s *MethodDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -7529,18 +7217,6 @@ func (s *CompactConstructorDeclarationContext) ToStringTree(ruleNames []string, 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CompactConstructorDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCompactConstructorDeclaration(s)
-	}
-}
-
-func (s *CompactConstructorDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCompactConstructorDeclaration(s)
-	}
-}
-
 func (s *CompactConstructorDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -7666,18 +7342,6 @@ func (s *MethodNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *MethodNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *MethodNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMethodName(s)
-	}
-}
-
-func (s *MethodNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMethodName(s)
-	}
 }
 
 func (s *MethodNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -7820,18 +7484,6 @@ func (s *ReturnTypeContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ReturnTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterReturnType(s)
-	}
-}
-
-func (s *ReturnTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitReturnType(s)
-	}
-}
-
 func (s *ReturnTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -7956,18 +7608,6 @@ func (s *FieldDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *FieldDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *FieldDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFieldDeclaration(s)
-	}
-}
-
-func (s *FieldDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFieldDeclaration(s)
-	}
 }
 
 func (s *FieldDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -8149,18 +7789,6 @@ func (s *VariableDeclaratorsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableDeclaratorsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableDeclaratorsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableDeclarators(s)
-	}
-}
-
-func (s *VariableDeclaratorsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableDeclarators(s)
-	}
 }
 
 func (s *VariableDeclaratorsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -8364,18 +7992,6 @@ func (s *VariableDeclaratorContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclaratorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableDeclarator(s)
-	}
-}
-
-func (s *VariableDeclaratorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableDeclarator(s)
-	}
-}
-
 func (s *VariableDeclaratorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -8506,18 +8122,6 @@ func (s *VariableDeclaratorIdContext) ToStringTree(ruleNames []string, recog ant
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableDeclaratorIdContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableDeclaratorId(s)
-	}
-}
-
-func (s *VariableDeclaratorIdContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableDeclaratorId(s)
-	}
-}
-
 func (s *VariableDeclaratorIdContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -8618,18 +8222,6 @@ func (s *VariableInitializerContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableInitializerContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableInitializer(s)
-	}
-}
-
-func (s *VariableInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableInitializer(s)
-	}
 }
 
 func (s *VariableInitializerContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -8811,18 +8403,6 @@ func (s *VariableInitializersContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableInitializersContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableInitializersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableInitializers(s)
-	}
-}
-
-func (s *VariableInitializersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableInitializers(s)
-	}
 }
 
 func (s *VariableInitializersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -9042,18 +8622,6 @@ func (s *EmptyDimsContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EmptyDimsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEmptyDims(s)
-	}
-}
-
-func (s *EmptyDimsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEmptyDims(s)
-	}
-}
-
 func (s *EmptyDimsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -9194,18 +8762,6 @@ func (s *EmptyDimsOptContext) GetRuleContext() antlr.RuleContext {
 
 func (s *EmptyDimsOptContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *EmptyDimsOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEmptyDimsOpt(s)
-	}
-}
-
-func (s *EmptyDimsOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEmptyDimsOpt(s)
-	}
 }
 
 func (s *EmptyDimsOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -9367,18 +8923,6 @@ func (s *StandardTypeContext) GetRuleContext() antlr.RuleContext {
 
 func (s *StandardTypeContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *StandardTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStandardType(s)
-	}
-}
-
-func (s *StandardTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStandardType(s)
-	}
 }
 
 func (s *StandardTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -9566,18 +9110,6 @@ func (s *TypeContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) s
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterType(s)
-	}
-}
-
-func (s *TypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitType(s)
-	}
-}
-
 func (s *TypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -9747,18 +9279,6 @@ func (s *GeneralClassOrInterfaceTypeContext) ToStringTree(ruleNames []string, re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GeneralClassOrInterfaceTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGeneralClassOrInterfaceType(s)
-	}
-}
-
-func (s *GeneralClassOrInterfaceTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGeneralClassOrInterfaceType(s)
-	}
-}
-
 func (s *GeneralClassOrInterfaceTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -9890,18 +9410,6 @@ func (s *StandardClassOrInterfaceTypeContext) ToStringTree(ruleNames []string, r
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StandardClassOrInterfaceTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStandardClassOrInterfaceType(s)
-	}
-}
-
-func (s *StandardClassOrInterfaceTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStandardClassOrInterfaceType(s)
-	}
-}
-
 func (s *StandardClassOrInterfaceTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -10006,18 +9514,6 @@ func (s *PrimitiveTypeContext) GetRuleContext() antlr.RuleContext {
 
 func (s *PrimitiveTypeContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *PrimitiveTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPrimitiveType(s)
-	}
-}
-
-func (s *PrimitiveTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPrimitiveType(s)
-	}
 }
 
 func (s *PrimitiveTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -10213,18 +9709,6 @@ func (s *TypeArgumentsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TypeArgumentsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeArguments(s)
-	}
-}
-
-func (s *TypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeArguments(s)
-	}
 }
 
 func (s *TypeArgumentsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -10436,18 +9920,6 @@ func (s *TypeArgumentContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeArgument(s)
-	}
-}
-
-func (s *TypeArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeArgument(s)
-	}
-}
-
 func (s *TypeArgumentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -10623,18 +10095,6 @@ func (s *AnnotatedQualifiedClassNameContext) GetRuleContext() antlr.RuleContext 
 
 func (s *AnnotatedQualifiedClassNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *AnnotatedQualifiedClassNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAnnotatedQualifiedClassName(s)
-	}
-}
-
-func (s *AnnotatedQualifiedClassNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAnnotatedQualifiedClassName(s)
-	}
 }
 
 func (s *AnnotatedQualifiedClassNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -10822,18 +10282,6 @@ func (s *QualifiedClassNameListContext) ToStringTree(ruleNames []string, recog a
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *QualifiedClassNameListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedClassNameList(s)
-	}
-}
-
-func (s *QualifiedClassNameListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedClassNameList(s)
-	}
-}
-
 func (s *QualifiedClassNameListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -10990,18 +10438,6 @@ func (s *FormalParametersContext) GetRuleContext() antlr.RuleContext {
 
 func (s *FormalParametersContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *FormalParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFormalParameters(s)
-	}
-}
-
-func (s *FormalParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFormalParameters(s)
-	}
 }
 
 func (s *FormalParametersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -11226,18 +10662,6 @@ func (s *FormalParameterListContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFormalParameterList(s)
-	}
-}
-
-func (s *FormalParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFormalParameterList(s)
-	}
-}
-
 func (s *FormalParameterListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -11395,18 +10819,6 @@ func (s *ThisFormalParameterContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ThisFormalParameterContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ThisFormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterThisFormalParameter(s)
-	}
-}
-
-func (s *ThisFormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitThisFormalParameter(s)
-	}
 }
 
 func (s *ThisFormalParameterContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -11623,18 +11035,6 @@ func (s *FormalParameterContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FormalParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFormalParameter(s)
-	}
-}
-
-func (s *FormalParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFormalParameter(s)
-	}
-}
-
 func (s *FormalParameterContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -11801,18 +11201,6 @@ func (s *MethodBodyContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MethodBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMethodBody(s)
-	}
-}
-
-func (s *MethodBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMethodBody(s)
-	}
-}
-
 func (s *MethodBodyContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -11949,18 +11337,6 @@ func (s *QualifiedNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *QualifiedNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *QualifiedNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedName(s)
-	}
-}
-
-func (s *QualifiedNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedName(s)
-	}
 }
 
 func (s *QualifiedNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -12120,18 +11496,6 @@ func (s *QualifiedNameElementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *QualifiedNameElementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *QualifiedNameElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedNameElement(s)
-	}
-}
-
-func (s *QualifiedNameElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedNameElement(s)
-	}
 }
 
 func (s *QualifiedNameElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -12328,18 +11692,6 @@ func (s *QualifiedNameElementsContext) ToStringTree(ruleNames []string, recog an
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *QualifiedNameElementsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedNameElements(s)
-	}
-}
-
-func (s *QualifiedNameElementsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedNameElements(s)
-	}
-}
-
 func (s *QualifiedNameElementsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -12490,18 +11842,6 @@ func (s *QualifiedClassNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *QualifiedClassNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *QualifiedClassNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedClassName(s)
-	}
-}
-
-func (s *QualifiedClassNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedClassName(s)
-	}
 }
 
 func (s *QualifiedClassNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -12663,18 +12003,6 @@ func (s *QualifiedStandardClassNameContext) ToStringTree(ruleNames []string, rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *QualifiedStandardClassNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterQualifiedStandardClassName(s)
-	}
-}
-
-func (s *QualifiedStandardClassNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitQualifiedStandardClassName(s)
-	}
-}
-
 func (s *QualifiedStandardClassNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -12829,18 +12157,6 @@ func (s *StringLiteralAltContext) StringLiteral() IStringLiteralContext {
 	return t.(IStringLiteralContext)
 }
 
-func (s *StringLiteralAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStringLiteralAlt(s)
-	}
-}
-
-func (s *StringLiteralAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStringLiteralAlt(s)
-	}
-}
-
 func (s *StringLiteralAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -12871,18 +12187,6 @@ func (s *IntegerLiteralAltContext) GetRuleContext() antlr.RuleContext {
 
 func (s *IntegerLiteralAltContext) IntegerLiteral() antlr.TerminalNode {
 	return s.GetToken(GroovyParserIntegerLiteral, 0)
-}
-
-func (s *IntegerLiteralAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIntegerLiteralAlt(s)
-	}
-}
-
-func (s *IntegerLiteralAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIntegerLiteralAlt(s)
-	}
 }
 
 func (s *IntegerLiteralAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -12917,18 +12221,6 @@ func (s *FloatingPointLiteralAltContext) FloatingPointLiteral() antlr.TerminalNo
 	return s.GetToken(GroovyParserFloatingPointLiteral, 0)
 }
 
-func (s *FloatingPointLiteralAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFloatingPointLiteralAlt(s)
-	}
-}
-
-func (s *FloatingPointLiteralAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFloatingPointLiteralAlt(s)
-	}
-}
-
 func (s *FloatingPointLiteralAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -12961,18 +12253,6 @@ func (s *NullLiteralAltContext) NullLiteral() antlr.TerminalNode {
 	return s.GetToken(GroovyParserNullLiteral, 0)
 }
 
-func (s *NullLiteralAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNullLiteralAlt(s)
-	}
-}
-
-func (s *NullLiteralAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNullLiteralAlt(s)
-	}
-}
-
 func (s *NullLiteralAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -13003,18 +12283,6 @@ func (s *BooleanLiteralAltContext) GetRuleContext() antlr.RuleContext {
 
 func (s *BooleanLiteralAltContext) BooleanLiteral() antlr.TerminalNode {
 	return s.GetToken(GroovyParserBooleanLiteral, 0)
-}
-
-func (s *BooleanLiteralAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBooleanLiteralAlt(s)
-	}
-}
-
-func (s *BooleanLiteralAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBooleanLiteralAlt(s)
-	}
 }
 
 func (s *BooleanLiteralAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -13227,18 +12495,6 @@ func (s *GstringContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GstringContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstring(s)
-	}
-}
-
-func (s *GstringContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstring(s)
-	}
-}
-
 func (s *GstringContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -13404,18 +12660,6 @@ func (s *GstringValueContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *GstringValueContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringValue(s)
-	}
-}
-
-func (s *GstringValueContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringValue(s)
-	}
-}
-
 func (s *GstringValueContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -13546,18 +12790,6 @@ func (s *GstringPathContext) GetRuleContext() antlr.RuleContext {
 
 func (s *GstringPathContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *GstringPathContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringPath(s)
-	}
-}
-
-func (s *GstringPathContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringPath(s)
-	}
 }
 
 func (s *GstringPathContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -13753,18 +12985,6 @@ func (s *LambdaExpressionContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LambdaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLambdaExpression(s)
-	}
-}
-
-func (s *LambdaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLambdaExpression(s)
-	}
-}
-
 func (s *LambdaExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -13952,18 +13172,6 @@ func (s *StandardLambdaExpressionContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StandardLambdaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStandardLambdaExpression(s)
-	}
-}
-
-func (s *StandardLambdaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStandardLambdaExpression(s)
-	}
-}
-
 func (s *StandardLambdaExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -14086,18 +13294,6 @@ func (s *LambdaParametersContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LambdaParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLambdaParameters(s)
-	}
-}
-
-func (s *LambdaParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLambdaParameters(s)
-	}
-}
-
 func (s *LambdaParametersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -14215,18 +13411,6 @@ func (s *StandardLambdaParametersContext) GetRuleContext() antlr.RuleContext {
 
 func (s *StandardLambdaParametersContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *StandardLambdaParametersContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStandardLambdaParameters(s)
-	}
-}
-
-func (s *StandardLambdaParametersContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStandardLambdaParameters(s)
-	}
 }
 
 func (s *StandardLambdaParametersContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -14366,18 +13550,6 @@ func (s *LambdaBodyContext) GetRuleContext() antlr.RuleContext {
 
 func (s *LambdaBodyContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *LambdaBodyContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLambdaBody(s)
-	}
-}
-
-func (s *LambdaBodyContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLambdaBody(s)
-	}
 }
 
 func (s *LambdaBodyContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -14593,18 +13765,6 @@ func (s *ClosureContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClosureContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClosure(s)
-	}
-}
-
-func (s *ClosureContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClosure(s)
-	}
-}
-
 func (s *ClosureContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -14792,18 +13952,6 @@ func (s *ClosureOrLambdaExpressionContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClosureOrLambdaExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClosureOrLambdaExpression(s)
-	}
-}
-
-func (s *ClosureOrLambdaExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClosureOrLambdaExpression(s)
-	}
-}
-
 func (s *ClosureOrLambdaExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -14924,18 +14072,6 @@ func (s *BlockStatementsOptContext) GetRuleContext() antlr.RuleContext {
 
 func (s *BlockStatementsOptContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *BlockStatementsOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBlockStatementsOpt(s)
-	}
-}
-
-func (s *BlockStatementsOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBlockStatementsOpt(s)
-	}
 }
 
 func (s *BlockStatementsOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -15115,18 +14251,6 @@ func (s *BlockStatementsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *BlockStatementsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *BlockStatementsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBlockStatements(s)
-	}
-}
-
-func (s *BlockStatementsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBlockStatements(s)
-	}
 }
 
 func (s *BlockStatementsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -15345,18 +14469,6 @@ func (s *AnnotationsOptContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationsOptContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAnnotationsOpt(s)
-	}
-}
-
-func (s *AnnotationsOptContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAnnotationsOpt(s)
-	}
-}
-
 func (s *AnnotationsOptContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -15569,18 +14681,6 @@ func (s *AnnotationContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AnnotationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAnnotation(s)
-	}
-}
-
-func (s *AnnotationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAnnotation(s)
-	}
-}
-
 func (s *AnnotationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -15744,18 +14844,6 @@ func (s *ElementValuesContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValuesContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValues(s)
-	}
-}
-
-func (s *ElementValuesContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValues(s)
-	}
-}
-
 func (s *ElementValuesContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -15875,18 +14963,6 @@ func (s *AnnotationNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *AnnotationNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *AnnotationNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAnnotationName(s)
-	}
-}
-
-func (s *AnnotationNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAnnotationName(s)
-	}
 }
 
 func (s *AnnotationNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -16025,18 +15101,6 @@ func (s *ElementValuePairsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ElementValuePairsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ElementValuePairsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValuePairs(s)
-	}
-}
-
-func (s *ElementValuePairsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValuePairs(s)
-	}
 }
 
 func (s *ElementValuePairsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -16236,18 +15300,6 @@ func (s *ElementValuePairContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ElementValuePairContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValuePair(s)
-	}
-}
-
-func (s *ElementValuePairContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValuePair(s)
-	}
-}
-
 func (s *ElementValuePairContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -16385,18 +15437,6 @@ func (s *ElementValuePairNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ElementValuePairNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ElementValuePairNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValuePairName(s)
-	}
-}
-
-func (s *ElementValuePairNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValuePairName(s)
-	}
 }
 
 func (s *ElementValuePairNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -16552,18 +15592,6 @@ func (s *ElementValueContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ElementValueContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ElementValueContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValue(s)
-	}
-}
-
-func (s *ElementValueContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValue(s)
-	}
 }
 
 func (s *ElementValueContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -16738,18 +15766,6 @@ func (s *ElementValueArrayInitializerContext) GetRuleContext() antlr.RuleContext
 
 func (s *ElementValueArrayInitializerContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ElementValueArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterElementValueArrayInitializer(s)
-	}
-}
-
-func (s *ElementValueArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitElementValueArrayInitializer(s)
-	}
 }
 
 func (s *ElementValueArrayInitializerContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -16962,18 +15978,6 @@ func (s *BlockContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) 
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBlock(s)
-	}
-}
-
-func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBlock(s)
-	}
-}
-
 func (s *BlockContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -17121,18 +16125,6 @@ func (s *BlockStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BlockStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBlockStatement(s)
-	}
-}
-
-func (s *BlockStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBlockStatement(s)
-	}
-}
-
 func (s *BlockStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -17252,18 +16244,6 @@ func (s *LocalVariableDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *LocalVariableDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *LocalVariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLocalVariableDeclaration(s)
-	}
-}
-
-func (s *LocalVariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLocalVariableDeclaration(s)
-	}
 }
 
 func (s *LocalVariableDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -17501,18 +16481,6 @@ func (s *VariableDeclarationContext) GetRuleContext() antlr.RuleContext {
 
 func (s *VariableDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *VariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableDeclaration(s)
-	}
-}
-
-func (s *VariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableDeclaration(s)
-	}
 }
 
 func (s *VariableDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -17757,18 +16725,6 @@ func (s *TypeNamePairsContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *TypeNamePairsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeNamePairs(s)
-	}
-}
-
-func (s *TypeNamePairsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeNamePairs(s)
-	}
-}
-
 func (s *TypeNamePairsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -17928,18 +16884,6 @@ func (s *TypeNamePairContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TypeNamePairContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TypeNamePairContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeNamePair(s)
-	}
-}
-
-func (s *TypeNamePairContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeNamePair(s)
-	}
 }
 
 func (s *TypeNamePairContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -18114,18 +17058,6 @@ func (s *VariableNamesContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *VariableNamesContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterVariableNames(s)
-	}
-}
-
-func (s *VariableNamesContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitVariableNames(s)
-	}
-}
-
 func (s *VariableNamesContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -18285,18 +17217,6 @@ func (s *ConditionalStatementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ConditionalStatementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ConditionalStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterConditionalStatement(s)
-	}
-}
-
-func (s *ConditionalStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitConditionalStatement(s)
-	}
 }
 
 func (s *ConditionalStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -18554,18 +17474,6 @@ func (s *IfElseStatementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *IfElseStatementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *IfElseStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIfElseStatement(s)
-	}
-}
-
-func (s *IfElseStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIfElseStatement(s)
-	}
 }
 
 func (s *IfElseStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -18839,18 +17747,6 @@ func (s *SwitchStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchStatement(s)
-	}
-}
-
-func (s *SwitchStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchStatement(s)
-	}
-}
-
 func (s *SwitchStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -19104,18 +18000,6 @@ func (s *DoWhileStmtAltContext) ExpressionInPar() IExpressionInParContext {
 	return t.(IExpressionInParContext)
 }
 
-func (s *DoWhileStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterDoWhileStmtAlt(s)
-	}
-}
-
-func (s *DoWhileStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitDoWhileStmtAlt(s)
-	}
-}
-
 func (s *DoWhileStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -19216,18 +18100,6 @@ func (s *ForStmtAltContext) Statement() IStatementContext {
 	return t.(IStatementContext)
 }
 
-func (s *ForStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterForStmtAlt(s)
-	}
-}
-
-func (s *ForStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitForStmtAlt(s)
-	}
-}
-
 func (s *ForStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -19306,18 +18178,6 @@ func (s *WhileStmtAltContext) Statement() IStatementContext {
 	}
 
 	return t.(IStatementContext)
-}
-
-func (s *WhileStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterWhileStmtAlt(s)
-	}
-}
-
-func (s *WhileStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitWhileStmtAlt(s)
-	}
 }
 
 func (s *WhileStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -19529,18 +18389,6 @@ func (s *ContinueStatementContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ContinueStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterContinueStatement(s)
-	}
-}
-
-func (s *ContinueStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitContinueStatement(s)
-	}
-}
-
 func (s *ContinueStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -19668,18 +18516,6 @@ func (s *BreakStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *BreakStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBreakStatement(s)
-	}
-}
-
-func (s *BreakStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBreakStatement(s)
-	}
-}
-
 func (s *BreakStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -19805,18 +18641,6 @@ func (s *YieldStatementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *YieldStatementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *YieldStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterYieldStatement(s)
-	}
-}
-
-func (s *YieldStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitYieldStatement(s)
-	}
 }
 
 func (s *YieldStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -20052,18 +18876,6 @@ func (s *TryCatchStatementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TryCatchStatementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TryCatchStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTryCatchStatement(s)
-	}
-}
-
-func (s *TryCatchStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTryCatchStatement(s)
-	}
 }
 
 func (s *TryCatchStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -20351,18 +19163,6 @@ func (s *AssertStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *AssertStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAssertStatement(s)
-	}
-}
-
-func (s *AssertStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAssertStatement(s)
-	}
-}
-
 func (s *AssertStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20530,18 +19330,6 @@ func (s *ConditionalStmtAltContext) ConditionalStatement() IConditionalStatement
 	return t.(IConditionalStatementContext)
 }
 
-func (s *ConditionalStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterConditionalStmtAlt(s)
-	}
-}
-
-func (s *ConditionalStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitConditionalStmtAlt(s)
-	}
-}
-
 func (s *ConditionalStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20572,18 +19360,6 @@ func (s *EmptyStmtAltContext) GetRuleContext() antlr.RuleContext {
 
 func (s *EmptyStmtAltContext) SEMI() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSEMI, 0)
-}
-
-func (s *EmptyStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEmptyStmtAlt(s)
-	}
-}
-
-func (s *EmptyStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEmptyStmtAlt(s)
-	}
 }
 
 func (s *EmptyStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -20630,18 +19406,6 @@ func (s *BlockStmtAltContext) Block() IBlockContext {
 	return t.(IBlockContext)
 }
 
-func (s *BlockStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBlockStmtAlt(s)
-	}
-}
-
-func (s *BlockStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBlockStmtAlt(s)
-	}
-}
-
 func (s *BlockStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20684,18 +19448,6 @@ func (s *TryCatchStmtAltContext) TryCatchStatement() ITryCatchStatementContext {
 	}
 
 	return t.(ITryCatchStatementContext)
-}
-
-func (s *TryCatchStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTryCatchStmtAlt(s)
-	}
-}
-
-func (s *TryCatchStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTryCatchStmtAlt(s)
-	}
 }
 
 func (s *TryCatchStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -20742,18 +19494,6 @@ func (s *BreakStmtAltContext) BreakStatement() IBreakStatementContext {
 	return t.(IBreakStatementContext)
 }
 
-func (s *BreakStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBreakStmtAlt(s)
-	}
-}
-
-func (s *BreakStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBreakStmtAlt(s)
-	}
-}
-
 func (s *BreakStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20796,18 +19536,6 @@ func (s *YieldStmtAltContext) YieldStatement() IYieldStatementContext {
 	}
 
 	return t.(IYieldStatementContext)
-}
-
-func (s *YieldStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterYieldStmtAlt(s)
-	}
-}
-
-func (s *YieldStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitYieldStmtAlt(s)
-	}
 }
 
 func (s *YieldStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -20854,18 +19582,6 @@ func (s *ContinueStmtAltContext) ContinueStatement() IContinueStatementContext {
 	return t.(IContinueStatementContext)
 }
 
-func (s *ContinueStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterContinueStmtAlt(s)
-	}
-}
-
-func (s *ContinueStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitContinueStmtAlt(s)
-	}
-}
-
 func (s *ContinueStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20910,18 +19626,6 @@ func (s *AssertStmtAltContext) AssertStatement() IAssertStatementContext {
 	return t.(IAssertStatementContext)
 }
 
-func (s *AssertStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAssertStmtAlt(s)
-	}
-}
-
-func (s *AssertStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAssertStmtAlt(s)
-	}
-}
-
 func (s *AssertStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -20964,18 +19668,6 @@ func (s *LoopStmtAltContext) LoopStatement() ILoopStatementContext {
 	}
 
 	return t.(ILoopStatementContext)
-}
-
-func (s *LoopStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLoopStmtAlt(s)
-	}
-}
-
-func (s *LoopStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLoopStmtAlt(s)
-	}
 }
 
 func (s *LoopStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -21058,18 +19750,6 @@ func (s *SynchronizedStmtAltContext) Block() IBlockContext {
 	return t.(IBlockContext)
 }
 
-func (s *SynchronizedStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSynchronizedStmtAlt(s)
-	}
-}
-
-func (s *SynchronizedStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSynchronizedStmtAlt(s)
-	}
-}
-
 func (s *SynchronizedStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -21114,18 +19794,6 @@ func (s *ExpressionStmtAltContext) StatementExpression() IStatementExpressionCon
 	return t.(IStatementExpressionContext)
 }
 
-func (s *ExpressionStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterExpressionStmtAlt(s)
-	}
-}
-
-func (s *ExpressionStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitExpressionStmtAlt(s)
-	}
-}
-
 func (s *ExpressionStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -21168,18 +19836,6 @@ func (s *LocalVariableDeclarationStmtAltContext) LocalVariableDeclaration() ILoc
 	}
 
 	return t.(ILocalVariableDeclarationContext)
-}
-
-func (s *LocalVariableDeclarationStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLocalVariableDeclarationStmtAlt(s)
-	}
-}
-
-func (s *LocalVariableDeclarationStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLocalVariableDeclarationStmtAlt(s)
-	}
 }
 
 func (s *LocalVariableDeclarationStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -21230,18 +19886,6 @@ func (s *ReturnStmtAltContext) Expression() IExpressionContext {
 	return t.(IExpressionContext)
 }
 
-func (s *ReturnStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterReturnStmtAlt(s)
-	}
-}
-
-func (s *ReturnStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitReturnStmtAlt(s)
-	}
-}
-
 func (s *ReturnStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -21288,18 +19932,6 @@ func (s *ThrowStmtAltContext) Expression() IExpressionContext {
 	}
 
 	return t.(IExpressionContext)
-}
-
-func (s *ThrowStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterThrowStmtAlt(s)
-	}
-}
-
-func (s *ThrowStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitThrowStmtAlt(s)
-	}
 }
 
 func (s *ThrowStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -21380,18 +20012,6 @@ func (s *LabeledStmtAltContext) Statement() IStatementContext {
 	}
 
 	return t.(IStatementContext)
-}
-
-func (s *LabeledStmtAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLabeledStmtAlt(s)
-	}
-}
-
-func (s *LabeledStmtAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLabeledStmtAlt(s)
-	}
 }
 
 func (s *LabeledStmtAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -21782,18 +20402,6 @@ func (s *CatchClauseContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CatchClauseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCatchClause(s)
-	}
-}
-
-func (s *CatchClauseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCatchClause(s)
-	}
-}
-
 func (s *CatchClauseContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -21976,18 +20584,6 @@ func (s *CatchTypeContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CatchTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCatchType(s)
-	}
-}
-
-func (s *CatchTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCatchType(s)
-	}
-}
-
 func (s *CatchTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -22140,18 +20736,6 @@ func (s *FinallyBlockContext) GetRuleContext() antlr.RuleContext {
 
 func (s *FinallyBlockContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *FinallyBlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFinallyBlock(s)
-	}
-}
-
-func (s *FinallyBlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFinallyBlock(s)
-	}
 }
 
 func (s *FinallyBlockContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -22322,18 +20906,6 @@ func (s *ResourcesContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ResourcesContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ResourcesContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterResources(s)
-	}
-}
-
-func (s *ResourcesContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitResources(s)
-	}
 }
 
 func (s *ResourcesContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -22539,18 +21111,6 @@ func (s *ResourceListContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ResourceListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterResourceList(s)
-	}
-}
-
-func (s *ResourceListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitResourceList(s)
-	}
-}
-
 func (s *ResourceListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -22701,18 +21261,6 @@ func (s *ResourceContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ResourceContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ResourceContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterResource(s)
-	}
-}
-
-func (s *ResourceContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitResource(s)
-	}
 }
 
 func (s *ResourceContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -22922,18 +21470,6 @@ func (s *SwitchBlockStatementGroupContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchBlockStatementGroupContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchBlockStatementGroup(s)
-	}
-}
-
-func (s *SwitchBlockStatementGroupContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchBlockStatementGroup(s)
-	}
-}
-
 func (s *SwitchBlockStatementGroupContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -23090,18 +21626,6 @@ func (s *SwitchLabelContext) GetRuleContext() antlr.RuleContext {
 
 func (s *SwitchLabelContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SwitchLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchLabel(s)
-	}
-}
-
-func (s *SwitchLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchLabel(s)
-	}
 }
 
 func (s *SwitchLabelContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -23269,18 +21793,6 @@ func (s *ForControlContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ForControlContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ForControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterForControl(s)
-	}
-}
-
-func (s *ForControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitForControl(s)
-	}
 }
 
 func (s *ForControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -23465,18 +21977,6 @@ func (s *EnhancedForControlContext) ToStringTree(ruleNames []string, recog antlr
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnhancedForControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnhancedForControl(s)
-	}
-}
-
-func (s *EnhancedForControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnhancedForControl(s)
-	}
-}
-
 func (s *EnhancedForControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -23656,18 +22156,6 @@ func (s *ClassicalForControlContext) ToStringTree(ruleNames []string, recog antl
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ClassicalForControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassicalForControl(s)
-	}
-}
-
-func (s *ClassicalForControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassicalForControl(s)
-	}
-}
-
 func (s *ClassicalForControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -23835,18 +22323,6 @@ func (s *ForInitContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ForInitContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterForInit(s)
-	}
-}
-
-func (s *ForInitContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitForInit(s)
-	}
-}
-
 func (s *ForInitContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -23966,18 +22442,6 @@ func (s *ForUpdateContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ForUpdateContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ForUpdateContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterForUpdate(s)
-	}
-}
-
-func (s *ForUpdateContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitForUpdate(s)
-	}
 }
 
 func (s *ForUpdateContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -24104,18 +22568,6 @@ func (s *CastParExpressionContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CastParExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCastParExpression(s)
-	}
-}
-
-func (s *CastParExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCastParExpression(s)
-	}
-}
-
 func (s *CastParExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -24228,18 +22680,6 @@ func (s *ParExpressionContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ParExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ParExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterParExpression(s)
-	}
-}
-
-func (s *ParExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitParExpression(s)
-	}
 }
 
 func (s *ParExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -24364,18 +22804,6 @@ func (s *ExpressionInParContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ExpressionInParContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ExpressionInParContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterExpressionInPar(s)
-	}
-}
-
-func (s *ExpressionInParContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitExpressionInPar(s)
-	}
 }
 
 func (s *ExpressionInParContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -24584,18 +23012,6 @@ func (s *ExpressionListContext) ToStringTree(ruleNames []string, recog antlr.Rec
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterExpressionList(s)
-	}
-}
-
-func (s *ExpressionListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitExpressionList(s)
-	}
-}
-
 func (s *ExpressionListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -24757,18 +23173,6 @@ func (s *ExpressionListElementContext) ToStringTree(ruleNames []string, recog an
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ExpressionListElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterExpressionListElement(s)
-	}
-}
-
-func (s *ExpressionListElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitExpressionListElement(s)
-	}
-}
-
 func (s *ExpressionListElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -24902,18 +23306,6 @@ func (s *EnhancedStatementExpressionContext) GetRuleContext() antlr.RuleContext 
 
 func (s *EnhancedStatementExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *EnhancedStatementExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnhancedStatementExpression(s)
-	}
-}
-
-func (s *EnhancedStatementExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnhancedStatementExpression(s)
-	}
 }
 
 func (s *EnhancedStatementExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -25055,18 +23447,6 @@ func (s *CommandExprAltContext) CommandExpression() ICommandExpressionContext {
 	return t.(ICommandExpressionContext)
 }
 
-func (s *CommandExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCommandExprAlt(s)
-	}
-}
-
-func (s *CommandExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCommandExprAlt(s)
-	}
-}
-
 func (s *CommandExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -25189,18 +23569,6 @@ func (s *PostfixExpressionContext) GetRuleContext() antlr.RuleContext {
 
 func (s *PostfixExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *PostfixExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPostfixExpression(s)
-	}
-}
-
-func (s *PostfixExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPostfixExpression(s)
-	}
 }
 
 func (s *PostfixExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -25432,18 +23800,6 @@ func (s *SwitchExpressionContext) GetRuleContext() antlr.RuleContext {
 
 func (s *SwitchExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SwitchExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchExpression(s)
-	}
-}
-
-func (s *SwitchExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchExpression(s)
-	}
 }
 
 func (s *SwitchExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -25699,18 +24055,6 @@ func (s *SwitchBlockStatementExpressionGroupContext) ToStringTree(ruleNames []st
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *SwitchBlockStatementExpressionGroupContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchBlockStatementExpressionGroup(s)
-	}
-}
-
-func (s *SwitchBlockStatementExpressionGroupContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchBlockStatementExpressionGroup(s)
-	}
-}
-
 func (s *SwitchBlockStatementExpressionGroupContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -25874,18 +24218,6 @@ func (s *SwitchExpressionLabelContext) GetRuleContext() antlr.RuleContext {
 
 func (s *SwitchExpressionLabelContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SwitchExpressionLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchExpressionLabel(s)
-	}
-}
-
-func (s *SwitchExpressionLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchExpressionLabel(s)
-	}
 }
 
 func (s *SwitchExpressionLabelContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -26059,18 +24391,6 @@ func (s *PostfixExprAltContext) PostfixExpression() IPostfixExpressionContext {
 	return t.(IPostfixExpressionContext)
 }
 
-func (s *PostfixExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPostfixExprAlt(s)
-	}
-}
-
-func (s *PostfixExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPostfixExprAlt(s)
-	}
-}
-
 func (s *PostfixExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -26137,18 +24457,6 @@ func (s *UnaryNotExprAltContext) BITNOT() antlr.TerminalNode {
 
 func (s *UnaryNotExprAltContext) NOT() antlr.TerminalNode {
 	return s.GetToken(GroovyParserNOT, 0)
-}
-
-func (s *UnaryNotExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterUnaryNotExprAlt(s)
-	}
-}
-
-func (s *UnaryNotExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitUnaryNotExprAlt(s)
-	}
 }
 
 func (s *UnaryNotExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -26323,18 +24631,6 @@ func (s *ShiftExprAltContext) RANGE_EXCLUSIVE_FULL() antlr.TerminalNode {
 	return s.GetToken(GroovyParserRANGE_EXCLUSIVE_FULL, 0)
 }
 
-func (s *ShiftExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterShiftExprAlt(s)
-	}
-}
-
-func (s *ShiftExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitShiftExprAlt(s)
-	}
-}
-
 func (s *ShiftExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -26464,18 +24760,6 @@ func (s *ImplicationExprAltContext) IMPLIES() antlr.TerminalNode {
 	return s.GetToken(GroovyParserIMPLIES, 0)
 }
 
-func (s *ImplicationExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterImplicationExprAlt(s)
-	}
-}
-
-func (s *ImplicationExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitImplicationExprAlt(s)
-	}
-}
-
 func (s *ImplicationExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -26536,18 +24820,6 @@ func (s *CastExprAltContext) CastOperandExpression() ICastOperandExpressionConte
 	return t.(ICastOperandExpressionContext)
 }
 
-func (s *CastExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCastExprAlt(s)
-	}
-}
-
-func (s *CastExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCastExprAlt(s)
-	}
-}
-
 func (s *CastExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -26590,18 +24862,6 @@ func (s *SwitchExprAltContext) SwitchExpression() ISwitchExpressionContext {
 	}
 
 	return t.(ISwitchExpressionContext)
-}
-
-func (s *SwitchExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSwitchExprAlt(s)
-	}
-}
-
-func (s *SwitchExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSwitchExprAlt(s)
-	}
 }
 
 func (s *SwitchExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -26722,18 +24982,6 @@ func (s *MultipleAssignmentExprAltContext) StatementExpression() IStatementExpre
 	}
 
 	return t.(IStatementExpressionContext)
-}
-
-func (s *MultipleAssignmentExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMultipleAssignmentExprAlt(s)
-	}
-}
-
-func (s *MultipleAssignmentExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMultipleAssignmentExprAlt(s)
-	}
 }
 
 func (s *MultipleAssignmentExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -26865,18 +25113,6 @@ func (s *ExclusiveOrExprAltContext) XOR() antlr.TerminalNode {
 	return s.GetToken(GroovyParserXOR, 0)
 }
 
-func (s *ExclusiveOrExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterExclusiveOrExprAlt(s)
-	}
-}
-
-func (s *ExclusiveOrExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitExclusiveOrExprAlt(s)
-	}
-}
-
 func (s *ExclusiveOrExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -26983,18 +25219,6 @@ func (s *AdditiveExprAltContext) ADD() antlr.TerminalNode {
 
 func (s *AdditiveExprAltContext) SUB() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSUB, 0)
-}
-
-func (s *AdditiveExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAdditiveExprAlt(s)
-	}
-}
-
-func (s *AdditiveExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAdditiveExprAlt(s)
-	}
 }
 
 func (s *AdditiveExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -27128,18 +25352,6 @@ func (s *RegexExprAltContext) REGEX_FIND() antlr.TerminalNode {
 
 func (s *RegexExprAltContext) REGEX_MATCH() antlr.TerminalNode {
 	return s.GetToken(GroovyParserREGEX_MATCH, 0)
-}
-
-func (s *RegexExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterRegexExprAlt(s)
-	}
-}
-
-func (s *RegexExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitRegexExprAlt(s)
-	}
 }
 
 func (s *RegexExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -27279,18 +25491,6 @@ func (s *ConditionalExprAltContext) ELVIS() antlr.TerminalNode {
 	return s.GetToken(GroovyParserELVIS, 0)
 }
 
-func (s *ConditionalExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterConditionalExprAlt(s)
-	}
-}
-
-func (s *ConditionalExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitConditionalExprAlt(s)
-	}
-}
-
 func (s *ConditionalExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -27393,18 +25593,6 @@ func (s *PowerExprAltContext) Expression(i int) IExpressionContext {
 
 func (s *PowerExprAltContext) POWER() antlr.TerminalNode {
 	return s.GetToken(GroovyParserPOWER, 0)
-}
-
-func (s *PowerExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPowerExprAlt(s)
-	}
-}
-
-func (s *PowerExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPowerExprAlt(s)
-	}
 }
 
 func (s *PowerExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -27584,18 +25772,6 @@ func (s *RelationalExprAltContext) NOT_INSTANCEOF() antlr.TerminalNode {
 	return s.GetToken(GroovyParserNOT_INSTANCEOF, 0)
 }
 
-func (s *RelationalExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterRelationalExprAlt(s)
-	}
-}
-
-func (s *RelationalExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitRelationalExprAlt(s)
-	}
-}
-
 func (s *RelationalExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -27723,18 +25899,6 @@ func (s *LogicalAndExprAltContext) Expression(i int) IExpressionContext {
 
 func (s *LogicalAndExprAltContext) AND() antlr.TerminalNode {
 	return s.GetToken(GroovyParserAND, 0)
-}
-
-func (s *LogicalAndExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLogicalAndExprAlt(s)
-	}
-}
-
-func (s *LogicalAndExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLogicalAndExprAlt(s)
-	}
 }
 
 func (s *LogicalAndExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -27909,18 +26073,6 @@ func (s *AssignmentExprAltContext) ELVIS_ASSIGN() antlr.TerminalNode {
 	return s.GetToken(GroovyParserELVIS_ASSIGN, 0)
 }
 
-func (s *AssignmentExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAssignmentExprAlt(s)
-	}
-}
-
-func (s *AssignmentExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAssignmentExprAlt(s)
-	}
-}
-
 func (s *AssignmentExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -27984,18 +26136,6 @@ func (s *UnaryAddExprAltContext) ADD() antlr.TerminalNode {
 
 func (s *UnaryAddExprAltContext) SUB() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSUB, 0)
-}
-
-func (s *UnaryAddExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterUnaryAddExprAlt(s)
-	}
-}
-
-func (s *UnaryAddExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitUnaryAddExprAlt(s)
-	}
 }
 
 func (s *UnaryAddExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -28135,18 +26275,6 @@ func (s *MultiplicativeExprAltContext) MOD() antlr.TerminalNode {
 	return s.GetToken(GroovyParserMOD, 0)
 }
 
-func (s *MultiplicativeExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMultiplicativeExprAlt(s)
-	}
-}
-
-func (s *MultiplicativeExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMultiplicativeExprAlt(s)
-	}
-}
-
 func (s *MultiplicativeExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -28276,18 +26404,6 @@ func (s *InclusiveOrExprAltContext) BITOR() antlr.TerminalNode {
 	return s.GetToken(GroovyParserBITOR, 0)
 }
 
-func (s *InclusiveOrExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterInclusiveOrExprAlt(s)
-	}
-}
-
-func (s *InclusiveOrExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitInclusiveOrExprAlt(s)
-	}
-}
-
 func (s *InclusiveOrExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -28415,18 +26531,6 @@ func (s *LogicalOrExprAltContext) Expression(i int) IExpressionContext {
 
 func (s *LogicalOrExprAltContext) OR() antlr.TerminalNode {
 	return s.GetToken(GroovyParserOR, 0)
-}
-
-func (s *LogicalOrExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLogicalOrExprAlt(s)
-	}
-}
-
-func (s *LogicalOrExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLogicalOrExprAlt(s)
-	}
 }
 
 func (s *LogicalOrExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -28574,18 +26678,6 @@ func (s *EqualityExprAltContext) SPACESHIP() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSPACESHIP, 0)
 }
 
-func (s *EqualityExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEqualityExprAlt(s)
-	}
-}
-
-func (s *EqualityExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEqualityExprAlt(s)
-	}
-}
-
 func (s *EqualityExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -28713,18 +26805,6 @@ func (s *AndExprAltContext) Expression(i int) IExpressionContext {
 
 func (s *AndExprAltContext) BITAND() antlr.TerminalNode {
 	return s.GetToken(GroovyParserBITAND, 0)
-}
-
-func (s *AndExprAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAndExprAlt(s)
-	}
-}
-
-func (s *AndExprAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAndExprAlt(s)
-	}
 }
 
 func (s *AndExprAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -29846,18 +27926,6 @@ func (s *UnaryNotExprAltOperandContext) NOT() antlr.TerminalNode {
 	return s.GetToken(GroovyParserNOT, 0)
 }
 
-func (s *UnaryNotExprAltOperandContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterUnaryNotExprAltOperand(s)
-	}
-}
-
-func (s *UnaryNotExprAltOperandContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitUnaryNotExprAltOperand(s)
-	}
-}
-
 func (s *UnaryNotExprAltOperandContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -29923,18 +27991,6 @@ func (s *UnaryAddExprAltOperandContext) SUB() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSUB, 0)
 }
 
-func (s *UnaryAddExprAltOperandContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterUnaryAddExprAltOperand(s)
-	}
-}
-
-func (s *UnaryAddExprAltOperandContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitUnaryAddExprAltOperand(s)
-	}
-}
-
 func (s *UnaryAddExprAltOperandContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -29977,18 +28033,6 @@ func (s *PostfixExprAltOperandContext) PostfixExpression() IPostfixExpressionCon
 	}
 
 	return t.(IPostfixExpressionContext)
-}
-
-func (s *PostfixExprAltOperandContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPostfixExprAltOperand(s)
-	}
-}
-
-func (s *PostfixExprAltOperandContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPostfixExprAltOperand(s)
-	}
 }
 
 func (s *PostfixExprAltOperandContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -30049,18 +28093,6 @@ func (s *CastExprAltOperandContext) CastOperandExpression() ICastOperandExpressi
 	}
 
 	return t.(ICastOperandExpressionContext)
-}
-
-func (s *CastExprAltOperandContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCastExprAltOperand(s)
-	}
-}
-
-func (s *CastExprAltOperandContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCastExprAltOperand(s)
-	}
 }
 
 func (s *CastExprAltOperandContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -30301,18 +28333,6 @@ func (s *CommandExpressionContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CommandExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCommandExpression(s)
-	}
-}
-
-func (s *CommandExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCommandExpression(s)
-	}
-}
-
 func (s *CommandExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -30520,18 +28540,6 @@ func (s *CommandArgumentContext) GetRuleContext() antlr.RuleContext {
 
 func (s *CommandArgumentContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *CommandArgumentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCommandArgument(s)
-	}
-}
-
-func (s *CommandArgumentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCommandArgument(s)
-	}
 }
 
 func (s *CommandArgumentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -30748,18 +28756,6 @@ func (s *PathExpressionContext) GetRuleContext() antlr.RuleContext {
 
 func (s *PathExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *PathExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPathExpression(s)
-	}
-}
-
-func (s *PathExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPathExpression(s)
-	}
 }
 
 func (s *PathExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -31121,18 +29117,6 @@ func (s *PathElementContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *PathElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterPathElement(s)
-	}
-}
-
-func (s *PathElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitPathElement(s)
-	}
-}
-
 func (s *PathElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -31471,18 +29455,6 @@ func (s *NamePartContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NamePartContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamePart(s)
-	}
-}
-
-func (s *NamePartContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamePart(s)
-	}
-}
-
 func (s *NamePartContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -31632,18 +29604,6 @@ func (s *DynamicMemberNameContext) ToStringTree(ruleNames []string, recog antlr.
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DynamicMemberNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterDynamicMemberName(s)
-	}
-}
-
-func (s *DynamicMemberNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitDynamicMemberName(s)
-	}
-}
-
 func (s *DynamicMemberNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -31779,18 +29739,6 @@ func (s *IndexPropertyArgsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *IndexPropertyArgsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *IndexPropertyArgsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIndexPropertyArgs(s)
-	}
-}
-
-func (s *IndexPropertyArgsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIndexPropertyArgs(s)
-	}
 }
 
 func (s *IndexPropertyArgsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -31942,18 +29890,6 @@ func (s *NamedPropertyArgsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *NamedPropertyArgsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *NamedPropertyArgsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedPropertyArgs(s)
-	}
-}
-
-func (s *NamedPropertyArgsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedPropertyArgs(s)
-	}
 }
 
 func (s *NamedPropertyArgsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32120,18 +30056,6 @@ func (s *MapPrmrAltContext) Map_() IMapContext {
 	return t.(IMapContext)
 }
 
-func (s *MapPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMapPrmrAlt(s)
-	}
-}
-
-func (s *MapPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMapPrmrAlt(s)
-	}
-}
-
 func (s *MapPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32176,18 +30100,6 @@ func (s *GstringPrmrAltContext) Gstring() IGstringContext {
 	return t.(IGstringContext)
 }
 
-func (s *GstringPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringPrmrAlt(s)
-	}
-}
-
-func (s *GstringPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringPrmrAlt(s)
-	}
-}
-
 func (s *GstringPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32230,18 +30142,6 @@ func (s *ListPrmrAltContext) List() IListContext {
 	}
 
 	return t.(IListContext)
-}
-
-func (s *ListPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterListPrmrAlt(s)
-	}
-}
-
-func (s *ListPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitListPrmrAlt(s)
-	}
 }
 
 func (s *ListPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32308,18 +30208,6 @@ func (s *NewPrmrAltContext) Creator() ICreatorContext {
 	return t.(ICreatorContext)
 }
 
-func (s *NewPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNewPrmrAlt(s)
-	}
-}
-
-func (s *NewPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNewPrmrAlt(s)
-	}
-}
-
 func (s *NewPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32364,18 +30252,6 @@ func (s *LiteralPrmrAltContext) Literal() ILiteralContext {
 	return t.(ILiteralContext)
 }
 
-func (s *LiteralPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLiteralPrmrAlt(s)
-	}
-}
-
-func (s *LiteralPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLiteralPrmrAlt(s)
-	}
-}
-
 func (s *LiteralPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32406,18 +30282,6 @@ func (s *ThisPrmrAltContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ThisPrmrAltContext) THIS() antlr.TerminalNode {
 	return s.GetToken(GroovyParserTHIS, 0)
-}
-
-func (s *ThisPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterThisPrmrAlt(s)
-	}
-}
-
-func (s *ThisPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitThisPrmrAlt(s)
-	}
 }
 
 func (s *ThisPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32464,18 +30328,6 @@ func (s *ClosureOrLambdaExpressionPrmrAltContext) ClosureOrLambdaExpression() IC
 	return t.(IClosureOrLambdaExpressionContext)
 }
 
-func (s *ClosureOrLambdaExpressionPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClosureOrLambdaExpressionPrmrAlt(s)
-	}
-}
-
-func (s *ClosureOrLambdaExpressionPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClosureOrLambdaExpressionPrmrAlt(s)
-	}
-}
-
 func (s *ClosureOrLambdaExpressionPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32518,18 +30370,6 @@ func (s *BuiltInTypePrmrAltContext) BuiltInType() IBuiltInTypeContext {
 	}
 
 	return t.(IBuiltInTypeContext)
-}
-
-func (s *BuiltInTypePrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBuiltInTypePrmrAlt(s)
-	}
-}
-
-func (s *BuiltInTypePrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBuiltInTypePrmrAlt(s)
-	}
 }
 
 func (s *BuiltInTypePrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32592,18 +30432,6 @@ func (s *IdentifierPrmrAltContext) TypeArguments() ITypeArgumentsContext {
 	return t.(ITypeArgumentsContext)
 }
 
-func (s *IdentifierPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIdentifierPrmrAlt(s)
-	}
-}
-
-func (s *IdentifierPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIdentifierPrmrAlt(s)
-	}
-}
-
 func (s *IdentifierPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -32634,18 +30462,6 @@ func (s *SuperPrmrAltContext) GetRuleContext() antlr.RuleContext {
 
 func (s *SuperPrmrAltContext) SUPER() antlr.TerminalNode {
 	return s.GetToken(GroovyParserSUPER, 0)
-}
-
-func (s *SuperPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSuperPrmrAlt(s)
-	}
-}
-
-func (s *SuperPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSuperPrmrAlt(s)
-	}
 }
 
 func (s *SuperPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32690,18 +30506,6 @@ func (s *ParenPrmrAltContext) ParExpression() IParExpressionContext {
 	}
 
 	return t.(IParExpressionContext)
-}
-
-func (s *ParenPrmrAltContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterParenPrmrAlt(s)
-	}
-}
-
-func (s *ParenPrmrAltContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitParenPrmrAlt(s)
-	}
 }
 
 func (s *ParenPrmrAltContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -32949,18 +30753,6 @@ func (s *LiteralPrmrAltNamedPropertyArgPrimaryContext) Literal() ILiteralContext
 	return t.(ILiteralContext)
 }
 
-func (s *LiteralPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLiteralPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *LiteralPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLiteralPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
 func (s *LiteralPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33003,18 +30795,6 @@ func (s *GstringPrmrAltNamedPropertyArgPrimaryContext) Gstring() IGstringContext
 	}
 
 	return t.(IGstringContext)
-}
-
-func (s *GstringPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *GstringPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringPrmrAltNamedPropertyArgPrimary(s)
-	}
 }
 
 func (s *GstringPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -33061,18 +30841,6 @@ func (s *MapPrmrAltNamedPropertyArgPrimaryContext) Map_() IMapContext {
 	return t.(IMapContext)
 }
 
-func (s *MapPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMapPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *MapPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMapPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
 func (s *MapPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33115,18 +30883,6 @@ func (s *IdentifierPrmrAltNamedPropertyArgPrimaryContext) Identifier() IIdentifi
 	}
 
 	return t.(IIdentifierContext)
-}
-
-func (s *IdentifierPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIdentifierPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *IdentifierPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIdentifierPrmrAltNamedPropertyArgPrimary(s)
-	}
 }
 
 func (s *IdentifierPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -33173,18 +30929,6 @@ func (s *ParenPrmrAltNamedPropertyArgPrimaryContext) ParExpression() IParExpress
 	return t.(IParExpressionContext)
 }
 
-func (s *ParenPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterParenPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *ParenPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitParenPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
 func (s *ParenPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33227,18 +30971,6 @@ func (s *ListPrmrAltNamedPropertyArgPrimaryContext) List() IListContext {
 	}
 
 	return t.(IListContext)
-}
-
-func (s *ListPrmrAltNamedPropertyArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterListPrmrAltNamedPropertyArgPrimary(s)
-	}
-}
-
-func (s *ListPrmrAltNamedPropertyArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitListPrmrAltNamedPropertyArgPrimary(s)
-	}
 }
 
 func (s *ListPrmrAltNamedPropertyArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -33414,18 +31146,6 @@ func (s *LiteralPrmrAltNamedArgPrimaryContext) Literal() ILiteralContext {
 	return t.(ILiteralContext)
 }
 
-func (s *LiteralPrmrAltNamedArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLiteralPrmrAltNamedArgPrimary(s)
-	}
-}
-
-func (s *LiteralPrmrAltNamedArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLiteralPrmrAltNamedArgPrimary(s)
-	}
-}
-
 func (s *LiteralPrmrAltNamedArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33470,18 +31190,6 @@ func (s *GstringPrmrAltNamedArgPrimaryContext) Gstring() IGstringContext {
 	return t.(IGstringContext)
 }
 
-func (s *GstringPrmrAltNamedArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringPrmrAltNamedArgPrimary(s)
-	}
-}
-
-func (s *GstringPrmrAltNamedArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringPrmrAltNamedArgPrimary(s)
-	}
-}
-
 func (s *GstringPrmrAltNamedArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33524,18 +31232,6 @@ func (s *IdentifierPrmrAltNamedArgPrimaryContext) Identifier() IIdentifierContex
 	}
 
 	return t.(IIdentifierContext)
-}
-
-func (s *IdentifierPrmrAltNamedArgPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIdentifierPrmrAltNamedArgPrimary(s)
-	}
-}
-
-func (s *IdentifierPrmrAltNamedArgPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIdentifierPrmrAltNamedArgPrimary(s)
-	}
 }
 
 func (s *IdentifierPrmrAltNamedArgPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -33688,18 +31384,6 @@ func (s *IdentifierPrmrAltCommandPrimaryContext) Identifier() IIdentifierContext
 	return t.(IIdentifierContext)
 }
 
-func (s *IdentifierPrmrAltCommandPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIdentifierPrmrAltCommandPrimary(s)
-	}
-}
-
-func (s *IdentifierPrmrAltCommandPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIdentifierPrmrAltCommandPrimary(s)
-	}
-}
-
 func (s *IdentifierPrmrAltCommandPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33744,18 +31428,6 @@ func (s *LiteralPrmrAltCommandPrimaryContext) Literal() ILiteralContext {
 	return t.(ILiteralContext)
 }
 
-func (s *LiteralPrmrAltCommandPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterLiteralPrmrAltCommandPrimary(s)
-	}
-}
-
-func (s *LiteralPrmrAltCommandPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitLiteralPrmrAltCommandPrimary(s)
-	}
-}
-
 func (s *LiteralPrmrAltCommandPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -33798,18 +31470,6 @@ func (s *GstringPrmrAltCommandPrimaryContext) Gstring() IGstringContext {
 	}
 
 	return t.(IGstringContext)
-}
-
-func (s *GstringPrmrAltCommandPrimaryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterGstringPrmrAltCommandPrimary(s)
-	}
-}
-
-func (s *GstringPrmrAltCommandPrimaryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitGstringPrmrAltCommandPrimary(s)
-	}
 }
 
 func (s *GstringPrmrAltCommandPrimaryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -33957,18 +31617,6 @@ func (s *ListContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ListContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterList(s)
-	}
-}
-
-func (s *ListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitList(s)
-	}
 }
 
 func (s *ListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -34135,18 +31783,6 @@ func (s *MapContext) GetRuleContext() antlr.RuleContext {
 
 func (s *MapContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *MapContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMap(s)
-	}
-}
-
-func (s *MapContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMap(s)
-	}
 }
 
 func (s *MapContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -34346,18 +31982,6 @@ func (s *MapEntryListContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MapEntryListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMapEntryList(s)
-	}
-}
-
-func (s *MapEntryListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMapEntryList(s)
-	}
-}
-
 func (s *MapEntryListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -34531,18 +32155,6 @@ func (s *NamedPropertyArgListContext) GetRuleContext() antlr.RuleContext {
 
 func (s *NamedPropertyArgListContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *NamedPropertyArgListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedPropertyArgList(s)
-	}
-}
-
-func (s *NamedPropertyArgListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedPropertyArgList(s)
-	}
 }
 
 func (s *NamedPropertyArgListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -34719,18 +32331,6 @@ func (s *MapEntryContext) GetRuleContext() antlr.RuleContext {
 
 func (s *MapEntryContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *MapEntryContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMapEntry(s)
-	}
-}
-
-func (s *MapEntryContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMapEntry(s)
-	}
 }
 
 func (s *MapEntryContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -34935,18 +32535,6 @@ func (s *NamedPropertyArgContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NamedPropertyArgContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedPropertyArg(s)
-	}
-}
-
-func (s *NamedPropertyArgContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedPropertyArg(s)
-	}
-}
-
 func (s *NamedPropertyArgContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -35149,18 +32737,6 @@ func (s *NamedArgContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NamedArgContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedArg(s)
-	}
-}
-
-func (s *NamedArgContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedArg(s)
-	}
-}
-
 func (s *NamedArgContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -35336,18 +32912,6 @@ func (s *MapEntryLabelContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *MapEntryLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterMapEntryLabel(s)
-	}
-}
-
-func (s *MapEntryLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitMapEntryLabel(s)
-	}
-}
-
 func (s *MapEntryLabelContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -35486,18 +33050,6 @@ func (s *NamedPropertyArgLabelContext) ToStringTree(ruleNames []string, recog an
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NamedPropertyArgLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedPropertyArgLabel(s)
-	}
-}
-
-func (s *NamedPropertyArgLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedPropertyArgLabel(s)
-	}
-}
-
 func (s *NamedPropertyArgLabelContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -35634,18 +33186,6 @@ func (s *NamedArgLabelContext) GetRuleContext() antlr.RuleContext {
 
 func (s *NamedArgLabelContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *NamedArgLabelContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNamedArgLabel(s)
-	}
-}
-
-func (s *NamedArgLabelContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNamedArgLabel(s)
-	}
 }
 
 func (s *NamedArgLabelContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -35893,18 +33433,6 @@ func (s *CreatorContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *CreatorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCreator(s)
-	}
-}
-
-func (s *CreatorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCreator(s)
-	}
-}
-
 func (s *CreatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -36113,18 +33641,6 @@ func (s *DimContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) st
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *DimContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterDim(s)
-	}
-}
-
-func (s *DimContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitDim(s)
-	}
-}
-
 func (s *DimContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -36308,18 +33824,6 @@ func (s *ArrayInitializerContext) ToStringTree(ruleNames []string, recog antlr.R
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArrayInitializerContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterArrayInitializer(s)
-	}
-}
-
-func (s *ArrayInitializerContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitArrayInitializer(s)
-	}
-}
-
 func (s *ArrayInitializerContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -36465,18 +33969,6 @@ func (s *AnonymousInnerClassDeclarationContext) GetRuleContext() antlr.RuleConte
 
 func (s *AnonymousInnerClassDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *AnonymousInnerClassDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterAnonymousInnerClassDeclaration(s)
-	}
-}
-
-func (s *AnonymousInnerClassDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitAnonymousInnerClassDeclaration(s)
-	}
 }
 
 func (s *AnonymousInnerClassDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -36630,18 +34122,6 @@ func (s *CreatedNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *CreatedNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *CreatedNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterCreatedName(s)
-	}
-}
-
-func (s *CreatedNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitCreatedName(s)
-	}
 }
 
 func (s *CreatedNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -36838,18 +34318,6 @@ func (s *NonWildcardTypeArgumentsContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *NonWildcardTypeArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNonWildcardTypeArguments(s)
-	}
-}
-
-func (s *NonWildcardTypeArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNonWildcardTypeArguments(s)
-	}
-}
-
 func (s *NonWildcardTypeArgumentsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -36984,18 +34452,6 @@ func (s *TypeArgumentsOrDiamondContext) GetRuleContext() antlr.RuleContext {
 
 func (s *TypeArgumentsOrDiamondContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *TypeArgumentsOrDiamondContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterTypeArgumentsOrDiamond(s)
-	}
-}
-
-func (s *TypeArgumentsOrDiamondContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitTypeArgumentsOrDiamond(s)
-	}
 }
 
 func (s *TypeArgumentsOrDiamondContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -37156,18 +34612,6 @@ func (s *ArgumentsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ArgumentsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ArgumentsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterArguments(s)
-	}
-}
-
-func (s *ArgumentsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitArguments(s)
-	}
 }
 
 func (s *ArgumentsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -37408,18 +34852,6 @@ func (s *ArgumentListContext) ToStringTree(ruleNames []string, recog antlr.Recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *ArgumentListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterArgumentList(s)
-	}
-}
-
-func (s *ArgumentListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitArgumentList(s)
-	}
-}
-
 func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -37642,18 +35074,6 @@ func (s *EnhancedArgumentListInParContext) ToStringTree(ruleNames []string, reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnhancedArgumentListInParContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnhancedArgumentListInPar(s)
-	}
-}
-
-func (s *EnhancedArgumentListInParContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnhancedArgumentListInPar(s)
-	}
-}
-
 func (s *EnhancedArgumentListInParContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -37814,18 +35234,6 @@ func (s *FirstArgumentListElementContext) ToStringTree(ruleNames []string, recog
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *FirstArgumentListElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterFirstArgumentListElement(s)
-	}
-}
-
-func (s *FirstArgumentListElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitFirstArgumentListElement(s)
-	}
-}
-
 func (s *FirstArgumentListElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -37962,18 +35370,6 @@ func (s *ArgumentListElementContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ArgumentListElementContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ArgumentListElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterArgumentListElement(s)
-	}
-}
-
-func (s *ArgumentListElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitArgumentListElement(s)
-	}
 }
 
 func (s *ArgumentListElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -38131,18 +35527,6 @@ func (s *EnhancedArgumentListElementContext) ToStringTree(ruleNames []string, re
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *EnhancedArgumentListElementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterEnhancedArgumentListElement(s)
-	}
-}
-
-func (s *EnhancedArgumentListElementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitEnhancedArgumentListElement(s)
-	}
-}
-
 func (s *EnhancedArgumentListElementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -38259,18 +35643,6 @@ func (s *StringLiteralContext) ToStringTree(ruleNames []string, recog antlr.Reco
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *StringLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterStringLiteral(s)
-	}
-}
-
-func (s *StringLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitStringLiteral(s)
-	}
-}
-
 func (s *StringLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -38363,18 +35735,6 @@ func (s *ClassNameContext) GetRuleContext() antlr.RuleContext {
 
 func (s *ClassNameContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *ClassNameContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterClassName(s)
-	}
-}
-
-func (s *ClassNameContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitClassName(s)
-	}
 }
 
 func (s *ClassNameContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -38516,18 +35876,6 @@ func (s *IdentifierContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *IdentifierContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterIdentifier(s)
-	}
-}
-
-func (s *IdentifierContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitIdentifier(s)
-	}
-}
-
 func (s *IdentifierContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -38630,18 +35978,6 @@ func (s *BuiltInTypeContext) GetRuleContext() antlr.RuleContext {
 
 func (s *BuiltInTypeContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *BuiltInTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterBuiltInType(s)
-	}
-}
-
-func (s *BuiltInTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitBuiltInType(s)
-	}
 }
 
 func (s *BuiltInTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -39018,18 +36354,6 @@ func (s *KeywordsContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *KeywordsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterKeywords(s)
-	}
-}
-
-func (s *KeywordsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitKeywords(s)
-	}
-}
-
 func (s *KeywordsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -39129,18 +36453,6 @@ func (s *RparenContext) ToStringTree(ruleNames []string, recog antlr.Recognizer)
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *RparenContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterRparen(s)
-	}
-}
-
-func (s *RparenContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitRparen(s)
-	}
-}
-
 func (s *RparenContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case GroovyParserVisitor:
@@ -39238,18 +36550,6 @@ func (s *NlsContext) GetRuleContext() antlr.RuleContext {
 
 func (s *NlsContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *NlsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterNls(s)
-	}
-}
-
-func (s *NlsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitNls(s)
-	}
 }
 
 func (s *NlsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -39384,18 +36684,6 @@ func (s *SepContext) GetRuleContext() antlr.RuleContext {
 
 func (s *SepContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
-}
-
-func (s *SepContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.EnterSep(s)
-	}
-}
-
-func (s *SepContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(GroovyParserListener); ok {
-		listenerT.ExitSep(s)
-	}
 }
 
 func (s *SepContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
