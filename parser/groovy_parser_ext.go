@@ -6,6 +6,28 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 )
 
+type GroovyParserRuleContext struct {
+	antlr.BaseParserRuleContext
+	metaDataMap map[interface{}]interface{}
+}
+
+// NewGroovyParserRuleContext creates a new GroovyParserRuleContext
+func NewGroovyParserRuleContext(parent antlr.ParserRuleContext, invokingStateNumber int) *GroovyParserRuleContext {
+	return &GroovyParserRuleContext{
+		BaseParserRuleContext: *antlr.NewBaseParserRuleContext(parent, invokingStateNumber),
+	}
+}
+
+// GetMetaDataMap returns the metaDataMap
+func (g *GroovyParserRuleContext) GetMetaDataMap() map[interface{}]interface{} {
+	return g.metaDataMap
+}
+
+// SetMetaDataMap sets the metaDataMap
+func (g *GroovyParserRuleContext) SetMetaDataMap(metaDataMap map[interface{}]interface{}) {
+	g.metaDataMap = metaDataMap
+}
+
 type MyGroovyParser struct {
 	*antlr.BaseParser
 	inSwitchExpressionLevel int

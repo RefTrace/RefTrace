@@ -1359,19 +1359,19 @@ type ICompilationUnitContext interface {
 }
 
 type CompilationUnitContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCompilationUnitContext() *CompilationUnitContext {
 	var p = new(CompilationUnitContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_compilationUnit
 	return p
 }
 
 func InitEmptyCompilationUnitContext(p *CompilationUnitContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_compilationUnit
 }
 
@@ -1380,8 +1380,7 @@ func (*CompilationUnitContext) IsCompilationUnitContext() {}
 func NewCompilationUnitContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CompilationUnitContext {
 	var p = new(CompilationUnitContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_compilationUnit
 
@@ -1560,19 +1559,19 @@ type IScriptStatementsContext interface {
 }
 
 type ScriptStatementsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyScriptStatementsContext() *ScriptStatementsContext {
 	var p = new(ScriptStatementsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_scriptStatements
 	return p
 }
 
 func InitEmptyScriptStatementsContext(p *ScriptStatementsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_scriptStatements
 }
 
@@ -1581,8 +1580,7 @@ func (*ScriptStatementsContext) IsScriptStatementsContext() {}
 func NewScriptStatementsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ScriptStatementsContext {
 	var p = new(ScriptStatementsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_scriptStatements
 
@@ -1780,19 +1778,19 @@ type IScriptStatementContext interface {
 }
 
 type ScriptStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyScriptStatementContext() *ScriptStatementContext {
 	var p = new(ScriptStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_scriptStatement
 	return p
 }
 
 func InitEmptyScriptStatementContext(p *ScriptStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_scriptStatement
 }
 
@@ -1801,8 +1799,7 @@ func (*ScriptStatementContext) IsScriptStatementContext() {}
 func NewScriptStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ScriptStatementContext {
 	var p = new(ScriptStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_scriptStatement
 
@@ -1971,19 +1968,19 @@ type IPackageDeclarationContext interface {
 }
 
 type PackageDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyPackageDeclarationContext() *PackageDeclarationContext {
 	var p = new(PackageDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_packageDeclaration
 	return p
 }
 
 func InitEmptyPackageDeclarationContext(p *PackageDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_packageDeclaration
 }
 
@@ -1992,8 +1989,7 @@ func (*PackageDeclarationContext) IsPackageDeclarationContext() {}
 func NewPackageDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PackageDeclarationContext {
 	var p = new(PackageDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_packageDeclaration
 
@@ -2118,20 +2114,20 @@ type IImportDeclarationContext interface {
 }
 
 type ImportDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	alias  IIdentifierContext
 }
 
 func NewEmptyImportDeclarationContext() *ImportDeclarationContext {
 	var p = new(ImportDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_importDeclaration
 	return p
 }
 
 func InitEmptyImportDeclarationContext(p *ImportDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_importDeclaration
 }
 
@@ -2140,8 +2136,7 @@ func (*ImportDeclarationContext) IsImportDeclarationContext() {}
 func NewImportDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ImportDeclarationContext {
 	var p = new(ImportDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_importDeclaration
 
@@ -2355,19 +2350,19 @@ type ITypeDeclarationContext interface {
 }
 
 type TypeDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeDeclarationContext() *TypeDeclarationContext {
 	var p = new(TypeDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeDeclaration
 	return p
 }
 
 func InitEmptyTypeDeclarationContext(p *TypeDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeDeclaration
 }
 
@@ -2376,8 +2371,7 @@ func (*TypeDeclarationContext) IsTypeDeclarationContext() {}
 func NewTypeDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeDeclarationContext {
 	var p = new(TypeDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeDeclaration
 
@@ -2489,20 +2483,20 @@ type IModifierContext interface {
 }
 
 type ModifierContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	m      antlr.Token
 }
 
 func NewEmptyModifierContext() *ModifierContext {
 	var p = new(ModifierContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifier
 	return p
 }
 
 func InitEmptyModifierContext(p *ModifierContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifier
 }
 
@@ -2511,8 +2505,7 @@ func (*ModifierContext) IsModifierContext() {}
 func NewModifierContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ModifierContext {
 	var p = new(ModifierContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_modifier
 
@@ -2657,19 +2650,19 @@ type IModifiersOptContext interface {
 }
 
 type ModifiersOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyModifiersOptContext() *ModifiersOptContext {
 	var p = new(ModifiersOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifiersOpt
 	return p
 }
 
 func InitEmptyModifiersOptContext(p *ModifiersOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifiersOpt
 }
 
@@ -2678,8 +2671,7 @@ func (*ModifiersOptContext) IsModifiersOptContext() {}
 func NewModifiersOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ModifiersOptContext {
 	var p = new(ModifiersOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_modifiersOpt
 
@@ -2790,19 +2782,19 @@ type IModifiersContext interface {
 }
 
 type ModifiersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyModifiersContext() *ModifiersContext {
 	var p = new(ModifiersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifiers
 	return p
 }
 
 func InitEmptyModifiersContext(p *ModifiersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_modifiers
 }
 
@@ -2811,8 +2803,7 @@ func (*ModifiersContext) IsModifiersContext() {}
 func NewModifiersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ModifiersContext {
 	var p = new(ModifiersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_modifiers
 
@@ -2993,19 +2984,19 @@ type IClassOrInterfaceModifiersOptContext interface {
 }
 
 type ClassOrInterfaceModifiersOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClassOrInterfaceModifiersOptContext() *ClassOrInterfaceModifiersOptContext {
 	var p = new(ClassOrInterfaceModifiersOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiersOpt
 	return p
 }
 
 func InitEmptyClassOrInterfaceModifiersOptContext(p *ClassOrInterfaceModifiersOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiersOpt
 }
 
@@ -3014,8 +3005,7 @@ func (*ClassOrInterfaceModifiersOptContext) IsClassOrInterfaceModifiersOptContex
 func NewClassOrInterfaceModifiersOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassOrInterfaceModifiersOptContext {
 	var p = new(ClassOrInterfaceModifiersOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiersOpt
 
@@ -3140,19 +3130,19 @@ type IClassOrInterfaceModifiersContext interface {
 }
 
 type ClassOrInterfaceModifiersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClassOrInterfaceModifiersContext() *ClassOrInterfaceModifiersContext {
 	var p = new(ClassOrInterfaceModifiersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiers
 	return p
 }
 
 func InitEmptyClassOrInterfaceModifiersContext(p *ClassOrInterfaceModifiersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiers
 }
 
@@ -3161,8 +3151,7 @@ func (*ClassOrInterfaceModifiersContext) IsClassOrInterfaceModifiersContext() {}
 func NewClassOrInterfaceModifiersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassOrInterfaceModifiersContext {
 	var p = new(ClassOrInterfaceModifiersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifiers
 
@@ -3357,20 +3346,20 @@ type IClassOrInterfaceModifierContext interface {
 }
 
 type ClassOrInterfaceModifierContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	m      antlr.Token
 }
 
 func NewEmptyClassOrInterfaceModifierContext() *ClassOrInterfaceModifierContext {
 	var p = new(ClassOrInterfaceModifierContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifier
 	return p
 }
 
 func InitEmptyClassOrInterfaceModifierContext(p *ClassOrInterfaceModifierContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifier
 }
 
@@ -3379,8 +3368,7 @@ func (*ClassOrInterfaceModifierContext) IsClassOrInterfaceModifierContext() {}
 func NewClassOrInterfaceModifierContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassOrInterfaceModifierContext {
 	var p = new(ClassOrInterfaceModifierContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classOrInterfaceModifier
 
@@ -3555,20 +3543,20 @@ type IVariableModifierContext interface {
 }
 
 type VariableModifierContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	m      antlr.Token
 }
 
 func NewEmptyVariableModifierContext() *VariableModifierContext {
 	var p = new(VariableModifierContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifier
 	return p
 }
 
 func InitEmptyVariableModifierContext(p *VariableModifierContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifier
 }
 
@@ -3577,8 +3565,7 @@ func (*VariableModifierContext) IsVariableModifierContext() {}
 func NewVariableModifierContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableModifierContext {
 	var p = new(VariableModifierContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableModifier
 
@@ -3735,19 +3722,19 @@ type IVariableModifiersOptContext interface {
 }
 
 type VariableModifiersOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableModifiersOptContext() *VariableModifiersOptContext {
 	var p = new(VariableModifiersOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifiersOpt
 	return p
 }
 
 func InitEmptyVariableModifiersOptContext(p *VariableModifiersOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifiersOpt
 }
 
@@ -3756,8 +3743,7 @@ func (*VariableModifiersOptContext) IsVariableModifiersOptContext() {}
 func NewVariableModifiersOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableModifiersOptContext {
 	var p = new(VariableModifiersOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableModifiersOpt
 
@@ -3868,19 +3854,19 @@ type IVariableModifiersContext interface {
 }
 
 type VariableModifiersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableModifiersContext() *VariableModifiersContext {
 	var p = new(VariableModifiersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifiers
 	return p
 }
 
 func InitEmptyVariableModifiersContext(p *VariableModifiersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableModifiers
 }
 
@@ -3889,8 +3875,7 @@ func (*VariableModifiersContext) IsVariableModifiersContext() {}
 func NewVariableModifiersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableModifiersContext {
 	var p = new(VariableModifiersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableModifiers
 
@@ -4076,19 +4061,19 @@ type ITypeParametersContext interface {
 }
 
 type TypeParametersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeParametersContext() *TypeParametersContext {
 	var p = new(TypeParametersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeParameters
 	return p
 }
 
 func InitEmptyTypeParametersContext(p *TypeParametersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeParameters
 }
 
@@ -4097,8 +4082,7 @@ func (*TypeParametersContext) IsTypeParametersContext() {}
 func NewTypeParametersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeParametersContext {
 	var p = new(TypeParametersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeParameters
 
@@ -4322,19 +4306,19 @@ type ITypeParameterContext interface {
 }
 
 type TypeParameterContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeParameterContext() *TypeParameterContext {
 	var p = new(TypeParameterContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeParameter
 	return p
 }
 
 func InitEmptyTypeParameterContext(p *TypeParameterContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeParameter
 }
 
@@ -4343,8 +4327,7 @@ func (*TypeParameterContext) IsTypeParameterContext() {}
 func NewTypeParameterContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeParameterContext {
 	var p = new(TypeParameterContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeParameter
 
@@ -4513,19 +4496,19 @@ type ITypeBoundContext interface {
 }
 
 type TypeBoundContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeBoundContext() *TypeBoundContext {
 	var p = new(TypeBoundContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeBound
 	return p
 }
 
 func InitEmptyTypeBoundContext(p *TypeBoundContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeBound
 }
 
@@ -4534,8 +4517,7 @@ func (*TypeBoundContext) IsTypeBoundContext() {}
 func NewTypeBoundContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeBoundContext {
 	var p = new(TypeBoundContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeBound
 
@@ -4728,19 +4710,19 @@ type ITypeListContext interface {
 }
 
 type TypeListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeListContext() *TypeListContext {
 	var p = new(TypeListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeList
 	return p
 }
 
 func InitEmptyTypeListContext(p *TypeListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeList
 }
 
@@ -4749,8 +4731,7 @@ func (*TypeListContext) IsTypeListContext() {}
 func NewTypeListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeListContext {
 	var p = new(TypeListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeList
 
@@ -4978,7 +4959,7 @@ type IClassDeclarationContext interface {
 }
 
 type ClassDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 	scs    ITypeListContext
@@ -4988,13 +4969,13 @@ type ClassDeclarationContext struct {
 
 func NewEmptyClassDeclarationContext() *ClassDeclarationContext {
 	var p = new(ClassDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classDeclaration
 	return p
 }
 
 func InitEmptyClassDeclarationContext(p *ClassDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classDeclaration
 }
 
@@ -5003,8 +4984,7 @@ func (*ClassDeclarationContext) IsClassDeclarationContext() {}
 func NewClassDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassDeclarationContext {
 	var p = new(ClassDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classDeclaration
 
@@ -5499,20 +5479,20 @@ type IClassBodyContext interface {
 }
 
 type ClassBodyContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyClassBodyContext() *ClassBodyContext {
 	var p = new(ClassBodyContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classBody
 	return p
 }
 
 func InitEmptyClassBodyContext(p *ClassBodyContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classBody
 }
 
@@ -5521,8 +5501,7 @@ func (*ClassBodyContext) IsClassBodyContext() {}
 func NewClassBodyContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *ClassBodyContext {
 	var p = new(ClassBodyContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classBody
 
@@ -5883,19 +5862,19 @@ type IEnumConstantsContext interface {
 }
 
 type EnumConstantsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnumConstantsContext() *EnumConstantsContext {
 	var p = new(EnumConstantsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enumConstants
 	return p
 }
 
 func InitEmptyEnumConstantsContext(p *EnumConstantsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enumConstants
 }
 
@@ -5904,8 +5883,7 @@ func (*EnumConstantsContext) IsEnumConstantsContext() {}
 func NewEnumConstantsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnumConstantsContext {
 	var p = new(EnumConstantsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enumConstants
 
@@ -6107,19 +6085,19 @@ type IEnumConstantContext interface {
 }
 
 type EnumConstantContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnumConstantContext() *EnumConstantContext {
 	var p = new(EnumConstantContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enumConstant
 	return p
 }
 
 func InitEmptyEnumConstantContext(p *EnumConstantContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enumConstant
 }
 
@@ -6128,8 +6106,7 @@ func (*EnumConstantContext) IsEnumConstantContext() {}
 func NewEnumConstantContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnumConstantContext {
 	var p = new(EnumConstantContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enumConstant
 
@@ -6298,20 +6275,20 @@ type IClassBodyDeclarationContext interface {
 }
 
 type ClassBodyDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyClassBodyDeclarationContext() *ClassBodyDeclarationContext {
 	var p = new(ClassBodyDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classBodyDeclaration
 	return p
 }
 
 func InitEmptyClassBodyDeclarationContext(p *ClassBodyDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classBodyDeclaration
 }
 
@@ -6320,8 +6297,7 @@ func (*ClassBodyDeclarationContext) IsClassBodyDeclarationContext() {}
 func NewClassBodyDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *ClassBodyDeclarationContext {
 	var p = new(ClassBodyDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classBodyDeclaration
 
@@ -6496,20 +6472,20 @@ type IMemberDeclarationContext interface {
 }
 
 type MemberDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyMemberDeclarationContext() *MemberDeclarationContext {
 	var p = new(MemberDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_memberDeclaration
 	return p
 }
 
 func InitEmptyMemberDeclarationContext(p *MemberDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_memberDeclaration
 }
 
@@ -6518,8 +6494,7 @@ func (*MemberDeclarationContext) IsMemberDeclarationContext() {}
 func NewMemberDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *MemberDeclarationContext {
 	var p = new(MemberDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_memberDeclaration
 
@@ -6740,7 +6715,7 @@ type IMethodDeclarationContext interface {
 }
 
 type MethodDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 	ct     int
@@ -6748,13 +6723,13 @@ type MethodDeclarationContext struct {
 
 func NewEmptyMethodDeclarationContext() *MethodDeclarationContext {
 	var p = new(MethodDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodDeclaration
 	return p
 }
 
 func InitEmptyMethodDeclarationContext(p *MethodDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodDeclaration
 }
 
@@ -6763,8 +6738,7 @@ func (*MethodDeclarationContext) IsMethodDeclarationContext() {}
 func NewMethodDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int, ct int) *MethodDeclarationContext {
 	var p = new(MethodDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_methodDeclaration
 
@@ -7130,19 +7104,19 @@ type ICompactConstructorDeclarationContext interface {
 }
 
 type CompactConstructorDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCompactConstructorDeclarationContext() *CompactConstructorDeclarationContext {
 	var p = new(CompactConstructorDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_compactConstructorDeclaration
 	return p
 }
 
 func InitEmptyCompactConstructorDeclarationContext(p *CompactConstructorDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_compactConstructorDeclaration
 }
 
@@ -7151,8 +7125,7 @@ func (*CompactConstructorDeclarationContext) IsCompactConstructorDeclarationCont
 func NewCompactConstructorDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CompactConstructorDeclarationContext {
 	var p = new(CompactConstructorDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_compactConstructorDeclaration
 
@@ -7273,19 +7246,19 @@ type IMethodNameContext interface {
 }
 
 type MethodNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMethodNameContext() *MethodNameContext {
 	var p = new(MethodNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodName
 	return p
 }
 
 func InitEmptyMethodNameContext(p *MethodNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodName
 }
 
@@ -7294,8 +7267,7 @@ func (*MethodNameContext) IsMethodNameContext() {}
 func NewMethodNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MethodNameContext {
 	var p = new(MethodNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_methodName
 
@@ -7418,20 +7390,20 @@ type IReturnTypeContext interface {
 }
 
 type ReturnTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	ct     int
 }
 
 func NewEmptyReturnTypeContext() *ReturnTypeContext {
 	var p = new(ReturnTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_returnType
 	return p
 }
 
 func InitEmptyReturnTypeContext(p *ReturnTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_returnType
 }
 
@@ -7440,8 +7412,7 @@ func (*ReturnTypeContext) IsReturnTypeContext() {}
 func NewReturnTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, ct int) *ReturnTypeContext {
 	var p = new(ReturnTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_returnType
 
@@ -7555,19 +7526,19 @@ type IFieldDeclarationContext interface {
 }
 
 type FieldDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFieldDeclarationContext() *FieldDeclarationContext {
 	var p = new(FieldDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_fieldDeclaration
 	return p
 }
 
 func InitEmptyFieldDeclarationContext(p *FieldDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_fieldDeclaration
 }
 
@@ -7576,8 +7547,7 @@ func (*FieldDeclarationContext) IsFieldDeclarationContext() {}
 func NewFieldDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FieldDeclarationContext {
 	var p = new(FieldDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_fieldDeclaration
 
@@ -7662,19 +7632,19 @@ type IVariableDeclaratorsContext interface {
 }
 
 type VariableDeclaratorsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableDeclaratorsContext() *VariableDeclaratorsContext {
 	var p = new(VariableDeclaratorsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclarators
 	return p
 }
 
 func InitEmptyVariableDeclaratorsContext(p *VariableDeclaratorsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclarators
 }
 
@@ -7683,8 +7653,7 @@ func (*VariableDeclaratorsContext) IsVariableDeclaratorsContext() {}
 func NewVariableDeclaratorsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableDeclaratorsContext {
 	var p = new(VariableDeclaratorsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableDeclarators
 
@@ -7876,19 +7845,19 @@ type IVariableDeclaratorContext interface {
 }
 
 type VariableDeclaratorContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableDeclaratorContext() *VariableDeclaratorContext {
 	var p = new(VariableDeclaratorContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclarator
 	return p
 }
 
 func InitEmptyVariableDeclaratorContext(p *VariableDeclaratorContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclarator
 }
 
@@ -7897,8 +7866,7 @@ func (*VariableDeclaratorContext) IsVariableDeclaratorContext() {}
 func NewVariableDeclaratorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableDeclaratorContext {
 	var p = new(VariableDeclaratorContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableDeclarator
 
@@ -8067,19 +8035,19 @@ type IVariableDeclaratorIdContext interface {
 }
 
 type VariableDeclaratorIdContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableDeclaratorIdContext() *VariableDeclaratorIdContext {
 	var p = new(VariableDeclaratorIdContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclaratorId
 	return p
 }
 
 func InitEmptyVariableDeclaratorIdContext(p *VariableDeclaratorIdContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclaratorId
 }
 
@@ -8088,8 +8056,7 @@ func (*VariableDeclaratorIdContext) IsVariableDeclaratorIdContext() {}
 func NewVariableDeclaratorIdContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableDeclaratorIdContext {
 	var p = new(VariableDeclaratorIdContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableDeclaratorId
 
@@ -8169,19 +8136,19 @@ type IVariableInitializerContext interface {
 }
 
 type VariableInitializerContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableInitializerContext() *VariableInitializerContext {
 	var p = new(VariableInitializerContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableInitializer
 	return p
 }
 
 func InitEmptyVariableInitializerContext(p *VariableInitializerContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableInitializer
 }
 
@@ -8190,8 +8157,7 @@ func (*VariableInitializerContext) IsVariableInitializerContext() {}
 func NewVariableInitializerContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableInitializerContext {
 	var p = new(VariableInitializerContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableInitializer
 
@@ -8276,19 +8242,19 @@ type IVariableInitializersContext interface {
 }
 
 type VariableInitializersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableInitializersContext() *VariableInitializersContext {
 	var p = new(VariableInitializersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableInitializers
 	return p
 }
 
 func InitEmptyVariableInitializersContext(p *VariableInitializersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableInitializers
 }
 
@@ -8297,8 +8263,7 @@ func (*VariableInitializersContext) IsVariableInitializersContext() {}
 func NewVariableInitializersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableInitializersContext {
 	var p = new(VariableInitializersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableInitializers
 
@@ -8526,19 +8491,19 @@ type IEmptyDimsContext interface {
 }
 
 type EmptyDimsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEmptyDimsContext() *EmptyDimsContext {
 	var p = new(EmptyDimsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_emptyDims
 	return p
 }
 
 func InitEmptyEmptyDimsContext(p *EmptyDimsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_emptyDims
 }
 
@@ -8547,8 +8512,7 @@ func (*EmptyDimsContext) IsEmptyDimsContext() {}
 func NewEmptyDimsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EmptyDimsContext {
 	var p = new(EmptyDimsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_emptyDims
 
@@ -8709,19 +8673,19 @@ type IEmptyDimsOptContext interface {
 }
 
 type EmptyDimsOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEmptyDimsOptContext() *EmptyDimsOptContext {
 	var p = new(EmptyDimsOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_emptyDimsOpt
 	return p
 }
 
 func InitEmptyEmptyDimsOptContext(p *EmptyDimsOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_emptyDimsOpt
 }
 
@@ -8730,8 +8694,7 @@ func (*EmptyDimsOptContext) IsEmptyDimsOptContext() {}
 func NewEmptyDimsOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EmptyDimsOptContext {
 	var p = new(EmptyDimsOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_emptyDimsOpt
 
@@ -8822,19 +8785,19 @@ type IStandardTypeContext interface {
 }
 
 type StandardTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStandardTypeContext() *StandardTypeContext {
 	var p = new(StandardTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardType
 	return p
 }
 
 func InitEmptyStandardTypeContext(p *StandardTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardType
 }
 
@@ -8843,8 +8806,7 @@ func (*StandardTypeContext) IsStandardTypeContext() {}
 func NewStandardTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StandardTypeContext {
 	var p = new(StandardTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_standardType
 
@@ -9003,19 +8965,19 @@ type ITypeContext interface {
 }
 
 type TypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeContext() *TypeContext {
 	var p = new(TypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_type
 	return p
 }
 
 func InitEmptyTypeContext(p *TypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_type
 }
 
@@ -9024,8 +8986,7 @@ func (*TypeContext) IsTypeContext() {}
 func NewTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeContext {
 	var p = new(TypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_type
 
@@ -9208,19 +9169,19 @@ type IGeneralClassOrInterfaceTypeContext interface {
 }
 
 type GeneralClassOrInterfaceTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyGeneralClassOrInterfaceTypeContext() *GeneralClassOrInterfaceTypeContext {
 	var p = new(GeneralClassOrInterfaceTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_generalClassOrInterfaceType
 	return p
 }
 
 func InitEmptyGeneralClassOrInterfaceTypeContext(p *GeneralClassOrInterfaceTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_generalClassOrInterfaceType
 }
 
@@ -9229,8 +9190,7 @@ func (*GeneralClassOrInterfaceTypeContext) IsGeneralClassOrInterfaceTypeContext(
 func NewGeneralClassOrInterfaceTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *GeneralClassOrInterfaceTypeContext {
 	var p = new(GeneralClassOrInterfaceTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_generalClassOrInterfaceType
 
@@ -9339,19 +9299,19 @@ type IStandardClassOrInterfaceTypeContext interface {
 }
 
 type StandardClassOrInterfaceTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStandardClassOrInterfaceTypeContext() *StandardClassOrInterfaceTypeContext {
 	var p = new(StandardClassOrInterfaceTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardClassOrInterfaceType
 	return p
 }
 
 func InitEmptyStandardClassOrInterfaceTypeContext(p *StandardClassOrInterfaceTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardClassOrInterfaceType
 }
 
@@ -9360,8 +9320,7 @@ func (*StandardClassOrInterfaceTypeContext) IsStandardClassOrInterfaceTypeContex
 func NewStandardClassOrInterfaceTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StandardClassOrInterfaceTypeContext {
 	var p = new(StandardClassOrInterfaceTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_standardClassOrInterfaceType
 
@@ -9473,19 +9432,19 @@ type IPrimitiveTypeContext interface {
 }
 
 type PrimitiveTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyPrimitiveTypeContext() *PrimitiveTypeContext {
 	var p = new(PrimitiveTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_primitiveType
 	return p
 }
 
 func InitEmptyPrimitiveTypeContext(p *PrimitiveTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_primitiveType
 }
 
@@ -9494,8 +9453,7 @@ func (*PrimitiveTypeContext) IsPrimitiveTypeContext() {}
 func NewPrimitiveTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PrimitiveTypeContext {
 	var p = new(PrimitiveTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_primitiveType
 
@@ -9574,19 +9532,19 @@ type ITypeArgumentsContext interface {
 }
 
 type TypeArgumentsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeArgumentsContext() *TypeArgumentsContext {
 	var p = new(TypeArgumentsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArguments
 	return p
 }
 
 func InitEmptyTypeArgumentsContext(p *TypeArgumentsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArguments
 }
 
@@ -9595,8 +9553,7 @@ func (*TypeArgumentsContext) IsTypeArgumentsContext() {}
 func NewTypeArgumentsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeArgumentsContext {
 	var p = new(TypeArgumentsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeArguments
 
@@ -9821,19 +9778,19 @@ type ITypeArgumentContext interface {
 }
 
 type TypeArgumentContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeArgumentContext() *TypeArgumentContext {
 	var p = new(TypeArgumentContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArgument
 	return p
 }
 
 func InitEmptyTypeArgumentContext(p *TypeArgumentContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArgument
 }
 
@@ -9842,8 +9799,7 @@ func (*TypeArgumentContext) IsTypeArgumentContext() {}
 func NewTypeArgumentContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeArgumentContext {
 	var p = new(TypeArgumentContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeArgument
 
@@ -10026,19 +9982,19 @@ type IAnnotatedQualifiedClassNameContext interface {
 }
 
 type AnnotatedQualifiedClassNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAnnotatedQualifiedClassNameContext() *AnnotatedQualifiedClassNameContext {
 	var p = new(AnnotatedQualifiedClassNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotatedQualifiedClassName
 	return p
 }
 
 func InitEmptyAnnotatedQualifiedClassNameContext(p *AnnotatedQualifiedClassNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotatedQualifiedClassName
 }
 
@@ -10047,8 +10003,7 @@ func (*AnnotatedQualifiedClassNameContext) IsAnnotatedQualifiedClassNameContext(
 func NewAnnotatedQualifiedClassNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AnnotatedQualifiedClassNameContext {
 	var p = new(AnnotatedQualifiedClassNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_annotatedQualifiedClassName
 
@@ -10153,19 +10108,19 @@ type IQualifiedClassNameListContext interface {
 }
 
 type QualifiedClassNameListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedClassNameListContext() *QualifiedClassNameListContext {
 	var p = new(QualifiedClassNameListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedClassNameList
 	return p
 }
 
 func InitEmptyQualifiedClassNameListContext(p *QualifiedClassNameListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedClassNameList
 }
 
@@ -10174,8 +10129,7 @@ func (*QualifiedClassNameListContext) IsQualifiedClassNameListContext() {}
 func NewQualifiedClassNameListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedClassNameListContext {
 	var p = new(QualifiedClassNameListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedClassNameList
 
@@ -10365,19 +10319,19 @@ type IFormalParametersContext interface {
 }
 
 type FormalParametersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFormalParametersContext() *FormalParametersContext {
 	var p = new(FormalParametersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameters
 	return p
 }
 
 func InitEmptyFormalParametersContext(p *FormalParametersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameters
 }
 
@@ -10386,8 +10340,7 @@ func (*FormalParametersContext) IsFormalParametersContext() {}
 func NewFormalParametersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FormalParametersContext {
 	var p = new(FormalParametersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_formalParameters
 
@@ -10517,19 +10470,19 @@ type IFormalParameterListContext interface {
 }
 
 type FormalParameterListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFormalParameterListContext() *FormalParameterListContext {
 	var p = new(FormalParameterListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameterList
 	return p
 }
 
 func InitEmptyFormalParameterListContext(p *FormalParameterListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameterList
 }
 
@@ -10538,8 +10491,7 @@ func (*FormalParameterListContext) IsFormalParameterListContext() {}
 func NewFormalParameterListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FormalParameterListContext {
 	var p = new(FormalParameterListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_formalParameterList
 
@@ -10762,19 +10714,19 @@ type IThisFormalParameterContext interface {
 }
 
 type ThisFormalParameterContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyThisFormalParameterContext() *ThisFormalParameterContext {
 	var p = new(ThisFormalParameterContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_thisFormalParameter
 	return p
 }
 
 func InitEmptyThisFormalParameterContext(p *ThisFormalParameterContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_thisFormalParameter
 }
 
@@ -10783,8 +10735,7 @@ func (*ThisFormalParameterContext) IsThisFormalParameterContext() {}
 func NewThisFormalParameterContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ThisFormalParameterContext {
 	var p = new(ThisFormalParameterContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_thisFormalParameter
 
@@ -10883,19 +10834,19 @@ type IFormalParameterContext interface {
 }
 
 type FormalParameterContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFormalParameterContext() *FormalParameterContext {
 	var p = new(FormalParameterContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameter
 	return p
 }
 
 func InitEmptyFormalParameterContext(p *FormalParameterContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_formalParameter
 }
 
@@ -10904,8 +10855,7 @@ func (*FormalParameterContext) IsFormalParameterContext() {}
 func NewFormalParameterContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FormalParameterContext {
 	var p = new(FormalParameterContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_formalParameter
 
@@ -11146,19 +11096,19 @@ type IMethodBodyContext interface {
 }
 
 type MethodBodyContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMethodBodyContext() *MethodBodyContext {
 	var p = new(MethodBodyContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodBody
 	return p
 }
 
 func InitEmptyMethodBodyContext(p *MethodBodyContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_methodBody
 }
 
@@ -11167,8 +11117,7 @@ func (*MethodBodyContext) IsMethodBodyContext() {}
 func NewMethodBodyContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MethodBodyContext {
 	var p = new(MethodBodyContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_methodBody
 
@@ -11251,19 +11200,19 @@ type IQualifiedNameContext interface {
 }
 
 type QualifiedNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedNameContext() *QualifiedNameContext {
 	var p = new(QualifiedNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedName
 	return p
 }
 
 func InitEmptyQualifiedNameContext(p *QualifiedNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedName
 }
 
@@ -11272,8 +11221,7 @@ func (*QualifiedNameContext) IsQualifiedNameContext() {}
 func NewQualifiedNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedNameContext {
 	var p = new(QualifiedNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedName
 
@@ -11427,19 +11375,19 @@ type IQualifiedNameElementContext interface {
 }
 
 type QualifiedNameElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedNameElementContext() *QualifiedNameElementContext {
 	var p = new(QualifiedNameElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElement
 	return p
 }
 
 func InitEmptyQualifiedNameElementContext(p *QualifiedNameElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElement
 }
 
@@ -11448,8 +11396,7 @@ func (*QualifiedNameElementContext) IsQualifiedNameElementContext() {}
 func NewQualifiedNameElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedNameElementContext {
 	var p = new(QualifiedNameElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElement
 
@@ -11604,19 +11551,19 @@ type IQualifiedNameElementsContext interface {
 }
 
 type QualifiedNameElementsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedNameElementsContext() *QualifiedNameElementsContext {
 	var p = new(QualifiedNameElementsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElements
 	return p
 }
 
 func InitEmptyQualifiedNameElementsContext(p *QualifiedNameElementsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElements
 }
 
@@ -11625,8 +11572,7 @@ func (*QualifiedNameElementsContext) IsQualifiedNameElementsContext() {}
 func NewQualifiedNameElementsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedNameElementsContext {
 	var p = new(QualifiedNameElementsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedNameElements
 
@@ -11773,19 +11719,19 @@ type IQualifiedClassNameContext interface {
 }
 
 type QualifiedClassNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedClassNameContext() *QualifiedClassNameContext {
 	var p = new(QualifiedClassNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedClassName
 	return p
 }
 
 func InitEmptyQualifiedClassNameContext(p *QualifiedClassNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedClassName
 }
 
@@ -11794,8 +11740,7 @@ func (*QualifiedClassNameContext) IsQualifiedClassNameContext() {}
 func NewQualifiedClassNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedClassNameContext {
 	var p = new(QualifiedClassNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedClassName
 
@@ -11899,19 +11844,19 @@ type IQualifiedStandardClassNameContext interface {
 }
 
 type QualifiedStandardClassNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyQualifiedStandardClassNameContext() *QualifiedStandardClassNameContext {
 	var p = new(QualifiedStandardClassNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedStandardClassName
 	return p
 }
 
 func InitEmptyQualifiedStandardClassNameContext(p *QualifiedStandardClassNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_qualifiedStandardClassName
 }
 
@@ -11920,8 +11865,7 @@ func (*QualifiedStandardClassNameContext) IsQualifiedStandardClassNameContext() 
 func NewQualifiedStandardClassNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *QualifiedStandardClassNameContext {
 	var p = new(QualifiedStandardClassNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_qualifiedStandardClassName
 
@@ -12080,19 +12024,19 @@ type ILiteralContext interface {
 }
 
 type LiteralContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLiteralContext() *LiteralContext {
 	var p = new(LiteralContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_literal
 	return p
 }
 
 func InitEmptyLiteralContext(p *LiteralContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_literal
 }
 
@@ -12101,8 +12045,7 @@ func (*LiteralContext) IsLiteralContext() {}
 func NewLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LiteralContext {
 	var p = new(LiteralContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_literal
 
@@ -12399,19 +12342,19 @@ type IGstringContext interface {
 }
 
 type GstringContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyGstringContext() *GstringContext {
 	var p = new(GstringContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstring
 	return p
 }
 
 func InitEmptyGstringContext(p *GstringContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstring
 }
 
@@ -12420,8 +12363,7 @@ func (*GstringContext) IsGstringContext() {}
 func NewGstringContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *GstringContext {
 	var p = new(GstringContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_gstring
 
@@ -12589,19 +12531,19 @@ type IGstringValueContext interface {
 }
 
 type GstringValueContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyGstringValueContext() *GstringValueContext {
 	var p = new(GstringValueContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstringValue
 	return p
 }
 
 func InitEmptyGstringValueContext(p *GstringValueContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstringValue
 }
 
@@ -12610,8 +12552,7 @@ func (*GstringValueContext) IsGstringValueContext() {}
 func NewGstringValueContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *GstringValueContext {
 	var p = new(GstringValueContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_gstringValue
 
@@ -12729,19 +12670,19 @@ type IGstringPathContext interface {
 }
 
 type GstringPathContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyGstringPathContext() *GstringPathContext {
 	var p = new(GstringPathContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstringPath
 	return p
 }
 
 func InitEmptyGstringPathContext(p *GstringPathContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_gstringPath
 }
 
@@ -12750,8 +12691,7 @@ func (*GstringPathContext) IsGstringPathContext() {}
 func NewGstringPathContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *GstringPathContext {
 	var p = new(GstringPathContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_gstringPath
 
@@ -12869,19 +12809,19 @@ type ILambdaExpressionContext interface {
 }
 
 type LambdaExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLambdaExpressionContext() *LambdaExpressionContext {
 	var p = new(LambdaExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaExpression
 	return p
 }
 
 func InitEmptyLambdaExpressionContext(p *LambdaExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaExpression
 }
 
@@ -12890,8 +12830,7 @@ func (*LambdaExpressionContext) IsLambdaExpressionContext() {}
 func NewLambdaExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LambdaExpressionContext {
 	var p = new(LambdaExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_lambdaExpression
 
@@ -13056,19 +12995,19 @@ type IStandardLambdaExpressionContext interface {
 }
 
 type StandardLambdaExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStandardLambdaExpressionContext() *StandardLambdaExpressionContext {
 	var p = new(StandardLambdaExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardLambdaExpression
 	return p
 }
 
 func InitEmptyStandardLambdaExpressionContext(p *StandardLambdaExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardLambdaExpression
 }
 
@@ -13077,8 +13016,7 @@ func (*StandardLambdaExpressionContext) IsStandardLambdaExpressionContext() {}
 func NewStandardLambdaExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StandardLambdaExpressionContext {
 	var p = new(StandardLambdaExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_standardLambdaExpression
 
@@ -13239,19 +13177,19 @@ type ILambdaParametersContext interface {
 }
 
 type LambdaParametersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLambdaParametersContext() *LambdaParametersContext {
 	var p = new(LambdaParametersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaParameters
 	return p
 }
 
 func InitEmptyLambdaParametersContext(p *LambdaParametersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaParameters
 }
 
@@ -13260,8 +13198,7 @@ func (*LambdaParametersContext) IsLambdaParametersContext() {}
 func NewLambdaParametersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LambdaParametersContext {
 	var p = new(LambdaParametersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_lambdaParameters
 
@@ -13342,19 +13279,19 @@ type IStandardLambdaParametersContext interface {
 }
 
 type StandardLambdaParametersContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStandardLambdaParametersContext() *StandardLambdaParametersContext {
 	var p = new(StandardLambdaParametersContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardLambdaParameters
 	return p
 }
 
 func InitEmptyStandardLambdaParametersContext(p *StandardLambdaParametersContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_standardLambdaParameters
 }
 
@@ -13363,8 +13300,7 @@ func (*StandardLambdaParametersContext) IsStandardLambdaParametersContext() {}
 func NewStandardLambdaParametersContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StandardLambdaParametersContext {
 	var p = new(StandardLambdaParametersContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_standardLambdaParameters
 
@@ -13481,19 +13417,19 @@ type ILambdaBodyContext interface {
 }
 
 type LambdaBodyContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLambdaBodyContext() *LambdaBodyContext {
 	var p = new(LambdaBodyContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaBody
 	return p
 }
 
 func InitEmptyLambdaBodyContext(p *LambdaBodyContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_lambdaBody
 }
 
@@ -13502,8 +13438,7 @@ func (*LambdaBodyContext) IsLambdaBodyContext() {}
 func NewLambdaBodyContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LambdaBodyContext {
 	var p = new(LambdaBodyContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_lambdaBody
 
@@ -13625,19 +13560,19 @@ type IClosureContext interface {
 }
 
 type ClosureContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClosureContext() *ClosureContext {
 	var p = new(ClosureContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_closure
 	return p
 }
 
 func InitEmptyClosureContext(p *ClosureContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_closure
 }
 
@@ -13646,8 +13581,7 @@ func (*ClosureContext) IsClosureContext() {}
 func NewClosureContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClosureContext {
 	var p = new(ClosureContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_closure
 
@@ -13881,19 +13815,19 @@ type IClosureOrLambdaExpressionContext interface {
 }
 
 type ClosureOrLambdaExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClosureOrLambdaExpressionContext() *ClosureOrLambdaExpressionContext {
 	var p = new(ClosureOrLambdaExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_closureOrLambdaExpression
 	return p
 }
 
 func InitEmptyClosureOrLambdaExpressionContext(p *ClosureOrLambdaExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_closureOrLambdaExpression
 }
 
@@ -13902,8 +13836,7 @@ func (*ClosureOrLambdaExpressionContext) IsClosureOrLambdaExpressionContext() {}
 func NewClosureOrLambdaExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClosureOrLambdaExpressionContext {
 	var p = new(ClosureOrLambdaExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_closureOrLambdaExpression
 
@@ -14019,19 +13952,19 @@ type IBlockStatementsOptContext interface {
 }
 
 type BlockStatementsOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBlockStatementsOptContext() *BlockStatementsOptContext {
 	var p = new(BlockStatementsOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatementsOpt
 	return p
 }
 
 func InitEmptyBlockStatementsOptContext(p *BlockStatementsOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatementsOpt
 }
 
@@ -14040,8 +13973,7 @@ func (*BlockStatementsOptContext) IsBlockStatementsOptContext() {}
 func NewBlockStatementsOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BlockStatementsOptContext {
 	var p = new(BlockStatementsOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_blockStatementsOpt
 
@@ -14132,19 +14064,19 @@ type IBlockStatementsContext interface {
 }
 
 type BlockStatementsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBlockStatementsContext() *BlockStatementsContext {
 	var p = new(BlockStatementsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatements
 	return p
 }
 
 func InitEmptyBlockStatementsContext(p *BlockStatementsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatements
 }
 
@@ -14153,8 +14085,7 @@ func (*BlockStatementsContext) IsBlockStatementsContext() {}
 func NewBlockStatementsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BlockStatementsContext {
 	var p = new(BlockStatementsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_blockStatements
 
@@ -14348,19 +14279,19 @@ type IAnnotationsOptContext interface {
 }
 
 type AnnotationsOptContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAnnotationsOptContext() *AnnotationsOptContext {
 	var p = new(AnnotationsOptContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotationsOpt
 	return p
 }
 
 func InitEmptyAnnotationsOptContext(p *AnnotationsOptContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotationsOpt
 }
 
@@ -14369,8 +14300,7 @@ func (*AnnotationsOptContext) IsAnnotationsOptContext() {}
 func NewAnnotationsOptContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AnnotationsOptContext {
 	var p = new(AnnotationsOptContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_annotationsOpt
 
@@ -14570,19 +14500,19 @@ type IAnnotationContext interface {
 }
 
 type AnnotationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAnnotationContext() *AnnotationContext {
 	var p = new(AnnotationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotation
 	return p
 }
 
 func InitEmptyAnnotationContext(p *AnnotationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotation
 }
 
@@ -14591,8 +14521,7 @@ func (*AnnotationContext) IsAnnotationContext() {}
 func NewAnnotationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AnnotationContext {
 	var p = new(AnnotationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_annotation
 
@@ -14773,19 +14702,19 @@ type IElementValuesContext interface {
 }
 
 type ElementValuesContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValuesContext() *ElementValuesContext {
 	var p = new(ElementValuesContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValues
 	return p
 }
 
 func InitEmptyElementValuesContext(p *ElementValuesContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValues
 }
 
@@ -14794,8 +14723,7 @@ func (*ElementValuesContext) IsElementValuesContext() {}
 func NewElementValuesContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValuesContext {
 	var p = new(ElementValuesContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValues
 
@@ -14910,19 +14838,19 @@ type IAnnotationNameContext interface {
 }
 
 type AnnotationNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyAnnotationNameContext() *AnnotationNameContext {
 	var p = new(AnnotationNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotationName
 	return p
 }
 
 func InitEmptyAnnotationNameContext(p *AnnotationNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_annotationName
 }
 
@@ -14931,8 +14859,7 @@ func (*AnnotationNameContext) IsAnnotationNameContext() {}
 func NewAnnotationNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AnnotationNameContext {
 	var p = new(AnnotationNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_annotationName
 
@@ -15015,19 +14942,19 @@ type IElementValuePairsContext interface {
 }
 
 type ElementValuePairsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValuePairsContext() *ElementValuePairsContext {
 	var p = new(ElementValuePairsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePairs
 	return p
 }
 
 func InitEmptyElementValuePairsContext(p *ElementValuePairsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePairs
 }
 
@@ -15036,8 +14963,7 @@ func (*ElementValuePairsContext) IsElementValuePairsContext() {}
 func NewElementValuePairsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValuePairsContext {
 	var p = new(ElementValuePairsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValuePairs
 
@@ -15184,19 +15110,19 @@ type IElementValuePairContext interface {
 }
 
 type ElementValuePairContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValuePairContext() *ElementValuePairContext {
 	var p = new(ElementValuePairContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePair
 	return p
 }
 
 func InitEmptyElementValuePairContext(p *ElementValuePairContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePair
 }
 
@@ -15205,8 +15131,7 @@ func (*ElementValuePairContext) IsElementValuePairContext() {}
 func NewElementValuePairContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValuePairContext {
 	var p = new(ElementValuePairContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValuePair
 
@@ -15368,19 +15293,19 @@ type IElementValuePairNameContext interface {
 }
 
 type ElementValuePairNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValuePairNameContext() *ElementValuePairNameContext {
 	var p = new(ElementValuePairNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePairName
 	return p
 }
 
 func InitEmptyElementValuePairNameContext(p *ElementValuePairNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValuePairName
 }
 
@@ -15389,8 +15314,7 @@ func (*ElementValuePairNameContext) IsElementValuePairNameContext() {}
 func NewElementValuePairNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValuePairNameContext {
 	var p = new(ElementValuePairNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValuePairName
 
@@ -15507,19 +15431,19 @@ type IElementValueContext interface {
 }
 
 type ElementValueContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValueContext() *ElementValueContext {
 	var p = new(ElementValueContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValue
 	return p
 }
 
 func InitEmptyElementValueContext(p *ElementValueContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValue
 }
 
@@ -15528,8 +15452,7 @@ func (*ElementValueContext) IsElementValueContext() {}
 func NewElementValueContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValueContext {
 	var p = new(ElementValueContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValue
 
@@ -15672,19 +15595,19 @@ type IElementValueArrayInitializerContext interface {
 }
 
 type ElementValueArrayInitializerContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyElementValueArrayInitializerContext() *ElementValueArrayInitializerContext {
 	var p = new(ElementValueArrayInitializerContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValueArrayInitializer
 	return p
 }
 
 func InitEmptyElementValueArrayInitializerContext(p *ElementValueArrayInitializerContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_elementValueArrayInitializer
 }
 
@@ -15693,8 +15616,7 @@ func (*ElementValueArrayInitializerContext) IsElementValueArrayInitializerContex
 func NewElementValueArrayInitializerContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ElementValueArrayInitializerContext {
 	var p = new(ElementValueArrayInitializerContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_elementValueArrayInitializer
 
@@ -15899,19 +15821,19 @@ type IBlockContext interface {
 }
 
 type BlockContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBlockContext() *BlockContext {
 	var p = new(BlockContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_block
 	return p
 }
 
 func InitEmptyBlockContext(p *BlockContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_block
 }
 
@@ -15920,8 +15842,7 @@ func (*BlockContext) IsBlockContext() {}
 func NewBlockContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BlockContext {
 	var p = new(BlockContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_block
 
@@ -16054,19 +15975,19 @@ type IBlockStatementContext interface {
 }
 
 type BlockStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBlockStatementContext() *BlockStatementContext {
 	var p = new(BlockStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatement
 	return p
 }
 
 func InitEmptyBlockStatementContext(p *BlockStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_blockStatement
 }
 
@@ -16075,8 +15996,7 @@ func (*BlockStatementContext) IsBlockStatementContext() {}
 func NewBlockStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BlockStatementContext {
 	var p = new(BlockStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_blockStatement
 
@@ -16191,19 +16111,19 @@ type ILocalVariableDeclarationContext interface {
 }
 
 type LocalVariableDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLocalVariableDeclarationContext() *LocalVariableDeclarationContext {
 	var p = new(LocalVariableDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_localVariableDeclaration
 	return p
 }
 
 func InitEmptyLocalVariableDeclarationContext(p *LocalVariableDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_localVariableDeclaration
 }
 
@@ -16212,8 +16132,7 @@ func (*LocalVariableDeclarationContext) IsLocalVariableDeclarationContext() {}
 func NewLocalVariableDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LocalVariableDeclarationContext {
 	var p = new(LocalVariableDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_localVariableDeclaration
 
@@ -16312,20 +16231,20 @@ type IVariableDeclarationContext interface {
 }
 
 type VariableDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyVariableDeclarationContext() *VariableDeclarationContext {
 	var p = new(VariableDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclaration
 	return p
 }
 
 func InitEmptyVariableDeclarationContext(p *VariableDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableDeclaration
 }
 
@@ -16334,8 +16253,7 @@ func (*VariableDeclarationContext) IsVariableDeclarationContext() {}
 func NewVariableDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *VariableDeclarationContext {
 	var p = new(VariableDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableDeclaration
 
@@ -16617,19 +16535,19 @@ type ITypeNamePairsContext interface {
 }
 
 type TypeNamePairsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeNamePairsContext() *TypeNamePairsContext {
 	var p = new(TypeNamePairsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeNamePairs
 	return p
 }
 
 func InitEmptyTypeNamePairsContext(p *TypeNamePairsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeNamePairs
 }
 
@@ -16638,8 +16556,7 @@ func (*TypeNamePairsContext) IsTypeNamePairsContext() {}
 func NewTypeNamePairsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeNamePairsContext {
 	var p = new(TypeNamePairsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeNamePairs
 
@@ -16815,19 +16732,19 @@ type ITypeNamePairContext interface {
 }
 
 type TypeNamePairContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeNamePairContext() *TypeNamePairContext {
 	var p = new(TypeNamePairContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeNamePair
 	return p
 }
 
 func InitEmptyTypeNamePairContext(p *TypeNamePairContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeNamePair
 }
 
@@ -16836,8 +16753,7 @@ func (*TypeNamePairContext) IsTypeNamePairContext() {}
 func NewTypeNamePairContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeNamePairContext {
 	var p = new(TypeNamePairContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeNamePair
 
@@ -16950,19 +16866,19 @@ type IVariableNamesContext interface {
 }
 
 type VariableNamesContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyVariableNamesContext() *VariableNamesContext {
 	var p = new(VariableNamesContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableNames
 	return p
 }
 
 func InitEmptyVariableNamesContext(p *VariableNamesContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_variableNames
 }
 
@@ -16971,8 +16887,7 @@ func (*VariableNamesContext) IsVariableNamesContext() {}
 func NewVariableNamesContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *VariableNamesContext {
 	var p = new(VariableNamesContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_variableNames
 
@@ -17148,19 +17063,19 @@ type IConditionalStatementContext interface {
 }
 
 type ConditionalStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyConditionalStatementContext() *ConditionalStatementContext {
 	var p = new(ConditionalStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_conditionalStatement
 	return p
 }
 
 func InitEmptyConditionalStatementContext(p *ConditionalStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_conditionalStatement
 }
 
@@ -17169,8 +17084,7 @@ func (*ConditionalStatementContext) IsConditionalStatementContext() {}
 func NewConditionalStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ConditionalStatementContext {
 	var p = new(ConditionalStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_conditionalStatement
 
@@ -17305,7 +17219,7 @@ type IIfElseStatementContext interface {
 }
 
 type IfElseStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	tb     IStatementContext
 	fb     IStatementContext
@@ -17313,13 +17227,13 @@ type IfElseStatementContext struct {
 
 func NewEmptyIfElseStatementContext() *IfElseStatementContext {
 	var p = new(IfElseStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_ifElseStatement
 	return p
 }
 
 func InitEmptyIfElseStatementContext(p *IfElseStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_ifElseStatement
 }
 
@@ -17328,8 +17242,7 @@ func (*IfElseStatementContext) IsIfElseStatementContext() {}
 func NewIfElseStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *IfElseStatementContext {
 	var p = new(IfElseStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_ifElseStatement
 
@@ -17598,19 +17511,19 @@ type ISwitchStatementContext interface {
 }
 
 type SwitchStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySwitchStatementContext() *SwitchStatementContext {
 	var p = new(SwitchStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchStatement
 	return p
 }
 
 func InitEmptySwitchStatementContext(p *SwitchStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchStatement
 }
 
@@ -17619,8 +17532,7 @@ func (*SwitchStatementContext) IsSwitchStatementContext() {}
 func NewSwitchStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchStatementContext {
 	var p = new(SwitchStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchStatement
 
@@ -17858,19 +17770,19 @@ type ILoopStatementContext interface {
 }
 
 type LoopStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyLoopStatementContext() *LoopStatementContext {
 	var p = new(LoopStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_loopStatement
 	return p
 }
 
 func InitEmptyLoopStatementContext(p *LoopStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_loopStatement
 }
 
@@ -17879,8 +17791,7 @@ func (*LoopStatementContext) IsLoopStatementContext() {}
 func NewLoopStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LoopStatementContext {
 	var p = new(LoopStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_loopStatement
 
@@ -18330,19 +18241,19 @@ type IContinueStatementContext interface {
 }
 
 type ContinueStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyContinueStatementContext() *ContinueStatementContext {
 	var p = new(ContinueStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_continueStatement
 	return p
 }
 
 func InitEmptyContinueStatementContext(p *ContinueStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_continueStatement
 }
 
@@ -18351,8 +18262,7 @@ func (*ContinueStatementContext) IsContinueStatementContext() {}
 func NewContinueStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ContinueStatementContext {
 	var p = new(ContinueStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_continueStatement
 
@@ -18457,19 +18367,19 @@ type IBreakStatementContext interface {
 }
 
 type BreakStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBreakStatementContext() *BreakStatementContext {
 	var p = new(BreakStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_breakStatement
 	return p
 }
 
 func InitEmptyBreakStatementContext(p *BreakStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_breakStatement
 }
 
@@ -18478,8 +18388,7 @@ func (*BreakStatementContext) IsBreakStatementContext() {}
 func NewBreakStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BreakStatementContext {
 	var p = new(BreakStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_breakStatement
 
@@ -18584,19 +18493,19 @@ type IYieldStatementContext interface {
 }
 
 type YieldStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyYieldStatementContext() *YieldStatementContext {
 	var p = new(YieldStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_yieldStatement
 	return p
 }
 
 func InitEmptyYieldStatementContext(p *YieldStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_yieldStatement
 }
 
@@ -18605,8 +18514,7 @@ func (*YieldStatementContext) IsYieldStatementContext() {}
 func NewYieldStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *YieldStatementContext {
 	var p = new(YieldStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_yieldStatement
 
@@ -18705,19 +18613,19 @@ type ITryCatchStatementContext interface {
 }
 
 type TryCatchStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTryCatchStatementContext() *TryCatchStatementContext {
 	var p = new(TryCatchStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_tryCatchStatement
 	return p
 }
 
 func InitEmptyTryCatchStatementContext(p *TryCatchStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_tryCatchStatement
 }
 
@@ -18726,8 +18634,7 @@ func (*TryCatchStatementContext) IsTryCatchStatementContext() {}
 func NewTryCatchStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TryCatchStatementContext {
 	var p = new(TryCatchStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_tryCatchStatement
 
@@ -19020,7 +18927,7 @@ type IAssertStatementContext interface {
 }
 
 type AssertStatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	ce     IExpressionContext
 	me     IExpressionContext
@@ -19028,13 +18935,13 @@ type AssertStatementContext struct {
 
 func NewEmptyAssertStatementContext() *AssertStatementContext {
 	var p = new(AssertStatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_assertStatement
 	return p
 }
 
 func InitEmptyAssertStatementContext(p *AssertStatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_assertStatement
 }
 
@@ -19043,8 +18950,7 @@ func (*AssertStatementContext) IsAssertStatementContext() {}
 func NewAssertStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *AssertStatementContext {
 	var p = new(AssertStatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_assertStatement
 
@@ -19253,19 +19159,19 @@ type IStatementContext interface {
 }
 
 type StatementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStatementContext() *StatementContext {
 	var p = new(StatementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_statement
 	return p
 }
 
 func InitEmptyStatementContext(p *StatementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_statement
 }
 
@@ -19274,8 +19180,7 @@ func (*StatementContext) IsStatementContext() {}
 func NewStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StatementContext {
 	var p = new(StatementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_statement
 
@@ -20259,19 +20164,19 @@ type ICatchClauseContext interface {
 }
 
 type CatchClauseContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCatchClauseContext() *CatchClauseContext {
 	var p = new(CatchClauseContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_catchClause
 	return p
 }
 
 func InitEmptyCatchClauseContext(p *CatchClauseContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_catchClause
 }
 
@@ -20280,8 +20185,7 @@ func (*CatchClauseContext) IsCatchClauseContext() {}
 func NewCatchClauseContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CatchClauseContext {
 	var p = new(CatchClauseContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_catchClause
 
@@ -20496,19 +20400,19 @@ type ICatchTypeContext interface {
 }
 
 type CatchTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCatchTypeContext() *CatchTypeContext {
 	var p = new(CatchTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_catchType
 	return p
 }
 
 func InitEmptyCatchTypeContext(p *CatchTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_catchType
 }
 
@@ -20517,8 +20421,7 @@ func (*CatchTypeContext) IsCatchTypeContext() {}
 func NewCatchTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CatchTypeContext {
 	var p = new(CatchTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_catchType
 
@@ -20663,19 +20566,19 @@ type IFinallyBlockContext interface {
 }
 
 type FinallyBlockContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFinallyBlockContext() *FinallyBlockContext {
 	var p = new(FinallyBlockContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_finallyBlock
 	return p
 }
 
 func InitEmptyFinallyBlockContext(p *FinallyBlockContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_finallyBlock
 }
 
@@ -20684,8 +20587,7 @@ func (*FinallyBlockContext) IsFinallyBlockContext() {}
 func NewFinallyBlockContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FinallyBlockContext {
 	var p = new(FinallyBlockContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_finallyBlock
 
@@ -20801,19 +20703,19 @@ type IResourcesContext interface {
 }
 
 type ResourcesContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyResourcesContext() *ResourcesContext {
 	var p = new(ResourcesContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resources
 	return p
 }
 
 func InitEmptyResourcesContext(p *ResourcesContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resources
 }
 
@@ -20822,8 +20724,7 @@ func (*ResourcesContext) IsResourcesContext() {}
 func NewResourcesContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ResourcesContext {
 	var p = new(ResourcesContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_resources
 
@@ -20990,19 +20891,19 @@ type IResourceListContext interface {
 }
 
 type ResourceListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyResourceListContext() *ResourceListContext {
 	var p = new(ResourceListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resourceList
 	return p
 }
 
 func InitEmptyResourceListContext(p *ResourceListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resourceList
 }
 
@@ -21011,8 +20912,7 @@ func (*ResourceListContext) IsResourceListContext() {}
 func NewResourceListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ResourceListContext {
 	var p = new(ResourceListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_resourceList
 
@@ -21192,19 +21092,19 @@ type IResourceContext interface {
 }
 
 type ResourceContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyResourceContext() *ResourceContext {
 	var p = new(ResourceContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resource
 	return p
 }
 
 func InitEmptyResourceContext(p *ResourceContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_resource
 }
 
@@ -21213,8 +21113,7 @@ func (*ResourceContext) IsResourceContext() {}
 func NewResourceContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ResourceContext {
 	var p = new(ResourceContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_resource
 
@@ -21333,19 +21232,19 @@ type ISwitchBlockStatementGroupContext interface {
 }
 
 type SwitchBlockStatementGroupContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySwitchBlockStatementGroupContext() *SwitchBlockStatementGroupContext {
 	var p = new(SwitchBlockStatementGroupContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementGroup
 	return p
 }
 
 func InitEmptySwitchBlockStatementGroupContext(p *SwitchBlockStatementGroupContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementGroup
 }
 
@@ -21354,8 +21253,7 @@ func (*SwitchBlockStatementGroupContext) IsSwitchBlockStatementGroupContext() {}
 func NewSwitchBlockStatementGroupContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchBlockStatementGroupContext {
 	var p = new(SwitchBlockStatementGroupContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementGroup
 
@@ -21561,19 +21459,19 @@ type ISwitchLabelContext interface {
 }
 
 type SwitchLabelContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySwitchLabelContext() *SwitchLabelContext {
 	var p = new(SwitchLabelContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchLabel
 	return p
 }
 
 func InitEmptySwitchLabelContext(p *SwitchLabelContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchLabel
 }
 
@@ -21582,8 +21480,7 @@ func (*SwitchLabelContext) IsSwitchLabelContext() {}
 func NewSwitchLabelContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchLabelContext {
 	var p = new(SwitchLabelContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchLabel
 
@@ -21724,19 +21621,19 @@ type IForControlContext interface {
 }
 
 type ForControlContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyForControlContext() *ForControlContext {
 	var p = new(ForControlContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forControl
 	return p
 }
 
 func InitEmptyForControlContext(p *ForControlContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forControl
 }
 
@@ -21745,8 +21642,7 @@ func (*ForControlContext) IsForControlContext() {}
 func NewForControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ForControlContext {
 	var p = new(ForControlContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_forControl
 
@@ -21866,19 +21762,19 @@ type IEnhancedForControlContext interface {
 }
 
 type EnhancedForControlContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnhancedForControlContext() *EnhancedForControlContext {
 	var p = new(EnhancedForControlContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedForControl
 	return p
 }
 
 func InitEmptyEnhancedForControlContext(p *EnhancedForControlContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedForControl
 }
 
@@ -21887,8 +21783,7 @@ func (*EnhancedForControlContext) IsEnhancedForControlContext() {}
 func NewEnhancedForControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnhancedForControlContext {
 	var p = new(EnhancedForControlContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enhancedForControl
 
@@ -22061,19 +21956,19 @@ type IClassicalForControlContext interface {
 }
 
 type ClassicalForControlContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClassicalForControlContext() *ClassicalForControlContext {
 	var p = new(ClassicalForControlContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classicalForControl
 	return p
 }
 
 func InitEmptyClassicalForControlContext(p *ClassicalForControlContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_classicalForControl
 }
 
@@ -22082,8 +21977,7 @@ func (*ClassicalForControlContext) IsClassicalForControlContext() {}
 func NewClassicalForControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassicalForControlContext {
 	var p = new(ClassicalForControlContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_classicalForControl
 
@@ -22252,19 +22146,19 @@ type IForInitContext interface {
 }
 
 type ForInitContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyForInitContext() *ForInitContext {
 	var p = new(ForInitContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forInit
 	return p
 }
 
 func InitEmptyForInitContext(p *ForInitContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forInit
 }
 
@@ -22273,8 +22167,7 @@ func (*ForInitContext) IsForInitContext() {}
 func NewForInitContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ForInitContext {
 	var p = new(ForInitContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_forInit
 
@@ -22389,19 +22282,19 @@ type IForUpdateContext interface {
 }
 
 type ForUpdateContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyForUpdateContext() *ForUpdateContext {
 	var p = new(ForUpdateContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forUpdate
 	return p
 }
 
 func InitEmptyForUpdateContext(p *ForUpdateContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_forUpdate
 }
 
@@ -22410,8 +22303,7 @@ func (*ForUpdateContext) IsForUpdateContext() {}
 func NewForUpdateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ForUpdateContext {
 	var p = new(ForUpdateContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_forUpdate
 
@@ -22493,19 +22385,19 @@ type ICastParExpressionContext interface {
 }
 
 type CastParExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCastParExpressionContext() *CastParExpressionContext {
 	var p = new(CastParExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_castParExpression
 	return p
 }
 
 func InitEmptyCastParExpressionContext(p *CastParExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_castParExpression
 }
 
@@ -22514,8 +22406,7 @@ func (*CastParExpressionContext) IsCastParExpressionContext() {}
 func NewCastParExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CastParExpressionContext {
 	var p = new(CastParExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_castParExpression
 
@@ -22627,19 +22518,19 @@ type IParExpressionContext interface {
 }
 
 type ParExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyParExpressionContext() *ParExpressionContext {
 	var p = new(ParExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_parExpression
 	return p
 }
 
 func InitEmptyParExpressionContext(p *ParExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_parExpression
 }
 
@@ -22648,8 +22539,7 @@ func (*ParExpressionContext) IsParExpressionContext() {}
 func NewParExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ParExpressionContext {
 	var p = new(ParExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_parExpression
 
@@ -22731,19 +22621,19 @@ type IExpressionInParContext interface {
 }
 
 type ExpressionInParContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyExpressionInParContext() *ExpressionInParContext {
 	var p = new(ExpressionInParContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionInPar
 	return p
 }
 
 func InitEmptyExpressionInParContext(p *ExpressionInParContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionInPar
 }
 
@@ -22752,8 +22642,7 @@ func (*ExpressionInParContext) IsExpressionInParContext() {}
 func NewExpressionInParContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ExpressionInParContext {
 	var p = new(ExpressionInParContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_expressionInPar
 
@@ -22876,20 +22765,20 @@ type IExpressionListContext interface {
 }
 
 type ExpressionListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser    antlr.Parser
 	canSpread bool
 }
 
 func NewEmptyExpressionListContext() *ExpressionListContext {
 	var p = new(ExpressionListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionList
 	return p
 }
 
 func InitEmptyExpressionListContext(p *ExpressionListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionList
 }
 
@@ -22898,8 +22787,7 @@ func (*ExpressionListContext) IsExpressionListContext() {}
 func NewExpressionListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, canSpread bool) *ExpressionListContext {
 	var p = new(ExpressionListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_expressionList
 
@@ -23107,20 +22995,20 @@ type IExpressionListElementContext interface {
 }
 
 type ExpressionListElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser    antlr.Parser
 	canSpread bool
 }
 
 func NewEmptyExpressionListElementContext() *ExpressionListElementContext {
 	var p = new(ExpressionListElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionListElement
 	return p
 }
 
 func InitEmptyExpressionListElementContext(p *ExpressionListElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expressionListElement
 }
 
@@ -23129,8 +23017,7 @@ func (*ExpressionListElementContext) IsExpressionListElementContext() {}
 func NewExpressionListElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, canSpread bool) *ExpressionListElementContext {
 	var p = new(ExpressionListElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_expressionListElement
 
@@ -23237,19 +23124,19 @@ type IEnhancedStatementExpressionContext interface {
 }
 
 type EnhancedStatementExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnhancedStatementExpressionContext() *EnhancedStatementExpressionContext {
 	var p = new(EnhancedStatementExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedStatementExpression
 	return p
 }
 
 func InitEmptyEnhancedStatementExpressionContext(p *EnhancedStatementExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedStatementExpression
 }
 
@@ -23258,8 +23145,7 @@ func (*EnhancedStatementExpressionContext) IsEnhancedStatementExpressionContext(
 func NewEnhancedStatementExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnhancedStatementExpressionContext {
 	var p = new(EnhancedStatementExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enhancedStatementExpression
 
@@ -23370,19 +23256,19 @@ type IStatementExpressionContext interface {
 }
 
 type StatementExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStatementExpressionContext() *StatementExpressionContext {
 	var p = new(StatementExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_statementExpression
 	return p
 }
 
 func InitEmptyStatementExpressionContext(p *StatementExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_statementExpression
 }
 
@@ -23391,8 +23277,7 @@ func (*StatementExpressionContext) IsStatementExpressionContext() {}
 func NewStatementExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StatementExpressionContext {
 	var p = new(StatementExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_statementExpression
 
@@ -23503,20 +23388,20 @@ type IPostfixExpressionContext interface {
 }
 
 type PostfixExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	op     antlr.Token
 }
 
 func NewEmptyPostfixExpressionContext() *PostfixExpressionContext {
 	var p = new(PostfixExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_postfixExpression
 	return p
 }
 
 func InitEmptyPostfixExpressionContext(p *PostfixExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_postfixExpression
 }
 
@@ -23525,8 +23410,7 @@ func (*PostfixExpressionContext) IsPostfixExpressionContext() {}
 func NewPostfixExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PostfixExpressionContext {
 	var p = new(PostfixExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_postfixExpression
 
@@ -23653,19 +23537,19 @@ type ISwitchExpressionContext interface {
 }
 
 type SwitchExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySwitchExpressionContext() *SwitchExpressionContext {
 	var p = new(SwitchExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchExpression
 	return p
 }
 
 func InitEmptySwitchExpressionContext(p *SwitchExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchExpression
 }
 
@@ -23674,8 +23558,7 @@ func (*SwitchExpressionContext) IsSwitchExpressionContext() {}
 func NewSwitchExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchExpressionContext {
 	var p = new(SwitchExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchExpression
 
@@ -23918,19 +23801,19 @@ type ISwitchBlockStatementExpressionGroupContext interface {
 }
 
 type SwitchBlockStatementExpressionGroupContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySwitchBlockStatementExpressionGroupContext() *SwitchBlockStatementExpressionGroupContext {
 	var p = new(SwitchBlockStatementExpressionGroupContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementExpressionGroup
 	return p
 }
 
 func InitEmptySwitchBlockStatementExpressionGroupContext(p *SwitchBlockStatementExpressionGroupContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementExpressionGroup
 }
 
@@ -23939,8 +23822,7 @@ func (*SwitchBlockStatementExpressionGroupContext) IsSwitchBlockStatementExpress
 func NewSwitchBlockStatementExpressionGroupContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchBlockStatementExpressionGroupContext {
 	var p = new(SwitchBlockStatementExpressionGroupContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchBlockStatementExpressionGroup
 
@@ -24144,20 +24026,20 @@ type ISwitchExpressionLabelContext interface {
 }
 
 type SwitchExpressionLabelContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	ac     antlr.Token
 }
 
 func NewEmptySwitchExpressionLabelContext() *SwitchExpressionLabelContext {
 	var p = new(SwitchExpressionLabelContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchExpressionLabel
 	return p
 }
 
 func InitEmptySwitchExpressionLabelContext(p *SwitchExpressionLabelContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_switchExpressionLabel
 }
 
@@ -24166,8 +24048,7 @@ func (*SwitchExpressionLabelContext) IsSwitchExpressionLabelContext() {}
 func NewSwitchExpressionLabelContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SwitchExpressionLabelContext {
 	var p = new(SwitchExpressionLabelContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_switchExpressionLabel
 
@@ -24314,19 +24195,19 @@ type IExpressionContext interface {
 }
 
 type ExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyExpressionContext() *ExpressionContext {
 	var p = new(ExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expression
 	return p
 }
 
 func InitEmptyExpressionContext(p *ExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_expression
 }
 
@@ -24335,8 +24216,7 @@ func (*ExpressionContext) IsExpressionContext() {}
 func NewExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ExpressionContext {
 	var p = new(ExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_expression
 
@@ -27825,19 +27705,19 @@ type ICastOperandExpressionContext interface {
 }
 
 type CastOperandExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCastOperandExpressionContext() *CastOperandExpressionContext {
 	var p = new(CastOperandExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_castOperandExpression
 	return p
 }
 
 func InitEmptyCastOperandExpressionContext(p *CastOperandExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_castOperandExpression
 }
 
@@ -27846,8 +27726,7 @@ func (*CastOperandExpressionContext) IsCastOperandExpressionContext() {}
 func NewCastOperandExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CastOperandExpressionContext {
 	var p = new(CastOperandExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_castOperandExpression
 
@@ -28221,19 +28100,19 @@ type ICommandExpressionContext interface {
 }
 
 type CommandExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCommandExpressionContext() *CommandExpressionContext {
 	var p = new(CommandExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandExpression
 	return p
 }
 
 func InitEmptyCommandExpressionContext(p *CommandExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandExpression
 }
 
@@ -28242,8 +28121,7 @@ func (*CommandExpressionContext) IsCommandExpressionContext() {}
 func NewCommandExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CommandExpressionContext {
 	var p = new(CommandExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_commandExpression
 
@@ -28430,19 +28308,19 @@ type ICommandArgumentContext interface {
 }
 
 type CommandArgumentContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCommandArgumentContext() *CommandArgumentContext {
 	var p = new(CommandArgumentContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandArgument
 	return p
 }
 
 func InitEmptyCommandArgumentContext(p *CommandArgumentContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandArgument
 }
 
@@ -28451,8 +28329,7 @@ func (*CommandArgumentContext) IsCommandArgumentContext() {}
 func NewCommandArgumentContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CommandArgumentContext {
 	var p = new(CommandArgumentContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_commandArgument
 
@@ -28648,7 +28525,7 @@ type IPathExpressionContext interface {
 }
 
 type PathExpressionContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser       antlr.Parser
 	t            int
 	_pathElement IPathElementContext
@@ -28656,13 +28533,13 @@ type PathExpressionContext struct {
 
 func NewEmptyPathExpressionContext() *PathExpressionContext {
 	var p = new(PathExpressionContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_pathExpression
 	return p
 }
 
 func InitEmptyPathExpressionContext(p *PathExpressionContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_pathExpression
 }
 
@@ -28671,8 +28548,7 @@ func (*PathExpressionContext) IsPathExpressionContext() {}
 func NewPathExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PathExpressionContext {
 	var p = new(PathExpressionContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_pathExpression
 
@@ -28888,20 +28764,20 @@ type IPathElementContext interface {
 }
 
 type PathElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyPathElementContext() *PathElementContext {
 	var p = new(PathElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_pathElement
 	return p
 }
 
 func InitEmptyPathElementContext(p *PathElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_pathElement
 }
 
@@ -28910,8 +28786,7 @@ func (*PathElementContext) IsPathElementContext() {}
 func NewPathElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PathElementContext {
 	var p = new(PathElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_pathElement
 
@@ -29352,19 +29227,19 @@ type INamePartContext interface {
 }
 
 type NamePartContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamePartContext() *NamePartContext {
 	var p = new(NamePartContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namePart
 	return p
 }
 
 func InitEmptyNamePartContext(p *NamePartContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namePart
 }
 
@@ -29373,8 +29248,7 @@ func (*NamePartContext) IsNamePartContext() {}
 func NewNamePartContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamePartContext {
 	var p = new(NamePartContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namePart
 
@@ -29533,19 +29407,19 @@ type IDynamicMemberNameContext interface {
 }
 
 type DynamicMemberNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyDynamicMemberNameContext() *DynamicMemberNameContext {
 	var p = new(DynamicMemberNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_dynamicMemberName
 	return p
 }
 
 func InitEmptyDynamicMemberNameContext(p *DynamicMemberNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_dynamicMemberName
 }
 
@@ -29554,8 +29428,7 @@ func (*DynamicMemberNameContext) IsDynamicMemberNameContext() {}
 func NewDynamicMemberNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DynamicMemberNameContext {
 	var p = new(DynamicMemberNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_dynamicMemberName
 
@@ -29674,19 +29547,19 @@ type IIndexPropertyArgsContext interface {
 }
 
 type IndexPropertyArgsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyIndexPropertyArgsContext() *IndexPropertyArgsContext {
 	var p = new(IndexPropertyArgsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_indexPropertyArgs
 	return p
 }
 
 func InitEmptyIndexPropertyArgsContext(p *IndexPropertyArgsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_indexPropertyArgs
 }
 
@@ -29695,8 +29568,7 @@ func (*IndexPropertyArgsContext) IsIndexPropertyArgsContext() {}
 func NewIndexPropertyArgsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *IndexPropertyArgsContext {
 	var p = new(IndexPropertyArgsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_indexPropertyArgs
 
@@ -29821,19 +29693,19 @@ type INamedPropertyArgsContext interface {
 }
 
 type NamedPropertyArgsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedPropertyArgsContext() *NamedPropertyArgsContext {
 	var p = new(NamedPropertyArgsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgs
 	return p
 }
 
 func InitEmptyNamedPropertyArgsContext(p *NamedPropertyArgsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgs
 }
 
@@ -29842,8 +29714,7 @@ func (*NamedPropertyArgsContext) IsNamedPropertyArgsContext() {}
 func NewNamedPropertyArgsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedPropertyArgsContext {
 	var p = new(NamedPropertyArgsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgs
 
@@ -29979,19 +29850,19 @@ type IPrimaryContext interface {
 }
 
 type PrimaryContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyPrimaryContext() *PrimaryContext {
 	var p = new(PrimaryContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_primary
 	return p
 }
 
 func InitEmptyPrimaryContext(p *PrimaryContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_primary
 }
 
@@ -30000,8 +29871,7 @@ func (*PrimaryContext) IsPrimaryContext() {}
 func NewPrimaryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PrimaryContext {
 	var p = new(PrimaryContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_primary
 
@@ -30676,19 +30546,19 @@ type INamedPropertyArgPrimaryContext interface {
 }
 
 type NamedPropertyArgPrimaryContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedPropertyArgPrimaryContext() *NamedPropertyArgPrimaryContext {
 	var p = new(NamedPropertyArgPrimaryContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgPrimary
 	return p
 }
 
 func InitEmptyNamedPropertyArgPrimaryContext(p *NamedPropertyArgPrimaryContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgPrimary
 }
 
@@ -30697,8 +30567,7 @@ func (*NamedPropertyArgPrimaryContext) IsNamedPropertyArgPrimaryContext() {}
 func NewNamedPropertyArgPrimaryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedPropertyArgPrimaryContext {
 	var p = new(NamedPropertyArgPrimaryContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgPrimary
 
@@ -31069,19 +30938,19 @@ type INamedArgPrimaryContext interface {
 }
 
 type NamedArgPrimaryContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedArgPrimaryContext() *NamedArgPrimaryContext {
 	var p = new(NamedArgPrimaryContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArgPrimary
 	return p
 }
 
 func InitEmptyNamedArgPrimaryContext(p *NamedArgPrimaryContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArgPrimary
 }
 
@@ -31090,8 +30959,7 @@ func (*NamedArgPrimaryContext) IsNamedArgPrimaryContext() {}
 func NewNamedArgPrimaryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedArgPrimaryContext {
 	var p = new(NamedArgPrimaryContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedArgPrimary
 
@@ -31307,19 +31175,19 @@ type ICommandPrimaryContext interface {
 }
 
 type CommandPrimaryContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCommandPrimaryContext() *CommandPrimaryContext {
 	var p = new(CommandPrimaryContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandPrimary
 	return p
 }
 
 func InitEmptyCommandPrimaryContext(p *CommandPrimaryContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_commandPrimary
 }
 
@@ -31328,8 +31196,7 @@ func (*CommandPrimaryContext) IsCommandPrimaryContext() {}
 func NewCommandPrimaryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CommandPrimaryContext {
 	var p = new(CommandPrimaryContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_commandPrimary
 
@@ -31552,19 +31419,19 @@ type IListContext interface {
 }
 
 type ListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyListContext() *ListContext {
 	var p = new(ListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_list
 	return p
 }
 
 func InitEmptyListContext(p *ListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_list
 }
 
@@ -31573,8 +31440,7 @@ func (*ListContext) IsListContext() {}
 func NewListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ListContext {
 	var p = new(ListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_list
 
@@ -31714,19 +31580,19 @@ type IMapContext interface {
 }
 
 type MapContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMapContext() *MapContext {
 	var p = new(MapContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_map
 	return p
 }
 
 func InitEmptyMapContext(p *MapContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_map
 }
 
@@ -31735,8 +31601,7 @@ func (*MapContext) IsMapContext() {}
 func NewMapContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MapContext {
 	var p = new(MapContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_map
 
@@ -31894,19 +31759,19 @@ type IMapEntryListContext interface {
 }
 
 type MapEntryListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMapEntryListContext() *MapEntryListContext {
 	var p = new(MapEntryListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntryList
 	return p
 }
 
 func InitEmptyMapEntryListContext(p *MapEntryListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntryList
 }
 
@@ -31915,8 +31780,7 @@ func (*MapEntryListContext) IsMapEntryListContext() {}
 func NewMapEntryListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MapEntryListContext {
 	var p = new(MapEntryListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_mapEntryList
 
@@ -32069,19 +31933,19 @@ type INamedPropertyArgListContext interface {
 }
 
 type NamedPropertyArgListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedPropertyArgListContext() *NamedPropertyArgListContext {
 	var p = new(NamedPropertyArgListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgList
 	return p
 }
 
 func InitEmptyNamedPropertyArgListContext(p *NamedPropertyArgListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgList
 }
 
@@ -32090,8 +31954,7 @@ func (*NamedPropertyArgListContext) IsNamedPropertyArgListContext() {}
 func NewNamedPropertyArgListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedPropertyArgListContext {
 	var p = new(NamedPropertyArgListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgList
 
@@ -32238,19 +32101,19 @@ type IMapEntryContext interface {
 }
 
 type MapEntryContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMapEntryContext() *MapEntryContext {
 	var p = new(MapEntryContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntry
 	return p
 }
 
 func InitEmptyMapEntryContext(p *MapEntryContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntry
 }
 
@@ -32259,8 +32122,7 @@ func (*MapEntryContext) IsMapEntryContext() {}
 func NewMapEntryContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MapEntryContext {
 	var p = new(MapEntryContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_mapEntry
 
@@ -32440,19 +32302,19 @@ type INamedPropertyArgContext interface {
 }
 
 type NamedPropertyArgContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedPropertyArgContext() *NamedPropertyArgContext {
 	var p = new(NamedPropertyArgContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArg
 	return p
 }
 
 func InitEmptyNamedPropertyArgContext(p *NamedPropertyArgContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArg
 }
 
@@ -32461,8 +32323,7 @@ func (*NamedPropertyArgContext) IsNamedPropertyArgContext() {}
 func NewNamedPropertyArgContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedPropertyArgContext {
 	var p = new(NamedPropertyArgContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedPropertyArg
 
@@ -32642,19 +32503,19 @@ type INamedArgContext interface {
 }
 
 type NamedArgContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedArgContext() *NamedArgContext {
 	var p = new(NamedArgContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArg
 	return p
 }
 
 func InitEmptyNamedArgContext(p *NamedArgContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArg
 }
 
@@ -32663,8 +32524,7 @@ func (*NamedArgContext) IsNamedArgContext() {}
 func NewNamedArgContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedArgContext {
 	var p = new(NamedArgContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedArg
 
@@ -32841,19 +32701,19 @@ type IMapEntryLabelContext interface {
 }
 
 type MapEntryLabelContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyMapEntryLabelContext() *MapEntryLabelContext {
 	var p = new(MapEntryLabelContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntryLabel
 	return p
 }
 
 func InitEmptyMapEntryLabelContext(p *MapEntryLabelContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_mapEntryLabel
 }
 
@@ -32862,8 +32722,7 @@ func (*MapEntryLabelContext) IsMapEntryLabelContext() {}
 func NewMapEntryLabelContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *MapEntryLabelContext {
 	var p = new(MapEntryLabelContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_mapEntryLabel
 
@@ -32979,19 +32838,19 @@ type INamedPropertyArgLabelContext interface {
 }
 
 type NamedPropertyArgLabelContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedPropertyArgLabelContext() *NamedPropertyArgLabelContext {
 	var p = new(NamedPropertyArgLabelContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgLabel
 	return p
 }
 
 func InitEmptyNamedPropertyArgLabelContext(p *NamedPropertyArgLabelContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgLabel
 }
 
@@ -33000,8 +32859,7 @@ func (*NamedPropertyArgLabelContext) IsNamedPropertyArgLabelContext() {}
 func NewNamedPropertyArgLabelContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedPropertyArgLabelContext {
 	var p = new(NamedPropertyArgLabelContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedPropertyArgLabel
 
@@ -33117,19 +32975,19 @@ type INamedArgLabelContext interface {
 }
 
 type NamedArgLabelContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNamedArgLabelContext() *NamedArgLabelContext {
 	var p = new(NamedArgLabelContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArgLabel
 	return p
 }
 
 func InitEmptyNamedArgLabelContext(p *NamedArgLabelContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_namedArgLabel
 }
 
@@ -33138,8 +32996,7 @@ func (*NamedArgLabelContext) IsNamedArgLabelContext() {}
 func NewNamedArgLabelContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NamedArgLabelContext {
 	var p = new(NamedArgLabelContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_namedArgLabel
 
@@ -33266,20 +33123,20 @@ type ICreatorContext interface {
 }
 
 type CreatorContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyCreatorContext() *CreatorContext {
 	var p = new(CreatorContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_creator
 	return p
 }
 
 func InitEmptyCreatorContext(p *CreatorContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_creator
 }
 
@@ -33288,8 +33145,7 @@ func (*CreatorContext) IsCreatorContext() {}
 func NewCreatorContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *CreatorContext {
 	var p = new(CreatorContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_creator
 
@@ -33562,19 +33418,19 @@ type IDimContext interface {
 }
 
 type DimContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyDimContext() *DimContext {
 	var p = new(DimContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_dim
 	return p
 }
 
 func InitEmptyDimContext(p *DimContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_dim
 }
 
@@ -33583,8 +33439,7 @@ func (*DimContext) IsDimContext() {}
 func NewDimContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *DimContext {
 	var p = new(DimContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_dim
 
@@ -33720,19 +33575,19 @@ type IArrayInitializerContext interface {
 }
 
 type ArrayInitializerContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArrayInitializerContext() *ArrayInitializerContext {
 	var p = new(ArrayInitializerContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_arrayInitializer
 	return p
 }
 
 func InitEmptyArrayInitializerContext(p *ArrayInitializerContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_arrayInitializer
 }
 
@@ -33741,8 +33596,7 @@ func (*ArrayInitializerContext) IsArrayInitializerContext() {}
 func NewArrayInitializerContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArrayInitializerContext {
 	var p = new(ArrayInitializerContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_arrayInitializer
 
@@ -33909,20 +33763,20 @@ type IAnonymousInnerClassDeclarationContext interface {
 }
 
 type AnonymousInnerClassDeclarationContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 	t      int
 }
 
 func NewEmptyAnonymousInnerClassDeclarationContext() *AnonymousInnerClassDeclarationContext {
 	var p = new(AnonymousInnerClassDeclarationContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_anonymousInnerClassDeclaration
 	return p
 }
 
 func InitEmptyAnonymousInnerClassDeclarationContext(p *AnonymousInnerClassDeclarationContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_anonymousInnerClassDeclaration
 }
 
@@ -33931,8 +33785,7 @@ func (*AnonymousInnerClassDeclarationContext) IsAnonymousInnerClassDeclarationCo
 func NewAnonymousInnerClassDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, t int) *AnonymousInnerClassDeclarationContext {
 	var p = new(AnonymousInnerClassDeclarationContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_anonymousInnerClassDeclaration
 
@@ -34021,19 +33874,19 @@ type ICreatedNameContext interface {
 }
 
 type CreatedNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyCreatedNameContext() *CreatedNameContext {
 	var p = new(CreatedNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_createdName
 	return p
 }
 
 func InitEmptyCreatedNameContext(p *CreatedNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_createdName
 }
 
@@ -34042,8 +33895,7 @@ func (*CreatedNameContext) IsCreatedNameContext() {}
 func NewCreatedNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CreatedNameContext {
 	var p = new(CreatedNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_createdName
 
@@ -34214,19 +34066,19 @@ type INonWildcardTypeArgumentsContext interface {
 }
 
 type NonWildcardTypeArgumentsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNonWildcardTypeArgumentsContext() *NonWildcardTypeArgumentsContext {
 	var p = new(NonWildcardTypeArgumentsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_nonWildcardTypeArguments
 	return p
 }
 
 func InitEmptyNonWildcardTypeArgumentsContext(p *NonWildcardTypeArgumentsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_nonWildcardTypeArguments
 }
 
@@ -34235,8 +34087,7 @@ func (*NonWildcardTypeArgumentsContext) IsNonWildcardTypeArgumentsContext() {}
 func NewNonWildcardTypeArgumentsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NonWildcardTypeArgumentsContext {
 	var p = new(NonWildcardTypeArgumentsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_nonWildcardTypeArguments
 
@@ -34391,19 +34242,19 @@ type ITypeArgumentsOrDiamondContext interface {
 }
 
 type TypeArgumentsOrDiamondContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyTypeArgumentsOrDiamondContext() *TypeArgumentsOrDiamondContext {
 	var p = new(TypeArgumentsOrDiamondContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArgumentsOrDiamond
 	return p
 }
 
 func InitEmptyTypeArgumentsOrDiamondContext(p *TypeArgumentsOrDiamondContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_typeArgumentsOrDiamond
 }
 
@@ -34412,8 +34263,7 @@ func (*TypeArgumentsOrDiamondContext) IsTypeArgumentsOrDiamondContext() {}
 func NewTypeArgumentsOrDiamondContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *TypeArgumentsOrDiamondContext {
 	var p = new(TypeArgumentsOrDiamondContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_typeArgumentsOrDiamond
 
@@ -34535,19 +34385,19 @@ type IArgumentsContext interface {
 }
 
 type ArgumentsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArgumentsContext() *ArgumentsContext {
 	var p = new(ArgumentsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_arguments
 	return p
 }
 
 func InitEmptyArgumentsContext(p *ArgumentsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_arguments
 }
 
@@ -34556,8 +34406,7 @@ func (*ArgumentsContext) IsArgumentsContext() {}
 func NewArgumentsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArgumentsContext {
 	var p = new(ArgumentsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_arguments
 
@@ -34707,19 +34556,19 @@ type IArgumentListContext interface {
 }
 
 type ArgumentListContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArgumentListContext() *ArgumentListContext {
 	var p = new(ArgumentListContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_argumentList
 	return p
 }
 
 func InitEmptyArgumentListContext(p *ArgumentListContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_argumentList
 }
 
@@ -34728,8 +34577,7 @@ func (*ArgumentListContext) IsArgumentListContext() {}
 func NewArgumentListContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArgumentListContext {
 	var p = new(ArgumentListContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_argumentList
 
@@ -34945,19 +34793,19 @@ type IEnhancedArgumentListInParContext interface {
 }
 
 type EnhancedArgumentListInParContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnhancedArgumentListInParContext() *EnhancedArgumentListInParContext {
 	var p = new(EnhancedArgumentListInParContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListInPar
 	return p
 }
 
 func InitEmptyEnhancedArgumentListInParContext(p *EnhancedArgumentListInParContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListInPar
 }
 
@@ -34966,8 +34814,7 @@ func (*EnhancedArgumentListInParContext) IsEnhancedArgumentListInParContext() {}
 func NewEnhancedArgumentListInParContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnhancedArgumentListInParContext {
 	var p = new(EnhancedArgumentListInParContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListInPar
 
@@ -35163,19 +35010,19 @@ type IFirstArgumentListElementContext interface {
 }
 
 type FirstArgumentListElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyFirstArgumentListElementContext() *FirstArgumentListElementContext {
 	var p = new(FirstArgumentListElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_firstArgumentListElement
 	return p
 }
 
 func InitEmptyFirstArgumentListElementContext(p *FirstArgumentListElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_firstArgumentListElement
 }
 
@@ -35184,8 +35031,7 @@ func (*FirstArgumentListElementContext) IsFirstArgumentListElementContext() {}
 func NewFirstArgumentListElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *FirstArgumentListElementContext {
 	var p = new(FirstArgumentListElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_firstArgumentListElement
 
@@ -35301,19 +35147,19 @@ type IArgumentListElementContext interface {
 }
 
 type ArgumentListElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyArgumentListElementContext() *ArgumentListElementContext {
 	var p = new(ArgumentListElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_argumentListElement
 	return p
 }
 
 func InitEmptyArgumentListElementContext(p *ArgumentListElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_argumentListElement
 }
 
@@ -35322,8 +35168,7 @@ func (*ArgumentListElementContext) IsArgumentListElementContext() {}
 func NewArgumentListElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ArgumentListElementContext {
 	var p = new(ArgumentListElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_argumentListElement
 
@@ -35440,19 +35285,19 @@ type IEnhancedArgumentListElementContext interface {
 }
 
 type EnhancedArgumentListElementContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyEnhancedArgumentListElementContext() *EnhancedArgumentListElementContext {
 	var p = new(EnhancedArgumentListElementContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListElement
 	return p
 }
 
 func InitEmptyEnhancedArgumentListElementContext(p *EnhancedArgumentListElementContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListElement
 }
 
@@ -35461,8 +35306,7 @@ func (*EnhancedArgumentListElementContext) IsEnhancedArgumentListElementContext(
 func NewEnhancedArgumentListElementContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *EnhancedArgumentListElementContext {
 	var p = new(EnhancedArgumentListElementContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_enhancedArgumentListElement
 
@@ -35600,19 +35444,19 @@ type IStringLiteralContext interface {
 }
 
 type StringLiteralContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyStringLiteralContext() *StringLiteralContext {
 	var p = new(StringLiteralContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_stringLiteral
 	return p
 }
 
 func InitEmptyStringLiteralContext(p *StringLiteralContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_stringLiteral
 }
 
@@ -35621,8 +35465,7 @@ func (*StringLiteralContext) IsStringLiteralContext() {}
 func NewStringLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *StringLiteralContext {
 	var p = new(StringLiteralContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_stringLiteral
 
@@ -35694,19 +35537,19 @@ type IClassNameContext interface {
 }
 
 type ClassNameContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyClassNameContext() *ClassNameContext {
 	var p = new(ClassNameContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_className
 	return p
 }
 
 func InitEmptyClassNameContext(p *ClassNameContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_className
 }
 
@@ -35715,8 +35558,7 @@ func (*ClassNameContext) IsClassNameContext() {}
 func NewClassNameContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *ClassNameContext {
 	var p = new(ClassNameContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_className
 
@@ -35797,19 +35639,19 @@ type IIdentifierContext interface {
 }
 
 type IdentifierContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyIdentifierContext() *IdentifierContext {
 	var p = new(IdentifierContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_identifier
 	return p
 }
 
 func InitEmptyIdentifierContext(p *IdentifierContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_identifier
 }
 
@@ -35818,8 +35660,7 @@ func (*IdentifierContext) IsIdentifierContext() {}
 func NewIdentifierContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *IdentifierContext {
 	var p = new(IdentifierContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_identifier
 
@@ -35933,19 +35774,19 @@ type IBuiltInTypeContext interface {
 }
 
 type BuiltInTypeContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyBuiltInTypeContext() *BuiltInTypeContext {
 	var p = new(BuiltInTypeContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_builtInType
 	return p
 }
 
 func InitEmptyBuiltInTypeContext(p *BuiltInTypeContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_builtInType
 }
 
@@ -35954,8 +35795,7 @@ func (*BuiltInTypeContext) IsBuiltInTypeContext() {}
 func NewBuiltInTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *BuiltInTypeContext {
 	var p = new(BuiltInTypeContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_builtInType
 
@@ -36091,19 +35931,19 @@ type IKeywordsContext interface {
 }
 
 type KeywordsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyKeywordsContext() *KeywordsContext {
 	var p = new(KeywordsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_keywords
 	return p
 }
 
 func InitEmptyKeywordsContext(p *KeywordsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_keywords
 }
 
@@ -36112,8 +35952,7 @@ func (*KeywordsContext) IsKeywordsContext() {}
 func NewKeywordsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *KeywordsContext {
 	var p = new(KeywordsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_keywords
 
@@ -36410,19 +36249,19 @@ type IRparenContext interface {
 }
 
 type RparenContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyRparenContext() *RparenContext {
 	var p = new(RparenContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_rparen
 	return p
 }
 
 func InitEmptyRparenContext(p *RparenContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_rparen
 }
 
@@ -36431,8 +36270,7 @@ func (*RparenContext) IsRparenContext() {}
 func NewRparenContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *RparenContext {
 	var p = new(RparenContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_rparen
 
@@ -36505,19 +36343,19 @@ type INlsContext interface {
 }
 
 type NlsContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptyNlsContext() *NlsContext {
 	var p = new(NlsContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_nls
 	return p
 }
 
 func InitEmptyNlsContext(p *NlsContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_nls
 }
 
@@ -36526,8 +36364,7 @@ func (*NlsContext) IsNlsContext() {}
 func NewNlsContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *NlsContext {
 	var p = new(NlsContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_nls
 
@@ -36631,19 +36468,19 @@ type ISepContext interface {
 }
 
 type SepContext struct {
-	antlr.BaseParserRuleContext
+	*GroovyParserRuleContext
 	parser antlr.Parser
 }
 
 func NewEmptySepContext() *SepContext {
 	var p = new(SepContext)
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_sep
 	return p
 }
 
 func InitEmptySepContext(p *SepContext) {
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(nil, -1) // Jim super
 	p.RuleIndex = GroovyParserRULE_sep
 }
 
@@ -36652,8 +36489,7 @@ func (*SepContext) IsSepContext() {}
 func NewSepContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *SepContext {
 	var p = new(SepContext)
 
-	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
-
+	p.GroovyParserRuleContext = NewGroovyParserRuleContext(parent, invokingState)
 	p.parser = parser
 	p.RuleIndex = GroovyParserRULE_sep
 

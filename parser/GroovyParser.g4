@@ -36,6 +36,7 @@ parser grammar GroovyParser;
 options {
     tokenVocab = GroovyLexer;
     superClass = MyGroovyParser;
+    contextSuperClass = GroovyParserRuleContext;
 }
 
 /*
