@@ -1,12 +1,12 @@
 package parser
 
 type NotExpression struct {
-	BooleanExpression
+	*BooleanExpression
 }
 
 func NewNotExpression(expression Expression) *NotExpression {
 	return &NotExpression{
-		BooleanExpression: BooleanExpression{Expression: expression},
+		BooleanExpression: NewBooleanExpression(expression),
 	}
 }
 

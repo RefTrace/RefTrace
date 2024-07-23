@@ -6,7 +6,7 @@ import (
 
 // PropertyNode represents a property (member variable, a getter and setter)
 type PropertyNode struct {
-	AnnotatedNode
+	*AnnotatedNode
 	field       *FieldNode
 	modifiers   int
 	getterBlock Statement
@@ -18,10 +18,11 @@ type PropertyNode struct {
 // NewPropertyNode creates a new PropertyNode with the given field, modifiers, and getter/setter blocks
 func NewPropertyNode(field *FieldNode, modifiers int, getterBlock, setterBlock Statement) *PropertyNode {
 	return &PropertyNode{
-		field:       field,
-		modifiers:   modifiers,
-		getterBlock: getterBlock,
-		setterBlock: setterBlock,
+		AnnotatedNode: &AnnotatedNode{},
+		field:         field,
+		modifiers:     modifiers,
+		getterBlock:   getterBlock,
+		setterBlock:   setterBlock,
 	}
 }
 

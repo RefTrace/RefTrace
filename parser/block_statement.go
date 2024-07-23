@@ -4,9 +4,11 @@ import (
 	"strings"
 )
 
+var _ ASTNode = (*BlockStatement)(nil)
+
 // BlockStatement represents a list of statements and a scope.
 type BlockStatement struct {
-	Statement
+	*BaseStatement
 	statements []Statement
 	scope      *VariableScope
 }
@@ -14,17 +16,23 @@ type BlockStatement struct {
 // NewBlockStatement creates a new BlockStatement with an empty list of statements and a new VariableScope.
 func NewBlockStatement() *BlockStatement {
 	return &BlockStatement{
-		statements: make([]Statement, 0),
-		scope:      NewVariableScope(),
+		BaseStatement: NewBaseStatement(),
+		statements:    make([]Statement, 0),
+		scope:         NewVariableScope(),
 	}
 }
 
 // NewBlockStatementWithStatementsAndScope creates a BlockStatement with a scope and children statements.
 func NewBlockStatementWithStatementsAndScope(statements []Statement, scope *VariableScope) *BlockStatement {
 	return &BlockStatement{
-		statements: append([]Statement(nil), statements...),
-		scope:      scope,
+		BaseStatement: NewBaseStatement(),
+		statements:    append([]Statement(nil), statements...),
+		scope:         scope,
 	}
+}
+
+func (bs *BlockStatement) ClearStatements() {
+	bs.statements = make([]Statement, 0)
 }
 
 // Visit implements the GroovyCodeVisitor interface.
@@ -58,7 +66,7 @@ func (bs *BlockStatement) GetText() string {
 
 // String returns a string representation of the BlockStatement.
 func (bs *BlockStatement) String() string {
-	return bs.Statement.GetText() + strings.Join(statementsToStrings(bs.statements), ", ")
+	return bs.BaseStatement.GetText() + strings.Join(statementsToStrings(bs.statements), ", ")
 }
 
 // IsEmpty returns true if the block statement has no statements.

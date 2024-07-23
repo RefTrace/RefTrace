@@ -3,12 +3,12 @@ package parser
 // DoWhileStatement represents a do { ... } while (condition) loop in Go
 type DoWhileStatement struct {
 	Statement
-	booleanExpression BooleanExpression
+	booleanExpression *BooleanExpression
 	loopBlock         Statement
 }
 
 // NewDoWhileStatement creates a new DoWhileStatement
-func NewDoWhileStatement(booleanExpression BooleanExpression, loopBlock Statement) *DoWhileStatement {
+func NewDoWhileStatement(booleanExpression *BooleanExpression, loopBlock Statement) *DoWhileStatement {
 	return &DoWhileStatement{
 		booleanExpression: booleanExpression,
 		loopBlock:         loopBlock,
@@ -21,7 +21,7 @@ func (d *DoWhileStatement) Visit(visitor GroovyCodeVisitor) {
 }
 
 // GetBooleanExpression returns the boolean expression of the do-while loop
-func (d *DoWhileStatement) GetBooleanExpression() BooleanExpression {
+func (d *DoWhileStatement) GetBooleanExpression() *BooleanExpression {
 	return d.booleanExpression
 }
 
@@ -31,7 +31,7 @@ func (d *DoWhileStatement) GetLoopBlock() Statement {
 }
 
 // SetBooleanExpression sets the boolean expression of the do-while loop
-func (d *DoWhileStatement) SetBooleanExpression(booleanExpression BooleanExpression) {
+func (d *DoWhileStatement) SetBooleanExpression(booleanExpression *BooleanExpression) {
 	d.booleanExpression = booleanExpression
 }
 

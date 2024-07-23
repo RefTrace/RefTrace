@@ -29,6 +29,10 @@ func (icn *InnerClassNode) IsInnerClass() bool {
 	return true
 }
 
+func (icn *InnerClassNode) SetEnclosingMethod(m *MethodNode) {
+	icn.ClassNode.SetEnclosingMethod(m)
+}
+
 // GetOuterClass returns the outer class of this inner class.
 func (icn *InnerClassNode) GetOuterClass() *ClassNode {
 	return icn.outerClass

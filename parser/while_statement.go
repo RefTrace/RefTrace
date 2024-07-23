@@ -1,14 +1,18 @@
 package parser
 
+var _ Statement = (*WhileStatement)(nil)
+
 // WhileStatement represents a while (condition) { ... } loop in Go
 type WhileStatement struct {
-	BooleanExpression BooleanExpression
+	*BaseStatement
+	BooleanExpression *BooleanExpression
 	LoopBlock         Statement
 }
 
 // NewWhileStatement creates a new WhileStatement
-func NewWhileStatement(booleanExpression BooleanExpression, loopBlock Statement) *WhileStatement {
+func NewWhileStatement(booleanExpression *BooleanExpression, loopBlock Statement) *WhileStatement {
 	return &WhileStatement{
+		BaseStatement:     NewBaseStatement(),
 		BooleanExpression: booleanExpression,
 		LoopBlock:         loopBlock,
 	}
@@ -20,7 +24,7 @@ func (w *WhileStatement) Visit(visitor GroovyCodeVisitor) {
 }
 
 // GetBooleanExpression returns the boolean expression of the while statement
-func (w *WhileStatement) GetBooleanExpression() BooleanExpression {
+func (w *WhileStatement) GetBooleanExpression() *BooleanExpression {
 	return w.BooleanExpression
 }
 
@@ -30,7 +34,7 @@ func (w *WhileStatement) GetLoopBlock() Statement {
 }
 
 // SetBooleanExpression sets the boolean expression of the while statement
-func (w *WhileStatement) SetBooleanExpression(booleanExpression BooleanExpression) {
+func (w *WhileStatement) SetBooleanExpression(booleanExpression *BooleanExpression) {
 	w.BooleanExpression = booleanExpression
 }
 

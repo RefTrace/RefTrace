@@ -7,18 +7,20 @@ import (
 
 // MapExpression represents a map expression [1 : 2, "a" : "b", x : y] which creates a mutable Map
 type MapExpression struct {
-	Expression
+	*BaseExpression
 	mapEntryExpressions []*MapEntryExpression
 }
 
 func NewMapExpression() *MapExpression {
 	return &MapExpression{
+		BaseExpression:      NewBaseExpression(),
 		mapEntryExpressions: make([]*MapEntryExpression, 0),
 	}
 }
 
 func NewMapExpressionWithEntries(mapEntryExpressions []*MapEntryExpression) *MapExpression {
 	me := &MapExpression{
+		BaseExpression:      NewBaseExpression(),
 		mapEntryExpressions: mapEntryExpressions,
 	}
 	// TODO: get the types of the expressions to specify the
@@ -44,7 +46,7 @@ func (me *MapExpression) IsDynamic() bool {
 }
 
 func (me *MapExpression) String() string {
-	return fmt.Sprintf("%s%v", me.Expression.GetText(), me.mapEntryExpressions)
+	return fmt.Sprintf("%s%v", me.BaseExpression.GetText(), me.mapEntryExpressions)
 }
 
 func (me *MapExpression) GetText() string {

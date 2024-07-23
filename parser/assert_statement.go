@@ -5,17 +5,17 @@ package parser
 // assert i != 0 : "should never be zero"
 type AssertStatement struct {
 	Statement
-	booleanExpression BooleanExpression
+	booleanExpression *BooleanExpression
 	messageExpression Expression
 }
 
 // NewAssertStatement creates a new AssertStatement with a boolean expression
-func NewAssertStatement(booleanExpression BooleanExpression) *AssertStatement {
+func NewAssertStatement(booleanExpression *BooleanExpression) *AssertStatement {
 	return NewAssertStatementWithMessage(booleanExpression, nullX())
 }
 
 // NewAssertStatementWithMessage creates a new AssertStatement with a boolean expression and message
-func NewAssertStatementWithMessage(booleanExpression BooleanExpression, messageExpression Expression) *AssertStatement {
+func NewAssertStatementWithMessage(booleanExpression *BooleanExpression, messageExpression Expression) *AssertStatement {
 	return &AssertStatement{
 		booleanExpression: booleanExpression,
 		messageExpression: messageExpression,
@@ -33,12 +33,12 @@ func (a *AssertStatement) GetMessageExpression() Expression {
 }
 
 // GetBooleanExpression returns the boolean expression
-func (a *AssertStatement) GetBooleanExpression() BooleanExpression {
+func (a *AssertStatement) GetBooleanExpression() *BooleanExpression {
 	return a.booleanExpression
 }
 
 // SetBooleanExpression sets the boolean expression
-func (a *AssertStatement) SetBooleanExpression(booleanExpression BooleanExpression) {
+func (a *AssertStatement) SetBooleanExpression(booleanExpression *BooleanExpression) {
 	a.booleanExpression = booleanExpression
 }
 

@@ -6,6 +6,13 @@ import (
 
 var _ Statement = (*BaseStatement)(nil)
 
+// NewBaseStatement creates and returns a new BaseStatement instance.
+func NewBaseStatement() *BaseStatement {
+	return &BaseStatement{
+		statementLabels: list.New(),
+	}
+}
+
 // Statement represents the interface for any statement.
 type Statement interface {
 	ASTNode

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"unicode"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -15,17 +16,100 @@ type GroovyParserRuleContext struct {
 func NewGroovyParserRuleContext(parent antlr.ParserRuleContext, invokingStateNumber int) *GroovyParserRuleContext {
 	return &GroovyParserRuleContext{
 		BaseParserRuleContext: *antlr.NewBaseParserRuleContext(parent, invokingStateNumber),
+		metaDataMap:           make(map[interface{}]interface{}),
 	}
 }
 
-// GetMetaDataMap returns the metaDataMap
 func (g *GroovyParserRuleContext) GetMetaDataMap() map[interface{}]interface{} {
 	return g.metaDataMap
 }
 
-// SetMetaDataMap sets the metaDataMap
 func (g *GroovyParserRuleContext) SetMetaDataMap(metaDataMap map[interface{}]interface{}) {
 	g.metaDataMap = metaDataMap
+}
+
+func (g *GroovyParserRuleContext) NewMetaDataMap() map[interface{}]interface{} {
+	return make(map[interface{}]interface{})
+}
+
+func (g *GroovyParserRuleContext) GetNodeMetaData(key interface{}) interface{} {
+	if g.metaDataMap == nil {
+		return nil
+	}
+	return g.metaDataMap[key]
+}
+
+func (g *GroovyParserRuleContext) SetNodeMetaData(key, value interface{}) {
+	if old := g.PutNodeMetaData(key, value); old != nil {
+		panic(errors.New("Tried to overwrite existing meta data"))
+	}
+}
+
+func (g *GroovyParserRuleContext) GetNodeMetaDataWithFunc(key interface{}, valFn func() interface{}) interface{} {
+	if key == nil {
+		panic(errors.New("Tried to get/set meta data with null key"))
+	}
+
+	if g.metaDataMap == nil {
+		g.metaDataMap = g.NewMetaDataMap()
+		g.SetMetaDataMap(g.metaDataMap)
+	}
+	if val, ok := g.metaDataMap[key]; ok {
+		return val
+	}
+	val := valFn()
+	g.metaDataMap[key] = val
+	return val
+}
+
+func (g *GroovyParserRuleContext) CopyNodeMetaData(other NodeMetaDataHandler) {
+	otherMetaDataMap := other.GetMetaDataMap()
+	if otherMetaDataMap == nil {
+		return
+	}
+	if g.metaDataMap == nil {
+		g.metaDataMap = g.NewMetaDataMap()
+		g.SetMetaDataMap(g.metaDataMap)
+	}
+	for k, v := range otherMetaDataMap {
+		g.metaDataMap[k] = v
+	}
+}
+
+func (g *GroovyParserRuleContext) PutNodeMetaData(key, value interface{}) interface{} {
+	if key == nil {
+		panic(errors.New("Tried to set meta data with null key"))
+	}
+
+	if g.metaDataMap == nil {
+		if value == nil {
+			return nil
+		}
+		g.metaDataMap = g.NewMetaDataMap()
+		g.SetMetaDataMap(g.metaDataMap)
+	} else if value == nil {
+		return g.metaDataMap[key]
+	}
+	oldValue := g.metaDataMap[key]
+	g.metaDataMap[key] = value
+	return oldValue
+}
+
+func (g *GroovyParserRuleContext) RemoveNodeMetaData(key interface{}) {
+	if key == nil {
+		panic(errors.New("Tried to remove meta data with null key"))
+	}
+
+	if g.metaDataMap != nil {
+		delete(g.metaDataMap, key)
+	}
+}
+
+func (g *GroovyParserRuleContext) GetNodeMetaDataMap() map[interface{}]interface{} {
+	if g.metaDataMap == nil {
+		return map[interface{}]interface{}{}
+	}
+	return g.metaDataMap
 }
 
 type MyGroovyParser struct {

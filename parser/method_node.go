@@ -33,6 +33,37 @@ func NewMethodNode(name string, modifiers int, returnType *ClassNode, parameters
 	return mn
 }
 
+func (mn *MethodNode) SetModifiers(modifiers int) {
+	mn.invalidateCachedData()
+	mn.modifiers = modifiers
+	mn.variableScope.SetInStaticContext(mn.IsStatic())
+}
+
+func (mn *MethodNode) GetModifiers() int {
+	return mn.modifiers
+}
+
+func (mn *MethodNode) SetGenericsTypes(genericsTypes []*GenericsType) {
+	mn.invalidateCachedData()
+	mn.genericsTypes = genericsTypes
+}
+
+func (mn *MethodNode) SetSyntheticPublic(syntheticPublic bool) {
+	mn.syntheticPublic = syntheticPublic
+}
+
+func (mn *MethodNode) GetName() string {
+	return mn.name
+}
+
+func (mn *MethodNode) GetVariableScope() *VariableScope {
+	return mn.variableScope
+}
+
+func (mn *MethodNode) GetParameters() []*Parameter {
+	return mn.parameters
+}
+
 func (mn *MethodNode) GetTypeDescriptor() string {
 	if mn.typeDescriptor == "" {
 		mn.typeDescriptor = MethodDescriptor(mn, false)

@@ -2,6 +2,7 @@ package parser
 
 // ForStatement represents a standard for loop in Go
 type ForStatement struct {
+	*BaseStatement
 	Variable             *Parameter
 	CollectionExpression Expression
 	LoopBlock            Statement
@@ -12,6 +13,7 @@ var ForLoopDummy = &Parameter{paramType: OBJECT_TYPE, name: "forLoopDummyParamet
 
 func NewForStatement(variable *Parameter, collectionExpression Expression, loopBlock Statement) *ForStatement {
 	return &ForStatement{
+		BaseStatement:        NewBaseStatement(),
 		Variable:             variable,
 		CollectionExpression: collectionExpression,
 		LoopBlock:            loopBlock,

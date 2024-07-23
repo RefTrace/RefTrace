@@ -7,12 +7,12 @@ import (
 // MethodReferenceExpression represents a method reference or a constructor reference,
 // e.g. System.out::println OR Objects::requireNonNull OR Integer::new OR int[]::new
 type MethodReferenceExpression struct {
-	MethodPointerExpression
+	*MethodPointerExpression
 }
 
 func NewMethodReferenceExpression(expression, methodName Expression) *MethodReferenceExpression {
 	return &MethodReferenceExpression{
-		MethodPointerExpression: MethodPointerExpression{
+		MethodPointerExpression: &MethodPointerExpression{
 			expression: expression,
 			methodName: methodName,
 		},

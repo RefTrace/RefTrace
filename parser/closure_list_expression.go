@@ -4,6 +4,8 @@ import (
 	"strings"
 )
 
+var _ Expression = (*ClosureListExpression)(nil)
+
 // ClosureListExpression represents a list of expressions used to create closures.
 // Example: def foo = (1;2;;)
 // The right side is a ClosureListExpression consisting of two ConstantExpressions
@@ -16,7 +18,7 @@ type ClosureListExpression struct {
 
 func NewClosureListExpression(expressions []Expression) *ClosureListExpression {
 	return &ClosureListExpression{
-		ListExpression: ListExpression{expressions: expressions},
+		ListExpression: *NewListExpressionWithExpressions(expressions),
 		scope:          NewVariableScope(),
 	}
 }

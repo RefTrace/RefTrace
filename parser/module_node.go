@@ -169,6 +169,20 @@ func (m *ModuleNode) AddMethod(node *MethodNode) {
 	m.Methods = append(m.Methods, node)
 }
 
+func (m *ModuleNode) AddImportWithAnnotations(name string, classNode *ClassNode, annotations []*AnnotationNode) {
+	importNode := NewImportNodeType(classNode, name)
+	importNode.AddAnnotations(annotations)
+	m.Imports = append(m.Imports, importNode)
+	m.storeLastAddedImportNode(importNode)
+}
+
+func (m *ModuleNode) AddStarImportWithAnnotations(packageName string, annotations []*AnnotationNode) {
+	importNode := NewImportNodePackage(packageName)
+	importNode.AddAnnotations(annotations)
+	m.StarImports = append(m.StarImports, importNode)
+	m.storeLastAddedImportNode(importNode)
+}
+
 func (m *ModuleNode) AddImport(name string, classNode *ClassNode) {
 	importNode := NewImportNodeType(classNode, name)
 	m.Imports = append(m.Imports, importNode)
@@ -179,7 +193,7 @@ func (m *ModuleNode) AddStarImport(packageName string) {
 	m.StarImports = append(m.StarImports, importNode)
 }
 
-func (m *ModuleNode) AddStaticImport(classNode *ClassNode, memberName, simpleName string, annotations []AnnotationNode) {
+func (m *ModuleNode) AddStaticImport(classNode *ClassNode, memberName, simpleName string, annotations []*AnnotationNode) {
 	// Create a new ClassNode for the member
 	memberType := NewClassNode(classNode.GetName()+"."+memberName, 0, nil)
 	memberType.SetRedirect(classNode)
@@ -214,7 +228,7 @@ func (m *ModuleNode) AddStaticStarImport(name string, classNode *ClassNode) {
 	m.AddStaticStarImportWithAnnotations(name, classNode, nil)
 }
 
-func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode *ClassNode, annotations []AnnotationNode) {
+func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode *ClassNode, annotations []*AnnotationNode) {
 	importNode := NewImportNodeStatic(classNode)
 	importNode.AddAnnotations(annotations)
 	m.StaticStarImports[name] = importNode

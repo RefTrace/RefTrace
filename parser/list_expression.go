@@ -7,7 +7,7 @@ import (
 
 // ListExpression represents a list expression [1, 2, 3] which creates a mutable List
 type ListExpression struct {
-	Expression
+	*BaseExpression
 	expressions []Expression
 	wrapped     bool
 }
@@ -15,8 +15,9 @@ type ListExpression struct {
 // NewListExpression creates a new ListExpression
 func NewListExpression() *ListExpression {
 	return &ListExpression{
-		expressions: make([]Expression, 0),
-		wrapped:     false,
+		BaseExpression: NewBaseExpression(),
+		expressions:    make([]Expression, 0),
+		wrapped:        false,
 	}
 }
 

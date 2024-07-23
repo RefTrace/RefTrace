@@ -2,13 +2,13 @@ package parser
 
 // ElvisOperatorExpression represents a short ternary expression x ?: y
 type ElvisOperatorExpression struct {
-	TernaryExpression
+	*TernaryExpression
 }
 
 // NewElvisOperatorExpression creates a new ElvisOperatorExpression
 func NewElvisOperatorExpression(base, falseValue Expression) *ElvisOperatorExpression {
 	return &ElvisOperatorExpression{
-		TernaryExpression: TernaryExpression{
+		TernaryExpression: &TernaryExpression{
 			booleanExpression: asBooleanExpression(base),
 			truthExpression:   base,
 			falseExpression:   falseValue,
@@ -16,12 +16,12 @@ func NewElvisOperatorExpression(base, falseValue Expression) *ElvisOperatorExpre
 	}
 }
 
-func asBooleanExpression(base Expression) BooleanExpression {
+func asBooleanExpression(base Expression) *BooleanExpression {
 	baseInterface := base.(interface{})
-	if be, ok := baseInterface.(BooleanExpression); ok {
+	if be, ok := baseInterface.(*BooleanExpression); ok {
 		return be
 	}
-	be := BooleanExpression{Expression: base}
+	be := &BooleanExpression{BaseExpression: NewBaseExpression()}
 	be.SetSourcePosition(base)
 	return be
 }

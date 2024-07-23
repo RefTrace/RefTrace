@@ -4,16 +4,20 @@ import (
 	"errors"
 )
 
+var _ Statement = (*TryCatchStatement)(nil)
+
 // TryCatchStatement represents a try { ... } catch () finally {} statement in Go
 type TryCatchStatement struct {
+	*BaseStatement
 	TryStatement       Statement
 	FinallyStatement   Statement
-	CatchStatements    []CatchStatement
-	ResourceStatements []ExpressionStatement
+	CatchStatements    []*CatchStatement
+	ResourceStatements []*ExpressionStatement
 }
 
 func NewTryCatchStatement(tryStatement, finallyStatement Statement) *TryCatchStatement {
 	return &TryCatchStatement{
+		BaseStatement:    NewBaseStatement(),
 		TryStatement:     tryStatement,
 		FinallyStatement: finallyStatement,
 	}
@@ -33,23 +37,23 @@ func (t *TryCatchStatement) GetFinallyStatement() Statement {
 
 func (t *TryCatchStatement) GetCatchStatement(idx int) *CatchStatement {
 	if idx >= 0 && idx < len(t.CatchStatements) {
-		return &t.CatchStatements[idx]
+		return t.CatchStatements[idx]
 	}
 	return nil
 }
 
-func (t *TryCatchStatement) GetCatchStatements() []CatchStatement {
+func (t *TryCatchStatement) GetCatchStatements() []*CatchStatement {
 	return t.CatchStatements
 }
 
 func (t *TryCatchStatement) GetResourceStatement(idx int) *ExpressionStatement {
 	if idx >= 0 && idx < len(t.ResourceStatements) {
-		return &t.ResourceStatements[idx]
+		return t.ResourceStatements[idx]
 	}
 	return nil
 }
 
-func (t *TryCatchStatement) GetResourceStatements() []ExpressionStatement {
+func (t *TryCatchStatement) GetResourceStatements() []*ExpressionStatement {
 	return t.ResourceStatements
 }
 
@@ -66,16 +70,16 @@ func (t *TryCatchStatement) SetFinallyStatement(finallyStatement Statement) {
 	t.FinallyStatement = finallyStatement
 }
 
-func (t *TryCatchStatement) SetCatchStatement(idx int, catchStatement CatchStatement) {
+func (t *TryCatchStatement) SetCatchStatement(idx int, catchStatement *CatchStatement) {
 	t.CatchStatements[idx] = catchStatement
 }
 
-func (t *TryCatchStatement) AddCatch(catchStatement CatchStatement) *TryCatchStatement {
+func (t *TryCatchStatement) AddCatch(catchStatement *CatchStatement) *TryCatchStatement {
 	t.CatchStatements = append(t.CatchStatements, catchStatement)
 	return t
 }
 
-func (t *TryCatchStatement) AddResource(resourceStatement ExpressionStatement) (*TryCatchStatement, error) {
+func (t *TryCatchStatement) AddResource(resourceStatement *ExpressionStatement) (*TryCatchStatement, error) {
 	resourceExpression := resourceStatement.GetExpression()
 	if _, ok := resourceExpression.(*DeclarationExpression); !ok {
 		if _, ok := resourceExpression.(*VariableExpression); !ok {

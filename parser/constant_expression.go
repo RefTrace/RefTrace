@@ -10,7 +10,7 @@ var _ Expression = (*ConstantExpression)(nil)
 
 // ConstantExpression represents a constant expression such as null, true, false.
 type ConstantExpression struct {
-	Expression
+	*BaseExpression
 	value        interface{}
 	constantName string
 }
@@ -34,7 +34,7 @@ func NewConstantExpression(value interface{}) *ConstantExpression {
 
 // NewConstantExpressionPrimitive creates a new ConstantExpression with primitive type preservation
 func NewConstantExpressionPrimitive(value interface{}) *ConstantExpression {
-	expr := &ConstantExpression{Expression: NewBaseExpression(), value: value}
+	expr := &ConstantExpression{BaseExpression: NewBaseExpression(), value: value}
 	if value != nil {
 		expr.setTypeFromValue(value, true)
 	}
@@ -65,7 +65,7 @@ func (c *ConstantExpression) setTypeFromValue(value interface{}, keepPrimitive b
 }
 
 func (c *ConstantExpression) String() string {
-	return fmt.Sprintf("%s[%v]", c.Expression.GetText(), c.value)
+	return fmt.Sprintf("%s[%v]", c.BaseExpression.GetText(), c.value)
 }
 
 func (c *ConstantExpression) Visit(visitor GroovyCodeVisitor) {

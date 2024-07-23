@@ -19,16 +19,19 @@ var (
 	STRING_TYPE  = NewClassNode("java.lang.String", ACC_PUBLIC, OBJECT_TYPE)
 	LIST_TYPE    = NewClassNode("java.util.List", ACC_PUBLIC, OBJECT_TYPE)
 	// New additions
-	SCRIPT_TYPE     = NewClassNode("groovy.lang.Script", ACC_PUBLIC, OBJECT_TYPE)
-	GSTRING_TYPE    = NewClassNode("groovy.lang.GString", ACC_PUBLIC, OBJECT_TYPE)
-	CLOSURE_TYPE    = NewClassNode("groovy.lang.Closure", ACC_PUBLIC, OBJECT_TYPE)
-	RANGE_TYPE      = NewClassNode("groovy.lang.Range", ACC_PUBLIC, OBJECT_TYPE)
-	PATTERN_TYPE    = NewClassNode("java.util.regex.Pattern", ACC_PUBLIC, OBJECT_TYPE)
-	BINDING_TYPE    = NewClassNode("groovy.lang.Binding", ACC_PUBLIC, OBJECT_TYPE)
-	BIGINTEGER_TYPE = NewClassNode("java.math.BigInteger", ACC_PUBLIC, OBJECT_TYPE)
-	BIGDECIMAL_TYPE = NewClassNode("java.math.BigDecimal", ACC_PUBLIC, OBJECT_TYPE)
-	NUMBER_TYPE     = NewClassNode("java.math.Number", ACC_PUBLIC, OBJECT_TYPE)
-	MAP_TYPE        = NewClassNode("java.util.Map", ACC_PUBLIC, OBJECT_TYPE)
+	SCRIPT_TYPE          = NewClassNode("groovy.lang.Script", ACC_PUBLIC, OBJECT_TYPE)
+	GSTRING_TYPE         = NewClassNode("groovy.lang.GString", ACC_PUBLIC, OBJECT_TYPE)
+	CLOSURE_TYPE         = NewClassNode("groovy.lang.Closure", ACC_PUBLIC, OBJECT_TYPE)
+	RANGE_TYPE           = NewClassNode("groovy.lang.Range", ACC_PUBLIC, OBJECT_TYPE)
+	PATTERN_TYPE         = NewClassNode("java.util.regex.Pattern", ACC_PUBLIC, OBJECT_TYPE)
+	BINDING_TYPE         = NewClassNode("groovy.lang.Binding", ACC_PUBLIC, OBJECT_TYPE)
+	BIGINTEGER_TYPE      = NewClassNode("java.math.BigInteger", ACC_PUBLIC, OBJECT_TYPE)
+	BIGDECIMAL_TYPE      = NewClassNode("java.math.BigDecimal", ACC_PUBLIC, OBJECT_TYPE)
+	NUMBER_TYPE          = NewClassNode("java.math.Number", ACC_PUBLIC, OBJECT_TYPE)
+	MAP_TYPE             = NewClassNode("java.util.Map", ACC_PUBLIC, OBJECT_TYPE)
+	ENUM_TYPE            = NewClassNode("java.util.Enum", ACC_PUBLIC, OBJECT_TYPE)
+	TUPLE_TYPE           = NewClassNode("groovy.lang.Tuple", ACC_PUBLIC, OBJECT_TYPE)
+	ANNOTATION_NODE_TYPE = NewClassNode("groovy.lang.Annotation", ACC_PUBLIC, OBJECT_TYPE)
 )
 
 var (
@@ -107,6 +110,9 @@ func Make(t reflect.Type) *ClassNode {
 	case reflect.Float64:
 		return DOUBLE_TYPE
 	case reflect.String:
+		if t.String() == "tupletype" {
+			return TUPLE_TYPE
+		}
 		return STRING_TYPE
 	case reflect.Slice, reflect.Array:
 		return LIST_TYPE

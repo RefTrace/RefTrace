@@ -49,9 +49,9 @@ func (an *AnnotatedNode) AddAnnotationNode(annotation *AnnotationNode) {
 }
 
 // AddAnnotations adds multiple annotations
-func (an *AnnotatedNode) AddAnnotations(annotations []AnnotationNode) {
+func (an *AnnotatedNode) AddAnnotations(annotations []*AnnotationNode) {
 	for _, annotation := range annotations {
-		an.AddAnnotationNode(&annotation)
+		an.AddAnnotationNode(annotation)
 	}
 }
 

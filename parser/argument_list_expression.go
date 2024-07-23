@@ -2,7 +2,7 @@ package parser
 
 // ArgumentListExpression represents one or more arguments being passed into a method
 type ArgumentListExpression struct {
-	TupleExpression
+	*TupleExpression
 }
 
 var (
@@ -15,11 +15,11 @@ func NewArgumentListExpression() *ArgumentListExpression {
 }
 
 func NewArgumentListExpressionFromList(expressions []Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{TupleExpression{expressions: expressions}}
+	return &ArgumentListExpression{&TupleExpression{expressions: expressions}}
 }
 
 func NewArgumentListExpressionFromSlice(expressions ...Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{TupleExpression{expressions: expressions}}
+	return &ArgumentListExpression{&TupleExpression{expressions: expressions}}
 }
 
 func NewArgumentListExpressionFromParameters(parameters []*Parameter) *ArgumentListExpression {

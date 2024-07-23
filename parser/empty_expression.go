@@ -1,20 +1,20 @@
 package parser
 
-import (
-	"errors"
-)
+var _ Expression = (*EmptyExpression)(nil)
 
 // EmptyExpression represents a placeholder for an empty expression.
 // Empty expressions are used in closures lists like (;).
 // During class generation, empty expressions should be ignored
 // or replaced with a null value.
 type EmptyExpression struct {
-	Expression
+	*BaseExpression
 }
 
 // NewEmptyExpression creates a new EmptyExpression instance.
 func NewEmptyExpression() *EmptyExpression {
-	return &EmptyExpression{}
+	return &EmptyExpression{
+		BaseExpression: NewBaseExpression(),
+	}
 }
 
 // Visit implements the Expression interface.
@@ -24,94 +24,79 @@ func (e *EmptyExpression) Visit(visitor GroovyCodeVisitor) {
 
 // INSTANCE is an immutable singleton that is recommended for use when source range
 // or any other occurrence-specific metadata is not needed.
-var INSTANCE = &EmptyExpression{}
+var INSTANCE = NewEmptyExpression()
 
-// Ensure INSTANCE methods throw errors when attempting to modify
+// Ensure INSTANCE methods do nothing when attempting to modify
 
-func (e *EmptyExpression) SetColumnNumber(n int) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetColumnNumber(n int) {
+	if e != INSTANCE {
+		e.BaseExpression.SetColumnNumber(n)
 	}
-	e.SetColumnNumber(n)
-	return nil
 }
 
-func (e *EmptyExpression) SetLastColumnNumber(n int) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetLastColumnNumber(n int) {
+	if e != INSTANCE {
+		e.BaseExpression.SetLastColumnNumber(n)
 	}
-	e.SetLastColumnNumber(n)
-	return nil
 }
 
-func (e *EmptyExpression) SetLastLineNumber(n int) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetLastLineNumber(n int) {
+	if e != INSTANCE {
+		e.BaseExpression.SetLastLineNumber(n)
 	}
-	e.SetLastLineNumber(n)
-	return nil
 }
 
-func (e *EmptyExpression) SetLineNumber(n int) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetLineNumber(n int) {
+	if e != INSTANCE {
+		e.BaseExpression.SetLineNumber(n)
 	}
-	e.SetLineNumber(n)
-	return nil
 }
 
-func (e *EmptyExpression) SetMetaDataMap(meta map[interface{}]interface{}) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetMetaDataMap(meta map[interface{}]interface{}) {
+	if e != INSTANCE {
+		e.BaseExpression.SetMetaDataMap(meta)
 	}
-	e.SetMetaDataMap(meta)
-	return nil
 }
 
-func (e *EmptyExpression) SetSourcePosition(node ASTNode) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetSourcePosition(node ASTNode) {
+	if e != INSTANCE {
+		e.BaseExpression.SetSourcePosition(node)
 	}
-	e.SetSourcePosition(node)
-	return nil
 }
 
-func (e *EmptyExpression) AddAnnotation(node AnnotationNode) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) AddAnnotation(node *ClassNode) {
+	if e != INSTANCE {
+		e.BaseExpression.AddAnnotation(node)
 	}
-	e.AddAnnotation(node)
-	return nil
 }
 
-func (e *EmptyExpression) SetDeclaringClass(node ClassNode) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetDeclaringClass(node *ClassNode) {
+	if e != INSTANCE {
+		e.BaseExpression.SetDeclaringClass(node)
 	}
-	e.SetDeclaringClass(node)
-	return nil
 }
 
-func (e *EmptyExpression) SetHasNoRealSourcePosition(b bool) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetHasNoRealSourcePosition(b bool) {
+	if e != INSTANCE {
+		e.BaseExpression.SetHasNoRealSourcePosition(b)
 	}
-	e.SetHasNoRealSourcePosition(b)
-	return nil
 }
 
-func (e *EmptyExpression) SetSynthetic(b bool) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetSynthetic(b bool) {
+	if e != INSTANCE {
+		e.BaseExpression.SetSynthetic(b)
 	}
-	e.SetSynthetic(b)
-	return nil
 }
 
-func (e *EmptyExpression) SetType(node ClassNode) error {
-	if e == INSTANCE {
-		return errors.New("EmptyExpression.INSTANCE is immutable")
+func (e *EmptyExpression) SetType(node *ClassNode) {
+	if e != INSTANCE {
+		e.BaseExpression.SetType(node)
 	}
-	e.SetType(node)
-	return nil
 }
+
+// Implement Expression interface methods
+func (e *EmptyExpression) GetType() *ClassNode {
+	return e.BaseExpression.GetType()
+}
+
+// ASTNode interface methods are already implemented by BaseExpression

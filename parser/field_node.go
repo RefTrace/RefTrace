@@ -7,7 +7,7 @@ import (
 )
 
 type FieldNode struct {
-	AnnotatedNode
+	*AnnotatedNode
 	Variable
 	name                   string
 	modifiers              int

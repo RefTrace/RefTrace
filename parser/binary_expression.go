@@ -6,7 +6,7 @@ import (
 
 // BinaryExpression represents two expressions and an operation
 type BinaryExpression struct {
-	Expression
+	*BaseExpression
 	leftExpression  Expression
 	rightExpression Expression
 	operation       *Token
@@ -16,6 +16,7 @@ type BinaryExpression struct {
 // NewBinaryExpression creates a new BinaryExpression
 func NewBinaryExpression(leftExpression Expression, operation *Token, rightExpression Expression) *BinaryExpression {
 	return &BinaryExpression{
+		BaseExpression:  NewBaseExpression(),
 		leftExpression:  leftExpression,
 		rightExpression: rightExpression,
 		operation:       operation,
@@ -31,7 +32,7 @@ func NewBinaryExpressionWithSafe(leftExpression Expression, operation *Token, ri
 }
 
 func (be *BinaryExpression) String() string {
-	return fmt.Sprintf("%s[%v%v%v]", be.Expression.GetText(), be.leftExpression, be.operation, be.rightExpression)
+	return fmt.Sprintf("%s[%v%v%v]", be.BaseExpression.GetText(), be.leftExpression, be.operation, be.rightExpression)
 }
 
 func (be *BinaryExpression) Visit(visitor GroovyCodeVisitor) {

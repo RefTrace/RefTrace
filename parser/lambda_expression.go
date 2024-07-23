@@ -10,14 +10,14 @@ import (
 // (x, y) -> { x + y }
 // (int x, int y) -> { x + y }
 type LambdaExpression struct {
-	ClosureExpression
+	*ClosureExpression
 	serializable bool
 }
 
 // NewLambdaExpression creates a new LambdaExpression
 func NewLambdaExpression(parameters []*Parameter, code Statement) *LambdaExpression {
 	le := &LambdaExpression{
-		ClosureExpression: *NewClosureExpression(parameters, code),
+		ClosureExpression: NewClosureExpression(parameters, code),
 	}
 	return le
 }

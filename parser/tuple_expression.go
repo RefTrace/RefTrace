@@ -21,6 +21,11 @@ func NewTupleExpressionWithExpressions(expressions ...Expression) *TupleExpressi
 	return &TupleExpression{expressions: expressions}
 }
 
+func (t *TupleExpression) PrependExpression(expression Expression) *TupleExpression {
+	t.expressions = append([]Expression{expression}, t.expressions...)
+	return t
+}
+
 func (t *TupleExpression) AddExpression(expression Expression) *TupleExpression {
 	t.expressions = append(t.expressions, expression)
 	return t

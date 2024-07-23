@@ -5,16 +5,18 @@ import (
 	"strings"
 )
 
+var _ Expression = (*DeclarationExpression)(nil)
+
 // DeclarationExpression represents one or more local variables.
 type DeclarationExpression struct {
-	BinaryExpression
+	*BinaryExpression
 }
 
 // NewDeclarationExpression creates a new DeclarationExpression.
 func NewDeclarationExpression(left Expression, operation *Token, right Expression) *DeclarationExpression {
 	check(left)
 	return &DeclarationExpression{
-		*NewBinaryExpression(
+		BinaryExpression: NewBinaryExpression(
 			left,
 			NewToken(ASSIGN, "=", operation.startLine, operation.startColumn),
 			right,

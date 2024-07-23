@@ -6,14 +6,16 @@ import (
 
 // IfStatement represents an if (condition) { ... } else { ... } statement in Go.
 type IfStatement struct {
-	BooleanExpression BooleanExpression
+	*BaseStatement
+	BooleanExpression *BooleanExpression
 	IfBlock           Statement
 	ElseBlock         Statement
 }
 
 // NewIfStatement creates a new IfStatement with the given condition and blocks.
-func NewIfStatement(booleanExpression BooleanExpression, ifBlock Statement, elseBlock Statement) *IfStatement {
+func NewIfStatement(booleanExpression *BooleanExpression, ifBlock Statement, elseBlock Statement) *IfStatement {
 	return &IfStatement{
+		BaseStatement:     NewBaseStatement(),
 		BooleanExpression: booleanExpression,
 		IfBlock:           ifBlock,
 		ElseBlock:         elseBlock,
@@ -21,7 +23,7 @@ func NewIfStatement(booleanExpression BooleanExpression, ifBlock Statement, else
 }
 
 // SetBooleanExpression sets the boolean expression for the if statement.
-func (i *IfStatement) SetBooleanExpression(booleanExpression BooleanExpression) {
+func (i *IfStatement) SetBooleanExpression(booleanExpression *BooleanExpression) {
 	i.BooleanExpression = booleanExpression
 }
 
@@ -41,7 +43,7 @@ func (i *IfStatement) Visit(visitor GroovyCodeVisitor) {
 }
 
 // GetBooleanExpression returns the boolean expression of the if statement.
-func (i *IfStatement) GetBooleanExpression() BooleanExpression {
+func (i *IfStatement) GetBooleanExpression() *BooleanExpression {
 	return i.BooleanExpression
 }
 

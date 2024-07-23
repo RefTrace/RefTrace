@@ -6,21 +6,22 @@ import (
 
 // TernaryExpression represents a ternary expression (booleanExpression) ? expression : expression
 type TernaryExpression struct {
-	Expression
-	booleanExpression BooleanExpression
+	*BaseExpression
+	booleanExpression *BooleanExpression
 	truthExpression   Expression
 	falseExpression   Expression
 }
 
-func NewTernaryExpression(booleanExpression BooleanExpression, truthExpression, falseExpression Expression) *TernaryExpression {
+func NewTernaryExpression(booleanExpression *BooleanExpression, truthExpression, falseExpression Expression) *TernaryExpression {
 	return &TernaryExpression{
+		BaseExpression:    NewBaseExpression(),
 		booleanExpression: booleanExpression,
 		truthExpression:   truthExpression,
 		falseExpression:   falseExpression,
 	}
 }
 
-func (t *TernaryExpression) GetBooleanExpression() BooleanExpression {
+func (t *TernaryExpression) GetBooleanExpression() *BooleanExpression {
 	return t.booleanExpression
 }
 
@@ -42,7 +43,7 @@ func (t *TernaryExpression) GetType() *ClassNode {
 }
 
 func (t *TernaryExpression) String() string {
-	return fmt.Sprintf("%s[%s ? %s : %s]", t.Expression.GetText(), t.booleanExpression, t.truthExpression, t.falseExpression)
+	return fmt.Sprintf("%s[%s ? %s : %s]", t.BaseExpression.GetText(), t.booleanExpression, t.truthExpression, t.falseExpression)
 }
 
 func (t *TernaryExpression) Visit(visitor GroovyCodeVisitor) {

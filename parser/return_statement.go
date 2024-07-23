@@ -6,7 +6,7 @@ import (
 
 // ReturnStatement represents a return statement
 type ReturnStatement struct {
-	Statement
+	*BaseStatement
 	expression Expression
 }
 
@@ -16,14 +16,14 @@ var RETURN_NULL_OR_VOID = &ReturnStatement{expression: nullX()}
 
 // NewReturnStatementFromExpressionStatement creates a new ReturnStatement from an ExpressionStatement
 func NewReturnStatementFromExpressionStatement(statement *ExpressionStatement) *ReturnStatement {
-	rs := &ReturnStatement{expression: statement.GetExpression()}
+	rs := &ReturnStatement{BaseStatement: NewBaseStatement(), expression: statement.GetExpression()}
 	rs.CopyStatementLabels(statement)
 	return rs
 }
 
 // NewReturnStatement creates a new ReturnStatement with the given expression
 func NewReturnStatement(expression Expression) *ReturnStatement {
-	return &ReturnStatement{expression: expression}
+	return &ReturnStatement{BaseStatement: NewBaseStatement(), expression: expression}
 }
 
 // GetExpression returns the expression of the ReturnStatement

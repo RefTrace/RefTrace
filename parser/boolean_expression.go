@@ -2,14 +2,15 @@ package parser
 
 // BooleanExpression represents a boolean expression
 type BooleanExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 }
 
 // NewBooleanExpression creates a new BooleanExpression
 func NewBooleanExpression(expression Expression) *BooleanExpression {
 	be := &BooleanExpression{
-		expression: expression,
+		BaseExpression: NewBaseExpression(),
+		expression:     expression,
 	}
 	be.SetType(BOOLEAN_TYPE) // Assuming BooleanType is defined elsewhere
 	return be

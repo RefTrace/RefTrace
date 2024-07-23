@@ -1,6 +1,9 @@
 package parser
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 var EMPTY_ARRAY = []*ClassNode{}
 var THIS = OBJECT_TYPE
@@ -27,6 +30,13 @@ type ClassNode struct {
 	scriptBody          bool
 	fieldIndex          map[string]*FieldNode
 	innerClasses        []*InnerClassNode
+	syntheticPublic     bool
+	enclosingMethod     *MethodNode
+	typeAnnotations     []*AnnotationNode
+	annotated           bool
+	objectInitializers  []Statement
+	properties          []*PropertyNode
+	mixins              []*MixinNode
 }
 
 func NewClassNode(name string, modifiers int, superClass *ClassNode) *ClassNode {
@@ -46,6 +56,269 @@ func NewClassNodeWithInterfaces(name string, modifiers int, superClass *ClassNod
 	// Assuming you want to add mixins to the ClassNode, you might need to add a mixins field to the ClassNode struct
 	// cn.mixins = mixins
 	return cn
+}
+
+func (cn *ClassNode) GetMixins() []*MixinNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetMixins()
+	}
+	return cn.mixins
+}
+
+func (cn *ClassNode) SetMixins(mixins []*MixinNode) {
+	if cn.redirect != nil {
+		cn.redirect.SetMixins(mixins)
+	} else {
+		cn.mixins = mixins
+	}
+}
+
+func (cn *ClassNode) SetName(name string) string {
+	if cn.redirect != nil {
+		return cn.redirect.SetName(name)
+	}
+	cn.name = name
+	return name
+}
+
+func (cn *ClassNode) GetProperty(name string) *PropertyNode {
+	for _, prop := range cn.GetProperties() {
+		if prop.GetName() == name {
+			return prop
+		}
+	}
+	return nil
+}
+
+func (cn *ClassNode) AddProperty(node *PropertyNode) {
+	node.SetDeclaringClass(cn.Redirect())
+	cn.AddField(node.GetField())
+	properties := cn.GetProperties()
+	cn.properties = append(properties, node)
+}
+
+// Add this method to the ClassNode struct
+func (cn *ClassNode) RemoveField(fieldToRemove *FieldNode) {
+	r := cn.Redirect()
+	for i, field := range r.fields {
+		if field == fieldToRemove {
+			r.fields = append(r.fields[:i], r.fields[i+1:]...)
+			delete(r.fieldIndex, fieldToRemove.GetName())
+			return
+		}
+	}
+}
+
+func (cn *ClassNode) HasProperty(name string) bool {
+	for _, prop := range cn.GetProperties() {
+		if prop.GetName() == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (cn *ClassNode) GetProperties() []*PropertyNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetProperties()
+	}
+	cn.lazyClassInit()
+	if cn.properties == nil {
+		cn.properties = make([]*PropertyNode, 0)
+	}
+	return cn.properties
+}
+
+func (cn *ClassNode) SetModifiers(modifiers int) {
+	cn.modifiers = modifiers
+}
+
+func (cn *ClassNode) GetFields() []*FieldNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetFields()
+	}
+	cn.lazyClassInit()
+	if cn.fields == nil {
+		cn.fields = make([]*FieldNode, 0)
+	}
+	return cn.fields
+}
+
+func (cn *ClassNode) SetInterfaces(interfaces []*ClassNode) {
+	if cn.redirect != nil {
+		cn.redirect.SetInterfaces(interfaces)
+	} else {
+		cn.interfaces = interfaces
+		// GROOVY-10763: update generics indicator
+		if interfaces != nil && !cn.usingGenerics && cn.isPrimaryNode {
+			for _, iface := range interfaces {
+				cn.usingGenerics = cn.usingGenerics || iface.IsUsingGenerics()
+			}
+		}
+	}
+}
+
+func (cn *ClassNode) GetOrAddStaticInitializer() *MethodNode {
+	const classInitializer = "<clinit>"
+	declaredMethods := cn.GetDeclaredMethods(classInitializer)
+
+	if len(declaredMethods) == 0 {
+		method := cn.AddMethodWithDetails(
+			classInitializer,
+			ACC_STATIC,
+			VOID_TYPE,
+			[]*Parameter{},
+			EMPTY_ARRAY,
+			NewBlockStatement(),
+		)
+		method.SetSynthetic(true)
+		return method
+	}
+
+	return declaredMethods[0]
+}
+
+func (cn *ClassNode) AddObjectInitializerStatements(statement Statement) {
+	statements := cn.GetObjectInitializerStatements()
+	cn.objectInitializers = append(statements, statement)
+}
+
+func (cn *ClassNode) AddStaticInitializerStatements(statements []Statement, fieldInit bool) {
+	method := cn.GetOrAddStaticInitializer()
+	block := GetCodeAsBlock(method)
+
+	if !fieldInit {
+		block.AddStatements(statements)
+	} else {
+		blockStatements := block.GetStatements()
+		statements = append(statements, blockStatements...)
+		block.ClearStatements()
+		block.AddStatements(statements)
+	}
+}
+
+func (cn *ClassNode) GetObjectInitializerStatements() []Statement {
+	r := cn.Redirect()
+	if r.objectInitializers == nil {
+		r.objectInitializers = make([]Statement, 0)
+	}
+	return r.objectInitializers
+}
+
+func (cn *ClassNode) IsAnnotated() bool {
+	return cn.annotated
+}
+
+func (cn *ClassNode) SetAnnotated(annotated bool) {
+	cn.annotated = annotated
+}
+
+func (cn *ClassNode) IsRedirectNode() bool {
+	return cn.redirect != nil
+}
+
+func (cn *ClassNode) IsResolved() bool {
+	// Implement this method based on your specific requirements
+	// For now, we'll return false as a placeholder
+	return false
+}
+
+func (cn *ClassNode) IsPrimaryClassNode() bool {
+	return cn.isPrimaryNode
+}
+
+func (cn *ClassNode) AddTypeAnnotation(annotation *AnnotationNode) {
+	if !cn.IsRedirectNode() && (cn.IsResolved() || cn.IsPrimaryClassNode()) {
+		panic(fmt.Sprintf("Adding type annotation @%s to non-redirect node: %s", annotation.GetClassNode().GetNameWithoutPackage(), cn.GetName()))
+	}
+	if cn.typeAnnotations == nil {
+		cn.typeAnnotations = make([]*AnnotationNode, 0, 3)
+	}
+	cn.typeAnnotations = append(cn.typeAnnotations, annotation)
+	cn.SetAnnotated(true)
+}
+
+func (cn *ClassNode) AddTypeAnnotations(annotations []*AnnotationNode) {
+	for _, annotation := range annotations {
+		cn.AddTypeAnnotation(annotation)
+	}
+}
+
+func (cn *ClassNode) GetEnclosingMethod() *MethodNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetEnclosingMethod()
+	}
+	return cn.enclosingMethod
+}
+
+func (cn *ClassNode) SetEnclosingMethod(enclosingMethod *MethodNode) {
+	if cn.redirect != nil {
+		cn.redirect.SetEnclosingMethod(enclosingMethod)
+	} else {
+		cn.enclosingMethod = enclosingMethod
+	}
+}
+
+func (cn *ClassNode) AddConstructor(node *ConstructorNode) {
+	r := cn.Redirect()
+	node.SetDeclaringClass(r)
+	if r.constructors == nil {
+		r.constructors = make([]*ConstructorNode, 0, 4)
+	}
+	r.constructors = append(r.constructors, node)
+}
+
+func (cn *ClassNode) AddConstructorWithDetails(modifiers int, parameters []*Parameter, exceptions []*ClassNode, code Statement) *ConstructorNode {
+	node := NewConstructorNodeWithParams(modifiers, parameters, exceptions, code)
+	cn.AddConstructor(node)
+	return node
+}
+
+func (cn *ClassNode) GetDeclaredMethod(name string, parameters []*Parameter) *MethodNode {
+	zeroParameters := len(parameters) == 0
+	for _, method := range cn.GetDeclaredMethods(name) {
+		if zeroParameters {
+			if len(method.GetParameters()) == 0 {
+				return method
+			}
+		} else {
+			if ParametersEqual(method.GetParameters(), parameters) {
+				return method
+			}
+		}
+	}
+	return nil
+}
+
+func (cn *ClassNode) GetDeclaredMethods(name string) []*MethodNode {
+	if cn.redirect != nil {
+		return cn.redirect.GetDeclaredMethods(name)
+	}
+	return cn.methods[name]
+}
+
+func (cn *ClassNode) AddMethod(node *MethodNode) {
+	r := cn.Redirect()
+	node.SetDeclaringClass(r)
+	if r.methods == nil {
+		r.methods = make(map[string][]*MethodNode)
+	}
+	r.methods[node.GetName()] = append(r.methods[node.GetName()], node)
+}
+
+func (cn *ClassNode) AddMethodWithDetails(name string, modifiers int, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement) *MethodNode {
+	other := cn.GetDeclaredMethod(name, parameters)
+	// don't add duplicate methods
+	if other != nil {
+		return other
+	}
+	node := NewMethodNode(name, modifiers, returnType, parameters, exceptions, code)
+	cn.AddMethod(node)
+	return node
+}
+
+func (cn *ClassNode) SetSyntheticPublic(isSyntheticPublic bool) {
+	cn.syntheticPublic = isSyntheticPublic
 }
 
 func (cn *ClassNode) IsInnerClass() bool {
@@ -181,8 +454,20 @@ func (cn *ClassNode) GetModifiers() int {
 	return cn.modifiers
 }
 
+func (cn *ClassNode) IsEnum() bool {
+	return (cn.modifiers & ACC_ENUM) != 0
+}
+
 func (cn *ClassNode) IsStatic() bool {
 	return (cn.modifiers & ACC_STATIC) != 0
+}
+
+func (cn *ClassNode) IsAnnotationDefinition() bool {
+	return cn.IsInterface() && (cn.modifiers&ACC_ANNOTATION) != 0
+}
+
+func (cn *ClassNode) IsAbstract() bool {
+	return (cn.modifiers & ACC_ABSTRACT) != 0
 }
 
 func (cn *ClassNode) GetComponentType() *ClassNode {
@@ -305,6 +590,35 @@ func (cn *ClassNode) RenameField(oldName, newName string) {
 	}
 }
 
+func (cn *ClassNode) AddField(node *FieldNode) {
+	cn.addField(node, true)
+}
+
+func (cn *ClassNode) addField(node *FieldNode, doappend bool) {
+	r := cn.Redirect()
+	node.SetDeclaringClass(r)
+	node.SetOwner(r)
+	if r.fields == nil {
+		r.fields = make([]*FieldNode, 0, 4)
+	}
+	if r.fieldIndex == nil {
+		r.fieldIndex = make(map[string]*FieldNode)
+	}
+
+	if doappend {
+		r.fields = append(r.fields, node)
+	} else {
+		r.fields = append([]*FieldNode{node}, r.fields...)
+	}
+	r.fieldIndex[node.GetName()] = node
+}
+
+func (cn *ClassNode) AddFieldWithInitialValue(name string, modifiers int, type_ *ClassNode, initialValue Expression) *FieldNode {
+	node := NewFieldNode(name, modifiers, type_, cn.Redirect(), initialValue)
+	cn.AddField(node)
+	return node
+}
+
 func (cn *ClassNode) AddInnerClass(innerClass *InnerClassNode) {
 	if cn.redirect != nil {
 		cn.redirect.AddInnerClass(innerClass)
@@ -354,4 +668,21 @@ func (cn *ClassNode) GetOuterClass() *ClassNode {
 		return cn.redirect.GetOuterClass()
 	}
 	return nil
+}
+
+func (cn *ClassNode) SetGenericsTypes(genericsTypes []*GenericsType) {
+	if cn.redirect != nil {
+		cn.redirect.SetGenericsTypes(genericsTypes)
+	} else {
+		cn.usingGenerics = cn.usingGenerics || genericsTypes != nil
+		cn.genericsTypes = genericsTypes
+	}
+}
+
+func (cn *ClassNode) IsUsingGenerics() bool {
+	return cn.usingGenerics
+}
+
+func (cn *ClassNode) SetUsingGenerics(usesGenerics bool) {
+	cn.usingGenerics = usesGenerics
 }
