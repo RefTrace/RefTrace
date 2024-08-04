@@ -345,7 +345,7 @@ func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) i
 	return nodes
 }
 
-func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) *PackageNode {
+func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) interface{} {
 	packageName := v.VisitQualifiedName(ctx.QualifiedName().(*QualifiedNameContext))
 	v.moduleNode.SetPackageName(packageName + DOT_STR)
 
@@ -357,7 +357,7 @@ func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) *Pa
 	return configureAST(packageNode, ctx)
 }
 
-func (v *ASTBuilder) VisitImportDeclaration(ctx *ImportDeclarationContext) *ImportNode {
+func (v *ASTBuilder) VisitImportDeclaration(ctx *ImportDeclarationContext) interface{} {
 	annotations := v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode)
 
 	hasStatic := ctx.STATIC() != nil
@@ -453,7 +453,7 @@ func makeClassNode(name string) *ClassNode {
 	return node
 }
 
-func (v *ASTBuilder) VisitAssertStatement(ctx *AssertStatementContext) *AssertStatement {
+func (v *ASTBuilder) VisitAssertStatement(ctx *AssertStatementContext) interface{} {
 	v.visitingAssertStatementCount++
 	defer func() {
 		v.visitingAssertStatementCount--
@@ -488,18 +488,18 @@ func (v *ASTBuilder) VisitAssertStatement(ctx *AssertStatementContext) *AssertSt
 	)
 }
 
-func (v *ASTBuilder) VisitConditionalStatement(ctx *ConditionalStatementContext) Statement {
+func (v *ASTBuilder) VisitConditionalStatement(ctx *ConditionalStatementContext) interface{} {
 	if ctx.IfElseStatement() != nil {
-		return configureAST(v.VisitIfElseStatement(ctx.IfElseStatement().(*IfElseStatementContext)), ctx)
+		return configureAST(v.VisitIfElseStatement(ctx.IfElseStatement().(*IfElseStatementContext)).(*IfStatement), ctx)
 	} else if ctx.SwitchStatement() != nil {
-		return configureAST(v.VisitSwitchStatement(ctx.SwitchStatement().(*SwitchStatementContext)), ctx)
+		return configureAST(v.VisitSwitchStatement(ctx.SwitchStatement().(*SwitchStatementContext)).(*SwitchStatement), ctx)
 	}
 
 	panic(createParsingFailedException("Unsupported conditional statement", parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitIfElseStatement(ctx *IfElseStatementContext) *IfStatement {
-	conditionExpression := v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext))
+func (v *ASTBuilder) VisitIfElseStatement(ctx *IfElseStatementContext) interface{} {
+	conditionExpression := v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)).(Expression)
 	booleanExpression := configureAST(
 		NewBooleanExpression(conditionExpression),
 		ctx,
@@ -516,7 +516,7 @@ func (v *ASTBuilder) VisitIfElseStatement(ctx *IfElseStatementContext) *IfStatem
 	return configureAST(NewIfStatement(booleanExpression, ifBlock, elseBlock), ctx)
 }
 
-func (v *ASTBuilder) VisitLoopStmtAlt(ctx *LoopStmtAltContext) Statement {
+func (v *ASTBuilder) VisitLoopStmtAlt(ctx *LoopStmtAltContext) interface{} {
 	v.pushSwitchExpressionRuleContext(ctx)
 	v.visitingLoopStatementCount++
 	defer func() {
@@ -527,8 +527,8 @@ func (v *ASTBuilder) VisitLoopStmtAlt(ctx *LoopStmtAltContext) Statement {
 	return configureAST(v.Visit(ctx.LoopStatement()).(Statement), ctx)
 }
 
-func (v *ASTBuilder) VisitForStmtAlt(ctx *ForStmtAltContext) *ForStatement {
-	controlTuple := v.VisitForControl(ctx.ForControl().(*ForControlContext))
+func (v *ASTBuilder) VisitForStmtAlt(ctx *ForStmtAltContext) interface{} {
+	controlTuple := v.VisitForControl(ctx.ForControl().(*ForControlContext)).(Tuple2[*Parameter, Expression])
 
 	loopBlock := v.unpackStatement(v.Visit(ctx.Statement()).(Statement))
 
@@ -545,25 +545,25 @@ func (v *ASTBuilder) VisitForStmtAlt(ctx *ForStmtAltContext) *ForStatement {
 	)
 }
 
-func (v *ASTBuilder) VisitForControl(ctx *ForControlContext) Tuple2[*Parameter, Expression] {
+func (v *ASTBuilder) VisitForControl(ctx *ForControlContext) interface{} {
 	if ctx.EnhancedForControl() != nil { // e.g. for(int i in 0..<10) {}
-		return v.VisitEnhancedForControl(ctx.EnhancedForControl().(*EnhancedForControlContext))
+		return v.VisitEnhancedForControl(ctx.EnhancedForControl().(*EnhancedForControlContext)).(Tuple2[*Parameter, Expression])
 	}
 
 	if ctx.ClassicalForControl() != nil { // e.g. for(int i = 0; i < 10; i++) {}
-		return v.VisitClassicalForControl(ctx.ClassicalForControl().(*ClassicalForControlContext))
+		return v.VisitClassicalForControl(ctx.ClassicalForControl().(*ClassicalForControlContext)).(Tuple2[*Parameter, Expression])
 	}
 
 	panic(createParsingFailedException("Unsupported for control: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitForInit(ctx *ForInitContext) Expression {
+func (v *ASTBuilder) VisitForInit(ctx *ForInitContext) interface{} {
 	if ctx == nil {
 		return EMPTY_EXPRESSION
 	}
 
 	if ctx.LocalVariableDeclaration() != nil {
-		declarationListStatement := v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext))
+		declarationListStatement := v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext)).(*DeclarationListStatement)
 		declarationExpressions := declarationListStatement.GetDeclarationExpressions()
 
 		if len(declarationExpressions) == 1 {
@@ -584,7 +584,7 @@ func (v *ASTBuilder) VisitForInit(ctx *ForInitContext) Expression {
 	panic(createParsingFailedException("Unsupported for init: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitForUpdate(ctx *ForUpdateContext) Expression {
+func (v *ASTBuilder) VisitForUpdate(ctx *ForUpdateContext) interface{} {
 	if ctx == nil {
 		return INSTANCE
 	}
@@ -593,7 +593,7 @@ func (v *ASTBuilder) VisitForUpdate(ctx *ForUpdateContext) Expression {
 }
 
 func (v *ASTBuilder) translateExpressionList(ctx *ExpressionListContext) Expression {
-	expressionList := v.VisitExpressionList(ctx)
+	expressionList := v.VisitExpressionList(ctx).([]Expression)
 
 	if len(expressionList) == 1 {
 		return configureAST(expressionList[0], ctx)
@@ -602,7 +602,7 @@ func (v *ASTBuilder) translateExpressionList(ctx *ExpressionListContext) Express
 	}
 }
 
-func (v *ASTBuilder) VisitEnhancedForControl(ctx *EnhancedForControlContext) Tuple2[*Parameter, Expression] {
+func (v *ASTBuilder) VisitEnhancedForControl(ctx *EnhancedForControlContext) interface{} {
 	parameter := NewParameter(v.VisitType(ctx.Type_().(*TypeContext)), v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).GetName())
 	modifierManager := NewModifierManager(v, v.VisitVariableModifiersOpt(ctx.VariableModifiersOpt().(*VariableModifiersOptContext)))
 	modifierManager.ProcessParameter(parameter)
@@ -610,23 +610,23 @@ func (v *ASTBuilder) VisitEnhancedForControl(ctx *EnhancedForControlContext) Tup
 	return NewTuple2(parameter, v.Visit(ctx.Expression()).(Expression))
 }
 
-func (v *ASTBuilder) VisitClassicalForControl(ctx *ClassicalForControlContext) Tuple2[*Parameter, Expression] {
+func (v *ASTBuilder) VisitClassicalForControl(ctx *ClassicalForControlContext) interface{} {
 	closureListExpression := NewEmptyClosureListExpression()
 
-	closureListExpression.AddExpression(v.VisitForInit(ctx.ForInit().(*ForInitContext)))
+	closureListExpression.AddExpression(v.VisitForInit(ctx.ForInit().(*ForInitContext)).(Expression))
 	if ctx.Expression() != nil {
 		closureListExpression.AddExpression(v.Visit(ctx.Expression()).(Expression))
 	} else {
 		closureListExpression.AddExpression(EMPTY_EXPRESSION)
 	}
-	closureListExpression.AddExpression(v.VisitForUpdate(ctx.ForUpdate().(*ForUpdateContext)))
+	closureListExpression.AddExpression(v.VisitForUpdate(ctx.ForUpdate().(*ForUpdateContext)).(Expression))
 
 	var foo Expression = closureListExpression
 
 	return NewTuple2(FOR_LOOP_DUMMY, foo)
 }
 
-func (v *ASTBuilder) VisitWhileStmtAlt(ctx *WhileStmtAltContext) *WhileStatement {
+func (v *ASTBuilder) VisitWhileStmtAlt(ctx *WhileStmtAltContext) interface{} {
 	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(*StatementContext))
 
 	var block Statement
@@ -642,7 +642,7 @@ func (v *ASTBuilder) VisitWhileStmtAlt(ctx *WhileStmtAltContext) *WhileStatement
 	)
 }
 
-func (v *ASTBuilder) VisitDoWhileStmtAlt(ctx *DoWhileStmtAltContext) *DoWhileStatement {
+func (v *ASTBuilder) VisitDoWhileStmtAlt(ctx *DoWhileStmtAltContext) interface{} {
 	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(*StatementContext))
 
 	var block Statement
@@ -659,7 +659,7 @@ func (v *ASTBuilder) VisitDoWhileStmtAlt(ctx *DoWhileStmtAltContext) *DoWhileSta
 }
 
 func (v *ASTBuilder) createLoopConditionExpressionAndBlock(eipc *ExpressionInParContext, sc *StatementContext) Tuple2[*BooleanExpression, Statement] {
-	conditionExpression := v.VisitExpressionInPar(eipc)
+	conditionExpression := v.VisitExpressionInPar(eipc).(Expression)
 
 	booleanExpression := configureASTFromSource(
 		NewBooleanExpression(conditionExpression),
@@ -671,7 +671,7 @@ func (v *ASTBuilder) createLoopConditionExpressionAndBlock(eipc *ExpressionInPar
 	return NewTuple2(booleanExpression, loopBlock)
 }
 
-func (v *ASTBuilder) VisitTryCatchStatement(ctx *TryCatchStatementContext) Statement {
+func (v *ASTBuilder) VisitTryCatchStatement(ctx *TryCatchStatementContext) interface{} {
 	resourcesExists := ctx.Resources() != nil
 	catchExists := len(ctx.AllCatchClause()) > 0
 	finallyExists := ctx.FinallyBlock() != nil
@@ -682,17 +682,17 @@ func (v *ASTBuilder) VisitTryCatchStatement(ctx *TryCatchStatementContext) State
 
 	tryCatchStatement := NewTryCatchStatement(
 		v.Visit(ctx.Block()).(Statement),
-		v.VisitFinallyBlock(ctx.FinallyBlock().(*FinallyBlockContext)),
+		v.VisitFinallyBlock(ctx.FinallyBlock().(*FinallyBlockContext)).(Statement),
 	)
 
 	if resourcesExists {
-		for _, resource := range v.VisitResources(ctx.Resources().(*ResourcesContext)) {
+		for _, resource := range v.VisitResources(ctx.Resources().(*ResourcesContext)).([]*ExpressionStatement) {
 			tryCatchStatement.AddResource(resource)
 		}
 	}
 
 	for _, catchClause := range ctx.AllCatchClause() {
-		for _, catchStmt := range v.VisitCatchClause(catchClause.(*CatchClauseContext)) {
+		for _, catchStmt := range v.VisitCatchClause(catchClause.(*CatchClauseContext)).([]*CatchStatement) {
 			tryCatchStatement.AddCatch(catchStmt)
 		}
 	}
@@ -700,14 +700,14 @@ func (v *ASTBuilder) VisitTryCatchStatement(ctx *TryCatchStatementContext) State
 	return configureAST(tryCatchStatement, ctx)
 }
 
-func (v *ASTBuilder) VisitResources(ctx *ResourcesContext) []*ExpressionStatement {
+func (v *ASTBuilder) VisitResources(ctx *ResourcesContext) interface{} {
 	return v.VisitResourceList(ctx.ResourceList().(*ResourceListContext))
 }
 
-func (v *ASTBuilder) VisitResourceList(ctx *ResourceListContext) []*ExpressionStatement {
+func (v *ASTBuilder) VisitResourceList(ctx *ResourceListContext) interface{} {
 	var resources []*ExpressionStatement
 	for _, resource := range ctx.AllResource() {
-		resources = append(resources, v.VisitResource(resource.(*ResourceContext)))
+		resources = append(resources, v.VisitResource(resource.(*ResourceContext)).(*ExpressionStatement))
 	}
 	return resources
 }
@@ -716,9 +716,9 @@ func IsInstanceOf(obj interface{}, targetType interface{}) bool {
 	return reflect.TypeOf(obj) == reflect.TypeOf(targetType).Elem()
 }
 
-func (v *ASTBuilder) VisitResource(ctx *ResourceContext) *ExpressionStatement {
+func (v *ASTBuilder) VisitResource(ctx *ResourceContext) interface{} {
 	if ctx.LocalVariableDeclaration() != nil {
-		declarationStatements := v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext)).GetDeclarationStatements()
+		declarationStatements := v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext)).(*DeclarationListStatement).GetDeclarationStatements()
 
 		if len(declarationStatements) > 1 {
 			panic(createParsingFailedException("Multi resources can not be declared in one statement", parserRuleContextAdapter{ctx}))
@@ -772,14 +772,14 @@ func (v *ASTBuilder) VisitResource(ctx *ResourceContext) *ExpressionStatement {
 	panic(createParsingFailedException("Unsupported resource declaration: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) []*CatchStatement {
-	catchTypes := v.VisitCatchType(ctx.CatchType().(*CatchTypeContext))
+func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) interface{} {
+	catchTypes := v.VisitCatchType(ctx.CatchType().(*CatchTypeContext)).([]*ClassNode)
 	catchStatements := make([]*CatchStatement, 0, len(catchTypes))
 
 	for _, e := range catchTypes {
 		catchStatement := NewCatchStatement(
 			NewParameter(e, v.VisitIdentifier(ctx.Identifier().(*IdentifierContext))),
-			v.VisitBlock(ctx.Block().(*BlockContext)),
+			v.VisitBlock(ctx.Block().(*BlockContext)).(Statement),
 		)
 		catchStatements = append(catchStatements, configureAST(catchStatement, ctx))
 	}
@@ -787,7 +787,7 @@ func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) []*CatchStatement
 	return catchStatements
 }
 
-func (v *ASTBuilder) VisitCatchType(ctx *CatchTypeContext) []*ClassNode {
+func (v *ASTBuilder) VisitCatchType(ctx *CatchTypeContext) interface{} {
 	if ctx == nil {
 		return []*ClassNode{OBJECT_TYPE}
 	}
@@ -799,7 +799,7 @@ func (v *ASTBuilder) VisitCatchType(ctx *CatchTypeContext) []*ClassNode {
 	return classNodes
 }
 
-func (v *ASTBuilder) VisitFinallyBlock(ctx *FinallyBlockContext) Statement {
+func (v *ASTBuilder) VisitFinallyBlock(ctx *FinallyBlockContext) interface{} {
 	if ctx == nil {
 		return NewEmptyStatement()
 	}
@@ -810,7 +810,7 @@ func (v *ASTBuilder) VisitFinallyBlock(ctx *FinallyBlockContext) Statement {
 	)
 }
 
-func (v *ASTBuilder) VisitSwitchStatement(ctx *SwitchStatementContext) *SwitchStatement {
+func (v *ASTBuilder) VisitSwitchStatement(ctx *SwitchStatementContext) interface{} {
 	v.pushSwitchExpressionRuleContext(ctx)
 	v.visitingSwitchStatementCount++
 	defer func() {
@@ -820,7 +820,7 @@ func (v *ASTBuilder) VisitSwitchStatement(ctx *SwitchStatementContext) *SwitchSt
 
 	var statementList []Statement
 	for _, group := range ctx.AllSwitchBlockStatementGroup() {
-		statementList = append(statementList, v.VisitSwitchBlockStatementGroup(group.(*SwitchBlockStatementGroupContext))...)
+		statementList = append(statementList, v.VisitSwitchBlockStatementGroup(group.(*SwitchBlockStatementGroupContext)).([]Statement)...)
 	}
 
 	var caseStatementList []*CaseStatement
@@ -852,7 +852,7 @@ func (v *ASTBuilder) VisitSwitchStatement(ctx *SwitchStatementContext) *SwitchSt
 
 	return configureAST(
 		NewSwitchStatementFull(
-			v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)),
+			v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)).(Expression),
 			caseStatementList,
 			defaultStatement,
 		),
@@ -860,13 +860,13 @@ func (v *ASTBuilder) VisitSwitchStatement(ctx *SwitchStatementContext) *SwitchSt
 	)
 }
 
-func (v *ASTBuilder) VisitSwitchBlockStatementGroup(ctx *SwitchBlockStatementGroupContext) []Statement {
+func (v *ASTBuilder) VisitSwitchBlockStatementGroup(ctx *SwitchBlockStatementGroupContext) interface{} {
 	labelCount := len(ctx.AllSwitchLabel())
 	var firstLabelHolder []antlr.Token
 
 	var statementList []Statement
 	for i, label := range ctx.AllSwitchLabel() {
-		tuple := v.VisitSwitchLabel(label.(*SwitchLabelContext))
+		tuple := v.VisitSwitchLabel(label.(*SwitchLabelContext)).(Tuple2[antlr.Token, Expression])
 		switch tuple.V1.GetTokenType() {
 		case GroovyParserCASE:
 			if len(statementList) == 0 {
@@ -874,14 +874,14 @@ func (v *ASTBuilder) VisitSwitchBlockStatementGroup(ctx *SwitchBlockStatementGro
 			}
 			var blockStatements Statement
 			if i == labelCount-1 {
-				blockStatements = v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext))
+				blockStatements = v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext)).(*BlockStatement)
 			} else {
 				blockStatements = NewEmptyStatement()
 			}
 			statement := NewCaseStatement(tuple.V2, blockStatements)
 			statementList = append(statementList, configureASTWithToken(statement, firstLabelHolder[0]))
 		case GroovyParserDEFAULT:
-			statement := v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext))
+			statement := v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext)).(*BlockStatement)
 			statement.SetNodeMetaData(IS_SWITCH_DEFAULT, true)
 			statementList = append(statementList, statement)
 		}
@@ -890,7 +890,7 @@ func (v *ASTBuilder) VisitSwitchBlockStatementGroup(ctx *SwitchBlockStatementGro
 	return statementList
 }
 
-func (v *ASTBuilder) VisitSwitchLabel(ctx *SwitchLabelContext) Tuple2[antlr.Token, Expression] {
+func (v *ASTBuilder) VisitSwitchLabel(ctx *SwitchLabelContext) interface{} {
 	if ctx.CASE() != nil {
 		return NewTuple2(ctx.CASE().GetSymbol(), v.Visit(ctx.Expression()).(Expression))
 	} else if ctx.DEFAULT() != nil {
@@ -901,17 +901,17 @@ func (v *ASTBuilder) VisitSwitchLabel(ctx *SwitchLabelContext) Tuple2[antlr.Toke
 	panic(createParsingFailedException("Unsupported switch label: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitSynchronizedStmtAlt(ctx *SynchronizedStmtAltContext) *SynchronizedStatement {
+func (v *ASTBuilder) VisitSynchronizedStmtAlt(ctx *SynchronizedStmtAltContext) interface{} {
 	return configureAST(
 		NewSynchronizedStatement(
-			v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)),
-			v.VisitBlock(ctx.Block().(*BlockContext)),
+			v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)).(Expression),
+			v.VisitBlock(ctx.Block().(*BlockContext)).(Statement),
 		),
 		ctx,
 	)
 }
 
-func (v *ASTBuilder) VisitReturnStmtAlt(ctx *ReturnStmtAltContext) *ReturnStatement {
+func (v *ASTBuilder) VisitReturnStmtAlt(ctx *ReturnStmtAltContext) interface{} {
 	if _, ok := v.peekSwitchExpressionRuleContext().(*SwitchExpressionContext); ok {
 		panic(createParsingFailedException("switch expression does not support `return`", parserRuleContextAdapter{ctx}))
 	}
@@ -926,20 +926,20 @@ func (v *ASTBuilder) VisitReturnStmtAlt(ctx *ReturnStmtAltContext) *ReturnStatem
 	return configureAST(NewReturnStatement(expr), ctx)
 }
 
-func (v *ASTBuilder) VisitThrowStmtAlt(ctx *ThrowStmtAltContext) *ThrowStatement {
+func (v *ASTBuilder) VisitThrowStmtAlt(ctx *ThrowStmtAltContext) interface{} {
 	return configureAST(
 		NewThrowStatement(v.Visit(ctx.Expression()).(Expression)),
 		ctx,
 	)
 }
 
-func (v *ASTBuilder) VisitLabeledStmtAlt(ctx *LabeledStmtAltContext) Statement {
+func (v *ASTBuilder) VisitLabeledStmtAlt(ctx *LabeledStmtAltContext) interface{} {
 	statement := v.Visit(ctx.Statement()).(Statement)
 	statement.AddStatementLabel(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)))
 	return statement
 }
 
-func (v *ASTBuilder) VisitBreakStatement(ctx *BreakStatementContext) *BreakStatement {
+func (v *ASTBuilder) VisitBreakStatement(ctx *BreakStatementContext) interface{} {
 	if v.visitingLoopStatementCount == 0 && v.visitingSwitchStatementCount == 0 {
 		panic(createParsingFailedException("break statement is only allowed inside loops or switches", parserRuleContextAdapter{ctx}))
 	}
@@ -956,17 +956,17 @@ func (v *ASTBuilder) VisitBreakStatement(ctx *BreakStatementContext) *BreakState
 	return configureAST(NewBreakStatement(label), ctx)
 }
 
-func (v *ASTBuilder) VisitYieldStatement(ctx *YieldStatementContext) *ReturnStatement {
+func (v *ASTBuilder) VisitYieldStatement(ctx *YieldStatementContext) interface{} {
 	returnStatement := NewReturnStatement(v.Visit(ctx.Expression()).(Expression))
 	returnStatement.SetNodeMetaData(IS_YIELD_STATEMENT, true)
 	return configureAST(returnStatement, ctx)
 }
 
-func (v *ASTBuilder) VisitYieldStmtAlt(ctx *YieldStmtAltContext) *ReturnStatement {
-	return configureAST(v.VisitYieldStatement(ctx.YieldStatement().(*YieldStatementContext)), ctx)
+func (v *ASTBuilder) VisitYieldStmtAlt(ctx *YieldStmtAltContext) interface{} {
+	return configureAST(v.VisitYieldStatement(ctx.YieldStatement().(*YieldStatementContext)).(*ReturnStatement), ctx)
 }
 
-func (v *ASTBuilder) VisitContinueStatement(ctx *ContinueStatementContext) *ContinueStatement {
+func (v *ASTBuilder) VisitContinueStatement(ctx *ContinueStatementContext) interface{} {
 	if v.visitingLoopStatementCount == 0 {
 		panic(createParsingFailedException("continue statement is only allowed inside loops", parserRuleContextAdapter{ctx}))
 	}
@@ -983,8 +983,8 @@ func (v *ASTBuilder) VisitContinueStatement(ctx *ContinueStatementContext) *Cont
 	return configureAST(NewContinueStatement(label), ctx)
 }
 
-func (v *ASTBuilder) VisitSwitchExprAlt(ctx *SwitchExprAltContext) Expression {
-	return configureAST(v.VisitSwitchExpression(ctx.SwitchExpression().(*SwitchExpressionContext)), ctx)
+func (v *ASTBuilder) VisitSwitchExprAlt(ctx *SwitchExprAltContext) interface{} {
+	return configureAST(v.VisitSwitchExpression(ctx.SwitchExpression().(*SwitchExpressionContext)).(*MethodCallExpression), ctx)
 }
 
 func (v *ASTBuilder) createDeclarationStatement(target Expression, init Expression) *DeclarationStatement {
@@ -1000,14 +1000,14 @@ func LocalVarX(name string) *VariableExpression {
 	return result
 }
 
-func (v *ASTBuilder) VisitSwitchExpression(ctx *SwitchExpressionContext) *MethodCallExpression {
+func (v *ASTBuilder) VisitSwitchExpression(ctx *SwitchExpressionContext) interface{} {
 	v.pushSwitchExpressionRuleContext(ctx)
 	defer v.popSwitchExpressionRuleContext()
 
 	v.validateSwitchExpressionLabels(ctx)
 	var statementInfoList []Tuple3[[]Statement, bool, bool]
 	for _, e := range ctx.AllSwitchBlockStatementExpressionGroup() {
-		statementInfoList = append(statementInfoList, v.VisitSwitchBlockStatementExpressionGroup(e.(*SwitchBlockStatementExpressionGroupContext)))
+		statementInfoList = append(statementInfoList, v.VisitSwitchBlockStatementExpressionGroup(e.(*SwitchBlockStatementExpressionGroupContext)).(Tuple3[[]Statement, bool, bool]))
 	}
 
 	if len(statementInfoList) == 0 {
@@ -1050,7 +1050,7 @@ func (v *ASTBuilder) VisitSwitchExpression(ctx *SwitchExpressionContext) *Method
 	v.switchExpressionVariableSeq++
 	declarationStatement := v.createDeclarationStatement(
 		LocalVarX(variableName),
-		v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)),
+		v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)).(Expression),
 	)
 
 	var defaultStatement Statement
@@ -1080,7 +1080,7 @@ func (v *ASTBuilder) VisitSwitchExpression(ctx *SwitchExpressionContext) *Method
 	return configureAST(callClosure, ctx)
 }
 
-func (v *ASTBuilder) VisitSwitchBlockStatementExpressionGroup(ctx *SwitchBlockStatementExpressionGroupContext) Tuple3[[]Statement, bool, bool] {
+func (v *ASTBuilder) VisitSwitchBlockStatementExpressionGroup(ctx *SwitchBlockStatementExpressionGroupContext) interface{} {
 	labelCnt := len(ctx.AllSwitchExpressionLabel())
 	var firstLabelHolder []antlr.Token
 	arrowCntHolder := 0
@@ -1090,7 +1090,7 @@ func (v *ASTBuilder) VisitSwitchBlockStatementExpressionGroup(ctx *SwitchBlockSt
 	var result []Statement
 
 	for i, e := range ctx.AllSwitchExpressionLabel() {
-		tuple := v.VisitSwitchExpressionLabel(e.(*SwitchExpressionLabelContext))
+		tuple := v.VisitSwitchExpressionLabel(e.(*SwitchExpressionLabelContext)).(Tuple3[antlr.Token, []Expression, int])
 
 		isArrow := tuple.V3 == GroovyParserARROW
 		isArrowHolder = isArrow
@@ -1103,7 +1103,7 @@ func (v *ASTBuilder) VisitSwitchBlockStatementExpressionGroup(ctx *SwitchBlockSt
 
 		isLast := labelCnt-1 == i
 
-		codeBlock := v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext))
+		codeBlock := v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext)).(*BlockStatement)
 		statements := codeBlock.GetStatements()
 		statementsCnt := len(statements)
 		if statementsCnt == 0 {
@@ -1224,12 +1224,12 @@ func (v *ASTBuilder) validateSwitchExpressionLabels(ctx *SwitchExpressionContext
 	}
 }
 
-func (v *ASTBuilder) VisitSwitchExpressionLabel(ctx *SwitchExpressionLabelContext) Tuple3[antlr.Token, []Expression, int] {
+func (v *ASTBuilder) VisitSwitchExpressionLabel(ctx *SwitchExpressionLabelContext) interface{} {
 	acType := ctx.GetAc().GetTokenType()
 	if ctx.CASE() != nil {
 		return NewTuple3(
 			ctx.CASE().GetSymbol(),
-			v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext)),
+			v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext)).([]Expression),
 			acType,
 		)
 	} else if ctx.DEFAULT() != nil {
@@ -1243,16 +1243,16 @@ func (v *ASTBuilder) VisitSwitchExpressionLabel(ctx *SwitchExpressionLabelContex
 	panic(createParsingFailedException("Unsupported switch expression label: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitTypeDeclaration(ctx *TypeDeclarationContext) *ClassNode {
+func (v *ASTBuilder) VisitTypeDeclaration(ctx *TypeDeclarationContext) interface{} {
 	if ctx.ClassDeclaration() != nil { // e.g. class A {}
 		ctx.ClassDeclaration().(*ClassDeclarationContext).PutNodeMetaData(TYPE_DECLARATION_MODIFIERS, v.VisitClassOrInterfaceModifiersOpt(ctx.ClassOrInterfaceModifiersOpt().(*ClassOrInterfaceModifiersOptContext)))
-		return configureAST(v.VisitClassDeclaration(ctx.ClassDeclaration().(*ClassDeclarationContext)), ctx)
+		return configureAST(v.VisitClassDeclaration(ctx.ClassDeclaration().(*ClassDeclarationContext)).(*ClassNode), ctx)
 	}
 
 	panic(createParsingFailedException("Unsupported type declaration: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) *ClassNode {
+func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interface{} {
 	packageName := v.moduleNode.GetPackageName()
 	if packageName == "" {
 		packageName = ""
@@ -1398,7 +1398,7 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) *ClassN
 
 	configureAST(classNode, ctx)
 	classNode.SetSyntheticPublic(syntheticPublic)
-	classNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)))
+	classNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)).([]*GenericsType))
 	isInterfaceWithDefaultMethods := (isInterface && v.containsDefaultOrPrivateMethods(ctx))
 	// TODO: handle this
 	/*
@@ -1432,23 +1432,23 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) *ClassN
 
 	if ctx.CLASS() != nil || ctx.TRAIT() != nil {
 		if ctx.scs != nil {
-			scs := v.VisitTypeList(ctx.scs.(*TypeListContext))
+			scs := v.VisitTypeList(ctx.scs.(*TypeListContext)).([]*ClassNode)
 			if len(scs) > 1 {
 				panic(createParsingFailedException("Cannot extend multiple classes", tokenAdapter{ctx.EXTENDS().GetSymbol()}))
 			}
 			classNode.SetSuperClass(scs[0])
 		}
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]*ClassNode))
 		v.checkUsingGenerics(classNode)
 
 	} else if isInterface {
 		classNode.SetModifiers(classNode.GetModifiers() | ACC_INTERFACE | ACC_ABSTRACT)
-		classNode.SetInterfaces(v.VisitTypeList(ctx.scs.(*TypeListContext)))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.scs.(*TypeListContext)).([]*ClassNode))
 		v.checkUsingGenerics(classNode)
 		v.hackMixins(classNode)
 
 	} else if isEnum || isRecord {
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]*ClassNode))
 		v.checkUsingGenerics(classNode)
 		if isRecord {
 			v.transformRecordHeaderToProperties(ctx, classNode)
@@ -1508,7 +1508,7 @@ func (v *ASTBuilder) checkUsingGenerics(classNode *ClassNode) {
 }
 
 func (v *ASTBuilder) transformRecordHeaderToProperties(ctx *ClassDeclarationContext, classNode *ClassNode) {
-	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext))
+	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
 	classNode.PutNodeMetaData(RECORD_HEADER, parameters)
 
 	for i, parameter := range parameters {
@@ -1564,7 +1564,7 @@ func (v *ASTBuilder) VisitClassBody(ctx *ClassBodyContext) interface{} {
 	return nil
 }
 
-func (v *ASTBuilder) VisitEnumConstants(ctx *EnumConstantsContext) []*FieldNode {
+func (v *ASTBuilder) VisitEnumConstants(ctx *EnumConstantsContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
@@ -1574,12 +1574,12 @@ func (v *ASTBuilder) VisitEnumConstants(ctx *EnumConstantsContext) []*FieldNode 
 	for _, e := range ctx.AllEnumConstant() {
 		foo := e.(*EnumConstantContext)
 		foo.PutNodeMetaData(CLASS_DECLARATION_CLASS_NODE, classNode)
-		fieldNodes = append(fieldNodes, v.VisitEnumConstant(e.(*EnumConstantContext)))
+		fieldNodes = append(fieldNodes, v.VisitEnumConstant(e.(*EnumConstantContext)).(*FieldNode))
 	}
 	return fieldNodes
 }
 
-func (v *ASTBuilder) VisitEnumConstant(ctx *EnumConstantContext) *FieldNode {
+func (v *ASTBuilder) VisitEnumConstant(ctx *EnumConstantContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
@@ -1589,7 +1589,7 @@ func (v *ASTBuilder) VisitEnumConstant(ctx *EnumConstantContext) *FieldNode {
 	if ctx.AnonymousInnerClassDeclaration() != nil {
 		foo := ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext)
 		foo.PutNodeMetaData(ANONYMOUS_INNER_CLASS_SUPER_CLASS, classNode)
-		anonymousInnerClassNode = v.VisitAnonymousInnerClassDeclaration(ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext))
+		anonymousInnerClassNode = v.VisitAnonymousInnerClassDeclaration(ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext)).(*InnerClassNode)
 	}
 
 	enumConstant := AddEnumConstant(
@@ -1689,23 +1689,24 @@ func (v *ASTBuilder) createEnumConstantInitExpression(ctx *ArgumentsContext, ano
 	return configureASTFromSource(listExpression, anonymousInnerClassNode)
 }
 
-func (v *ASTBuilder) VisitClassBodyDeclaration(ctx *ClassBodyDeclarationContext) {
+func (v *ASTBuilder) VisitClassBodyDeclaration(ctx *ClassBodyDeclarationContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 	if ctx.MemberDeclaration() != nil {
 		methodDecl := ctx.MemberDeclaration().(*MemberDeclarationContext)
 		methodDecl.PutNodeMetaData(CLASS_DECLARATION_CLASS_NODE, classNode)
 		v.VisitMemberDeclaration(methodDecl)
 	} else if ctx.Block() != nil {
-		statement := v.VisitBlock(ctx.Block().(*BlockContext))
+		statement := v.VisitBlock(ctx.Block().(*BlockContext)).(Statement)
 		if ctx.STATIC() != nil { // e.g. static { }
 			classNode.AddStaticInitializerStatements([]Statement{statement}, false)
 		} else { // e.g. { }
 			classNode.AddObjectInitializerStatements(configureASTFromSource(v.createBlockStatement(statement), statement))
 		}
 	}
+	return nil
 }
 
-func (v *ASTBuilder) VisitMemberDeclaration(ctx *MemberDeclarationContext) {
+func (v *ASTBuilder) VisitMemberDeclaration(ctx *MemberDeclarationContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
@@ -1730,28 +1731,29 @@ func (v *ASTBuilder) VisitMemberDeclaration(ctx *MemberDeclarationContext) {
 		classDecl.PutNodeMetaData(CLASS_DECLARATION_CLASS_NODE, classNode)
 		v.VisitClassDeclaration(classDecl)
 	}
+	return nil
 }
 
-func (v *ASTBuilder) VisitTypeParameters(ctx *TypeParametersContext) []*GenericsType {
+func (v *ASTBuilder) VisitTypeParameters(ctx *TypeParametersContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
 
 	typeParameters := make([]*GenericsType, len(ctx.AllTypeParameter()))
 	for i, tp := range ctx.AllTypeParameter() {
-		typeParameters[i] = v.VisitTypeParameter(tp.(*TypeParameterContext))
+		typeParameters[i] = v.VisitTypeParameter(tp.(*TypeParameterContext)).(*GenericsType)
 	}
 	return typeParameters
 }
 
-func (v *ASTBuilder) VisitTypeParameter(ctx *TypeParameterContext) *GenericsType {
-	baseType := configureAST(MakeWithoutCaching(v.VisitClassName(ctx.ClassName().(*ClassNameContext))), ctx)
+func (v *ASTBuilder) VisitTypeParameter(ctx *TypeParameterContext) interface{} {
+	baseType := configureAST(MakeWithoutCaching(v.VisitClassName(ctx.ClassName().(*ClassNameContext)).(string)), ctx)
 	baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
-	genericsType := NewGenericsType(baseType, v.VisitTypeBound(ctx.TypeBound().(*TypeBoundContext)), nil)
+	genericsType := NewGenericsType(baseType, v.VisitTypeBound(ctx.TypeBound().(*TypeBoundContext)).([]*ClassNode), nil)
 	return configureAST(genericsType, ctx)
 }
 
-func (v *ASTBuilder) VisitTypeBound(ctx *TypeBoundContext) []*ClassNode {
+func (v *ASTBuilder) VisitTypeBound(ctx *TypeBoundContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -1763,7 +1765,7 @@ func (v *ASTBuilder) VisitTypeBound(ctx *TypeBoundContext) []*ClassNode {
 	return typeBounds
 }
 
-func (v *ASTBuilder) VisitFieldDeclaration(ctx *FieldDeclarationContext) {
+func (v *ASTBuilder) VisitFieldDeclaration(ctx *FieldDeclarationContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
@@ -1773,6 +1775,7 @@ func (v *ASTBuilder) VisitFieldDeclaration(ctx *FieldDeclarationContext) {
 
 	declaration.SetNodeMetaData(CLASS_DECLARATION_CLASS_NODE, classNode)
 	v.VisitVariableDeclaration(ctx.VariableDeclaration().(*VariableDeclarationContext))
+	return nil
 }
 
 func (v *ASTBuilder) checkThisAndSuperConstructorCall(statement Statement) *ConstructorCallExpression {
@@ -1816,7 +1819,7 @@ func (v *ASTBuilder) validateParametersOfMethodDeclaration(parameters []*Paramet
 	}
 }
 
-func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorDeclarationContext) *MethodNode {
+func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorDeclarationContext) interface{} {
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
 
 	if !slices.ContainsFunc(classNode.GetAnnotations(), func(a AnnotationNode) bool {
@@ -1837,7 +1840,7 @@ func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorD
 	}
 
 	header := classNode.GetNodeMetaData(RECORD_HEADER).([]*Parameter)
-	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext))
+	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext)).(Statement)
 	code.Visit(&CodeVisitorSupport{
 		VisitPropertyExpressionFunc: func(expression *PropertyExpression) {
 			receiverText := expression.GetObjectExpression().GetText()
@@ -1865,20 +1868,20 @@ func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorD
 	return nil
 }
 
-func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) *MethodNode {
+func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) interface{} {
 	modifierManager := v.createModifierManager(ctx)
 
 	if modifierManager.ContainsAny(GroovyParserVAR) {
 		panic(createParsingFailedException("var cannot be used for method declarations", parserRuleContextAdapter{ctx}))
 	}
 
-	methodName := v.VisitMethodName(ctx.MethodName().(*MethodNameContext))
-	returnType := v.VisitReturnType(ctx.ReturnType().(*ReturnTypeContext))
-	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext))
+	methodName := v.VisitMethodName(ctx.MethodName().(*MethodNameContext)).(string)
+	returnType := v.VisitReturnType(ctx.ReturnType().(*ReturnTypeContext)).(*ClassNode)
+	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
 	exceptions := v.VisitQualifiedClassNameList(ctx.QualifiedClassNameList().(*QualifiedClassNameListContext))
 
 	v.pushAnonymousInnerClass(list.New())
-	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext))
+	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext)).(Statement)
 	anonymousInnerClassList := v.popAnonymousInnerClass()
 
 	var methodNode *MethodNode
@@ -1896,7 +1899,7 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) *Meth
 		e.Value.(*InnerClassNode).SetEnclosingMethod(methodNode)
 	}
 
-	methodNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)))
+	methodNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)).([]*GenericsType))
 	methodNode.SetSyntheticPublic(
 		v.isSyntheticPublic(
 			v.isAnnotationDeclaration(classNode),
@@ -2042,7 +2045,7 @@ func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclaratio
 
 func (v *ASTBuilder) createMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode, modifiers int) *MethodNode {
 	if ctx.ElementValue() != nil { // the code of annotation method
-		exprStmt, err := NewExpressionStatement(v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)))
+		exprStmt, err := NewExpressionStatement(v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)).(Expression))
 		if err != nil {
 			panic(createParsingFailedException("Failed to create expression statement: "+err.Error(), parserRuleContextAdapter{ctx.ElementValue()}))
 		}
@@ -2073,19 +2076,19 @@ func (v *ASTBuilder) createConstructorNodeForClass(methodName string, parameters
 	)
 }
 
-func (v *ASTBuilder) VisitMethodName(ctx *MethodNameContext) string {
+func (v *ASTBuilder) VisitMethodName(ctx *MethodNameContext) interface{} {
 	if ctx.Identifier() != nil {
 		return v.VisitIdentifier(ctx.Identifier().(*IdentifierContext))
 	}
 
 	if ctx.StringLiteral() != nil {
-		return v.VisitStringLiteral(ctx.StringLiteral().(*StringLiteralContext)).GetText()
+		return v.VisitStringLiteral(ctx.StringLiteral().(*StringLiteralContext)).(*ConstantExpression).GetText()
 	}
 
 	panic(createParsingFailedException("Unsupported method name: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitReturnType(ctx *ReturnTypeContext) *ClassNode {
+func (v *ASTBuilder) VisitReturnType(ctx *ReturnTypeContext) interface{} {
 	if ctx == nil {
 		return dynamicType()
 	}
@@ -2108,20 +2111,20 @@ func (v *ASTBuilder) VisitReturnType(ctx *ReturnTypeContext) *ClassNode {
 	panic(createParsingFailedException("Unsupported return type: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitMethodBody(ctx *MethodBodyContext) Statement {
+func (v *ASTBuilder) VisitMethodBody(ctx *MethodBodyContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
 
-	return configureAST(v.VisitBlock(ctx.Block().(*BlockContext)), ctx)
+	return configureAST(v.VisitBlock(ctx.Block().(*BlockContext)).(Statement), ctx)
 }
 
-func (v *ASTBuilder) VisitLocalVariableDeclaration(ctx *LocalVariableDeclarationContext) *DeclarationListStatement {
-	return configureAST(v.VisitVariableDeclaration(ctx.VariableDeclaration().(*VariableDeclarationContext)), ctx)
+func (v *ASTBuilder) VisitLocalVariableDeclaration(ctx *LocalVariableDeclarationContext) interface{} {
+	return configureAST(v.VisitVariableDeclaration(ctx.VariableDeclaration().(*VariableDeclarationContext)).(*DeclarationListStatement), ctx)
 }
 
 func (v *ASTBuilder) createMultiAssignmentDeclarationListStatement(ctx *VariableDeclarationContext, modifierManager *ModifierManager) *DeclarationListStatement {
-	elist := v.VisitTypeNamePairs(ctx.TypeNamePairs().(*TypeNamePairsContext))
+	elist := v.VisitTypeNamePairs(ctx.TypeNamePairs().(*TypeNamePairsContext)).([]Expression)
 	for _, e := range elist {
 		modifierManager.ProcessVariableExpression(e.(*VariableExpression))
 	}
@@ -2129,14 +2132,14 @@ func (v *ASTBuilder) createMultiAssignmentDeclarationListStatement(ctx *Variable
 	de := NewDeclarationExpression(
 		configureAST(NewTupleExpressionWithExpressions(elist...), ctx.TypeNamePairs()),
 		v.createGroovyTokenByType(ctx.ASSIGN().GetSymbol(), GroovyParserASSIGN),
-		v.VisitVariableInitializer(ctx.VariableInitializer().(*VariableInitializerContext)),
+		v.VisitVariableInitializer(ctx.VariableInitializer().(*VariableInitializerContext)).(Expression),
 	)
 
 	configureAST(modifierManager.AttachAnnotations(de.AnnotatedNode), ctx)
 	return configureAST(NewDeclarationListStatement(de), ctx)
 }
 
-func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) *DeclarationListStatement {
+func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) interface{} {
 	var modifierManager *ModifierManager
 	if ctx.Modifiers() != nil {
 		modifierManager = NewModifierManager(v, v.VisitModifiers(ctx.Modifiers().(*ModifiersContext)))
@@ -2151,7 +2154,7 @@ func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) *
 	variableType := v.VisitType(ctx.Type_().(*TypeContext))
 	declarators := ctx.VariableDeclarators().(*VariableDeclaratorsContext)
 	declarators.PutNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE, variableType)
-	declarationExpressionList := v.VisitVariableDeclarators(ctx.VariableDeclarators().(*VariableDeclaratorsContext))
+	declarationExpressionList := v.VisitVariableDeclarators(ctx.VariableDeclarators().(*VariableDeclaratorsContext)).([]*DeclarationExpression)
 
 	// if classNode is not nil, the variable declaration is for class declaration. In other words, it is a field declaration
 	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
@@ -2344,15 +2347,15 @@ func (v *ASTBuilder) isFieldDeclaration(modifierManager *ModifierManager, classN
 	return classNode.IsInterface() || modifierManager.ContainsVisibilityModifier()
 }
 
-func (v *ASTBuilder) VisitTypeNamePairs(ctx *TypeNamePairsContext) []Expression {
+func (v *ASTBuilder) VisitTypeNamePairs(ctx *TypeNamePairsContext) interface{} {
 	pairs := make([]Expression, 0, len(ctx.AllTypeNamePair()))
 	for _, pair := range ctx.AllTypeNamePair() {
-		pairs = append(pairs, v.VisitTypeNamePair(pair.(*TypeNamePairContext)))
+		pairs = append(pairs, v.VisitTypeNamePair(pair.(*TypeNamePairContext)).(*VariableExpression))
 	}
 	return pairs
 }
 
-func (v *ASTBuilder) VisitTypeNamePair(ctx *TypeNamePairContext) *VariableExpression {
+func (v *ASTBuilder) VisitTypeNamePair(ctx *TypeNamePairContext) interface{} {
 	return configureAST(
 		NewVariableExpression(
 			v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).GetName(),
@@ -2362,7 +2365,7 @@ func (v *ASTBuilder) VisitTypeNamePair(ctx *TypeNamePairContext) *VariableExpres
 	)
 }
 
-func (v *ASTBuilder) VisitVariableDeclarators(ctx *VariableDeclaratorsContext) []*DeclarationExpression {
+func (v *ASTBuilder) VisitVariableDeclarators(ctx *VariableDeclaratorsContext) interface{} {
 	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(*ClassNode)
 	if variableType == nil {
 		panic("variableType should not be nil")
@@ -2372,12 +2375,12 @@ func (v *ASTBuilder) VisitVariableDeclarators(ctx *VariableDeclaratorsContext) [
 	for _, e := range ctx.AllVariableDeclarator() {
 		variableDeclaratorContext := e.(*VariableDeclaratorContext)
 		variableDeclaratorContext.PutNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE, variableType)
-		declarationExpressions = append(declarationExpressions, v.VisitVariableDeclarator(variableDeclaratorContext))
+		declarationExpressions = append(declarationExpressions, v.VisitVariableDeclarator(variableDeclaratorContext).(*DeclarationExpression))
 	}
 	return declarationExpressions
 }
 
-func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) *DeclarationExpression {
+func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) interface{} {
 	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(*ClassNode)
 	if variableType == nil {
 		panic("variableType should not be nil")
@@ -2400,19 +2403,19 @@ func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) *De
 				ctx.VariableDeclaratorId(),
 			),
 			token,
-			v.VisitVariableInitializer(ctx.VariableInitializer().(*VariableInitializerContext)),
+			v.VisitVariableInitializer(ctx.VariableInitializer().(*VariableInitializerContext)).(Expression),
 		),
 		ctx,
 	)
 }
 
-func (v *ASTBuilder) VisitVariableInitializer(ctx *VariableInitializerContext) Expression {
+func (v *ASTBuilder) VisitVariableInitializer(ctx *VariableInitializerContext) interface{} {
 	if ctx == nil {
 		return EMPTY_EXPRESSION
 	}
 
 	return configureAST(
-		v.VisitEnhancedStatementExpression(ctx.EnhancedStatementExpression().(*EnhancedStatementExpressionContext)),
+		v.VisitEnhancedStatementExpression(ctx.EnhancedStatementExpression().(*EnhancedStatementExpressionContext)).(Expression),
 		ctx,
 	)
 }
@@ -2424,12 +2427,12 @@ func (v *ASTBuilder) VisitVariableInitializers(ctx *VariableInitializersContext)
 
 	initializers := make([]Expression, 0, len(ctx.AllVariableInitializer()))
 	for _, initCtx := range ctx.AllVariableInitializer() {
-		initializers = append(initializers, v.VisitVariableInitializer(initCtx.(*VariableInitializerContext)))
+		initializers = append(initializers, v.VisitVariableInitializer(initCtx.(*VariableInitializerContext)).(Expression))
 	}
 	return initializers
 }
 
-func (v *ASTBuilder) VisitArrayInitializer(ctx *ArrayInitializerContext) []Expression {
+func (v *ASTBuilder) VisitArrayInitializer(ctx *ArrayInitializerContext) interface{} {
 	if ctx == nil {
 		return []Expression{}
 	}
@@ -2442,18 +2445,18 @@ func (v *ASTBuilder) VisitArrayInitializer(ctx *ArrayInitializerContext) []Expre
 	return v.VisitVariableInitializers(ctx.VariableInitializers().(*VariableInitializersContext))
 }
 
-func (v *ASTBuilder) VisitBlock(ctx *BlockContext) Statement {
+func (v *ASTBuilder) VisitBlock(ctx *BlockContext) interface{} {
 	if ctx == nil {
 		return v.createBlockStatement()
 	}
 
 	return configureAST(
-		v.VisitBlockStatementsOpt(ctx.BlockStatementsOpt().(*BlockStatementsOptContext)),
+		v.VisitBlockStatementsOpt(ctx.BlockStatementsOpt().(*BlockStatementsOptContext)).(*BlockStatement),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitCommandExprAlt(ctx *CommandExprAltContext) *ExpressionStatement {
-	expr, err := NewExpressionStatement(v.VisitCommandExpression(ctx.CommandExpression().(*CommandExpressionContext)))
+func (v *ASTBuilder) VisitCommandExprAlt(ctx *CommandExprAltContext) interface{} {
+	expr, err := NewExpressionStatement(v.VisitCommandExpression(ctx.CommandExpression().(*CommandExpressionContext)).(Expression))
 	if err != nil {
 		panic(createParsingFailedException(err.Error(), parserRuleContextAdapter{ctx}))
 	}
@@ -2464,7 +2467,7 @@ func (v *ASTBuilder) getOriginalText(ctx antlr.ParserRuleContext) string {
 	return ctx.GetStart().GetInputStream().GetText(ctx.GetStart().GetStart(), ctx.GetStop().GetStop())
 }
 
-func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) Expression {
+func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) interface{} {
 	hasArgumentList := ctx.ArgumentList() != nil
 	hasCommandArgument := len(ctx.AllCommandArgument()) > 0
 
@@ -2486,7 +2489,7 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) Expre
 	var methodCallExpression *MethodCallExpression
 
 	if hasArgumentList {
-		arguments := v.VisitEnhancedArgumentListInParArgs(ctx.ArgumentList().(*ArgumentListContext))
+		arguments := v.VisitEnhancedArgumentListInParArgs(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
 
 		if propertyExpr, ok := baseExpr.(*PropertyExpression); ok { // e.g. obj.a 1, 2
 			methodCallExpression = configureAST(v.createMethodCallExpression(propertyExpr, arguments), ctx.Expression())
@@ -2561,7 +2564,7 @@ func (v *ASTBuilder) validateInvalidMethodDefinition(baseExpr Expression, argume
 	}
 }
 
-func (v *ASTBuilder) VisitCommandArgument(ctx *CommandArgumentContext) Expression {
+func (v *ASTBuilder) VisitCommandArgument(ctx *CommandArgumentContext) interface{} {
 	// e.g. x y a b     we call "x y" as the base expression
 	baseExpr := ctx.GetNodeMetaData(CMD_EXPRESSION_BASE_EXPR).(Expression)
 
@@ -2621,12 +2624,12 @@ func (v *ASTBuilder) VisitCommandArgument(ctx *CommandArgumentContext) Expressio
 	)
 }
 
-func (v *ASTBuilder) VisitCastParExpression(ctx *CastParExpressionContext) *ClassNode {
+func (v *ASTBuilder) VisitCastParExpression(ctx *CastParExpressionContext) interface{} {
 	return v.VisitType(ctx.Type_().(*TypeContext))
 }
 
-func (v *ASTBuilder) VisitParExpression(ctx *ParExpressionContext) Expression {
-	expression := v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext))
+func (v *ASTBuilder) VisitParExpression(ctx *ParExpressionContext) interface{} {
+	expression := v.VisitExpressionInPar(ctx.ExpressionInPar().(*ExpressionInParContext)).(Expression)
 
 	level := expression.GetNodeMetaData(INSIDE_PARENTHESES_LEVEL)
 	if level == nil {
@@ -2638,11 +2641,11 @@ func (v *ASTBuilder) VisitParExpression(ctx *ParExpressionContext) Expression {
 	return configureAST(expression, ctx)
 }
 
-func (v *ASTBuilder) VisitExpressionInPar(ctx *ExpressionInParContext) Expression {
-	return v.VisitEnhancedStatementExpression(ctx.EnhancedStatementExpression().(*EnhancedStatementExpressionContext))
+func (v *ASTBuilder) VisitExpressionInPar(ctx *ExpressionInParContext) interface{} {
+	return v.VisitEnhancedStatementExpression(ctx.EnhancedStatementExpression().(*EnhancedStatementExpressionContext)).(Expression)
 }
 
-func (v *ASTBuilder) VisitEnhancedStatementExpression(ctx *EnhancedStatementExpressionContext) Expression {
+func (v *ASTBuilder) VisitEnhancedStatementExpression(ctx *EnhancedStatementExpressionContext) interface{} {
 	var expression Expression
 
 	if ctx.StatementExpression() != nil {
@@ -2712,9 +2715,9 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 	} else if ctx.Creator() != nil {
 		creatorContext := ctx.Creator().(*CreatorContext)
 		creatorContext.SetNodeMetaData(ENCLOSING_INSTANCE_EXPRESSION, baseExpr)
-		return configureAST(v.VisitCreator(creatorContext), ctx)
+		return configureAST(v.VisitCreator(creatorContext).(Expression), ctx)
 	} else if ctx.IndexPropertyArgs() != nil {
-		tuple := v.VisitIndexPropertyArgs(ctx.IndexPropertyArgs().(*IndexPropertyArgsContext))
+		tuple := v.VisitIndexPropertyArgs(ctx.IndexPropertyArgs().(*IndexPropertyArgsContext)).(Tuple2[antlr.Token, Expression])
 		isSafeChain := isTrue(baseExpr, PATH_EXPRESSION_BASE_EXPR_SAFE_CHAIN)
 		return configureAST(
 			NewBinaryExpressionWithSafe(
@@ -2726,7 +2729,7 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 			ctx,
 		)
 	} else if ctx.NamedPropertyArgs() != nil {
-		mapEntryExpressionList := v.VisitNamedPropertyArgs(ctx.NamedPropertyArgs().(*NamedPropertyArgsContext))
+		mapEntryExpressionList := v.VisitNamedPropertyArgs(ctx.NamedPropertyArgs().(*NamedPropertyArgsContext)).([]MapEntryExpression)
 
 		expressions := make([]Expression, len(mapEntryExpressionList))
 		for i, v := range mapEntryExpressionList {
@@ -2811,7 +2814,7 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 		methodCallExpression := v.createMethodCallExpression(baseExpr, argumentsExpr)
 		return configureAST(methodCallExpression, ctx)
 	} else if ctx.ClosureOrLambdaExpression() != nil {
-		closureExpression := v.VisitClosureOrLambdaExpression(ctx.ClosureOrLambdaExpression().(*ClosureOrLambdaExpressionContext))
+		closureExpression := v.VisitClosureOrLambdaExpression(ctx.ClosureOrLambdaExpression().(*ClosureOrLambdaExpressionContext)).(*ClosureExpression)
 
 		if methodCallExpression, ok := baseExpr.(*MethodCallExpression); ok {
 			argumentsExpression := methodCallExpression.GetArguments()
@@ -2910,7 +2913,7 @@ func (v *ASTBuilder) VisitNonWildcardTypeArguments(ctx *NonWildcardTypeArguments
 		return nil
 	}
 
-	typeList := v.VisitTypeList(ctx.TypeList().(*TypeListContext))
+	typeList := v.VisitTypeList(ctx.TypeList().(*TypeListContext)).([]*ClassNode)
 	genericsTypes := make([]*GenericsType, len(typeList))
 	for i, t := range typeList {
 		genericsTypes[i] = v.createGenericsType(t)
@@ -2918,7 +2921,7 @@ func (v *ASTBuilder) VisitNonWildcardTypeArguments(ctx *NonWildcardTypeArguments
 	return genericsTypes
 }
 
-func (v *ASTBuilder) VisitTypeList(ctx *TypeListContext) []*ClassNode {
+func (v *ASTBuilder) VisitTypeList(ctx *TypeListContext) interface{} {
 	if ctx == nil {
 		return []*ClassNode{}
 	}
@@ -2931,7 +2934,7 @@ func (v *ASTBuilder) VisitTypeList(ctx *TypeListContext) []*ClassNode {
 	return classNodes
 }
 
-func (v *ASTBuilder) VisitArguments(ctx *ArgumentsContext) Expression {
+func (v *ASTBuilder) VisitArguments(ctx *ArgumentsContext) interface{} {
 	if ctx != nil && ctx.COMMA() != nil && ctx.EnhancedArgumentListInPar() == nil {
 		panic(createParsingFailedException("Expression expected", tokenAdapter{ctx.COMMA().GetSymbol()}))
 	}
@@ -2940,10 +2943,10 @@ func (v *ASTBuilder) VisitArguments(ctx *ArgumentsContext) Expression {
 		return NewArgumentListExpression()
 	}
 
-	return configureAST(v.VisitEnhancedArgumentListInPar(ctx.EnhancedArgumentListInPar().(*EnhancedArgumentListInParContext)), ctx)
+	return configureAST(v.VisitEnhancedArgumentListInPar(ctx.EnhancedArgumentListInPar().(*EnhancedArgumentListInParContext)).(Expression), ctx)
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext) Expression {
+func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -2952,7 +2955,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext
 	var mapEntryExpressionList []*MapEntryExpression
 
 	for _, element := range ctx.AllArgumentListElement() {
-		e := v.VisitEnhancedArgumentListElementArg(element.(*ArgumentListElementContext))
+		e := v.VisitEnhancedArgumentListElementArg(element.(*ArgumentListElementContext)).(Expression)
 
 		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
 			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
@@ -2986,7 +2989,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext
 	panic(createParsingFailedException("Unsupported argument list: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInParContext) Expression {
+func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInParContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -2995,7 +2998,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInP
 	var mapEntryExpressionList []*MapEntryExpression
 
 	for _, element := range ctx.AllEnhancedArgumentListElement() {
-		e := v.VisitEnhancedArgumentListElement(element.(*EnhancedArgumentListElementContext))
+		e := v.VisitEnhancedArgumentListElement(element.(*EnhancedArgumentListElementContext)).(Expression)
 
 		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
 			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
@@ -3050,9 +3053,9 @@ func (v *ASTBuilder) validateDuplicatedNamedParameter(mapEntryExpressionList []*
 	panic(createParsingFailedException("Duplicated named parameter '"+parameterName+"' found", astNodeAdapter{mapEntryExpression}))
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListElementArg(ctx *ArgumentListElementContext) Expression {
+func (v *ASTBuilder) VisitEnhancedArgumentListElementArg(ctx *ArgumentListElementContext) interface{} {
 	if ctx.ExpressionListElement() != nil {
-		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)), ctx)
+		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
 
 	// TODO: implement this
@@ -3069,9 +3072,9 @@ func (v *ASTBuilder) VisitEnhancedArgumentListElementArg(ctx *ArgumentListElemen
 	panic(createParsingFailedException("Unsupported enhanced argument list element: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListElement(ctx *EnhancedArgumentListElementContext) Expression {
+func (v *ASTBuilder) VisitEnhancedArgumentListElement(ctx *EnhancedArgumentListElementContext) interface{} {
 	if ctx.ExpressionListElement() != nil {
-		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)), ctx)
+		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
 
 	if ctx.StandardLambdaExpression() != nil {
@@ -3089,7 +3092,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListElement(ctx *EnhancedArgumentListE
 	panic(createParsingFailedException("Unsupported enhanced argument list element: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitStringLiteral(ctx *StringLiteralContext) *ConstantExpression {
+func (v *ASTBuilder) VisitStringLiteral(ctx *StringLiteralContext) interface{} {
 	text := v.parseStringLiteral(ctx.StringLiteral().GetText())
 
 	constantExpression := NewConstantExpression(text)
@@ -3131,8 +3134,8 @@ func (v *ASTBuilder) getSlashyType(text string) int {
 	}
 }
 
-func (v *ASTBuilder) VisitIndexPropertyArgs(ctx *IndexPropertyArgsContext) Tuple2[antlr.Token, Expression] {
-	expressionList := v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext))
+func (v *ASTBuilder) VisitIndexPropertyArgs(ctx *IndexPropertyArgsContext) interface{} {
+	expressionList := v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext)).([]Expression)
 	var token antlr.Token
 	if ctx.LBRACK() == nil {
 		token = ctx.SAFE_INDEX().GetSymbol()
@@ -3165,19 +3168,19 @@ func (v *ASTBuilder) VisitIndexPropertyArgs(ctx *IndexPropertyArgsContext) Tuple
 	return NewTuple2(token, expr)
 }
 
-func (v *ASTBuilder) VisitNamedPropertyArgs(ctx *NamedPropertyArgsContext) []MapEntryExpression {
+func (v *ASTBuilder) VisitNamedPropertyArgs(ctx *NamedPropertyArgsContext) interface{} {
 	// TODO: implement this
 	panic("FOO")
 	//return v.VisitMapEntryList(ctx.MapEntryList().(*MapEntryListContext))
 }
 
-func (v *ASTBuilder) VisitNamePart(ctx *NamePartContext) Expression {
+func (v *ASTBuilder) VisitNamePart(ctx *NamePartContext) interface{} {
 	if ctx.Identifier() != nil {
 		return configureAST(NewConstantExpression(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext))), ctx)
 	} else if ctx.StringLiteral() != nil {
-		return configureAST(v.VisitStringLiteral(ctx.StringLiteral().(*StringLiteralContext)), ctx)
+		return configureAST(v.VisitStringLiteral(ctx.StringLiteral().(*StringLiteralContext)).(*ConstantExpression), ctx)
 	} else if ctx.DynamicMemberName() != nil {
-		return configureAST(v.VisitDynamicMemberName(ctx.DynamicMemberName().(*DynamicMemberNameContext)), ctx)
+		return configureAST(v.VisitDynamicMemberName(ctx.DynamicMemberName().(*DynamicMemberNameContext)).(Expression), ctx)
 	} else if ctx.Keywords() != nil {
 		return configureAST(NewConstantExpression(ctx.Keywords().GetText()), ctx)
 	}
@@ -3185,9 +3188,9 @@ func (v *ASTBuilder) VisitNamePart(ctx *NamePartContext) Expression {
 	panic(createParsingFailedException("Unsupported name part: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitDynamicMemberName(ctx *DynamicMemberNameContext) Expression {
+func (v *ASTBuilder) VisitDynamicMemberName(ctx *DynamicMemberNameContext) interface{} {
 	if ctx.ParExpression() != nil {
-		return configureAST(v.VisitParExpression(ctx.ParExpression().(*ParExpressionContext)), ctx)
+		return configureAST(v.VisitParExpression(ctx.ParExpression().(*ParExpressionContext)).(Expression), ctx)
 	} else if ctx.Gstring() != nil {
 		return configureAST(v.VisitGstring(ctx.Gstring().(*GstringContext)), ctx)
 	}
@@ -3195,7 +3198,7 @@ func (v *ASTBuilder) VisitDynamicMemberName(ctx *DynamicMemberNameContext) Expre
 	panic(createParsingFailedException("Unsupported dynamic member name: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitPostfixExpression(ctx *PostfixExpressionContext) Expression {
+func (v *ASTBuilder) VisitPostfixExpression(ctx *PostfixExpressionContext) interface{} {
 	pathExpr := v.VisitPathExpression(ctx.PathExpression().(*PathExpressionContext)).(Expression)
 
 	if ctx.GetOp() != nil {
@@ -3212,7 +3215,7 @@ func (v *ASTBuilder) VisitPostfixExpression(ctx *PostfixExpressionContext) Expre
 	return configureAST(pathExpr, ctx)
 }
 
-func (v *ASTBuilder) VisitUnaryNotExprAlt(ctx *UnaryNotExprAltContext) Expression {
+func (v *ASTBuilder) VisitUnaryNotExprAlt(ctx *UnaryNotExprAltContext) interface{} {
 	if ctx.NOT() != nil {
 		return configureAST(
 			NewNotExpression(v.Visit(ctx.Expression()).(Expression)),
@@ -3228,20 +3231,20 @@ func (v *ASTBuilder) VisitUnaryNotExprAlt(ctx *UnaryNotExprAltContext) Expressio
 	panic(createParsingFailedException("Unsupported unary expression: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitCastExprAlt(ctx *CastExprAltContext) *CastExpression {
+func (v *ASTBuilder) VisitCastExprAlt(ctx *CastExprAltContext) interface{} {
 	expr := v.Visit(&ctx.ExpressionContext).(Expression)
 	if varExpr, ok := expr.(*VariableExpression); ok && varExpr.IsSuperExpression() {
 		createParsingFailedException("Cannot cast or coerce `super`", parserRuleContextAdapter{ctx}) // GROOVY-9391
 	}
-	cast := NewCastExpression(v.VisitCastParExpression(ctx.CastParExpression().(*CastParExpressionContext)), expr)
+	cast := NewCastExpression(v.VisitCastParExpression(ctx.CastParExpression().(*CastParExpressionContext)).(*ClassNode), expr)
 	return configureAST(cast, ctx)
 }
 
-func (v *ASTBuilder) VisitPowerExprAlt(ctx *PowerExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitPowerExprAlt(ctx *PowerExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
-func (v *ASTBuilder) VisitUnaryAddExprAlt(ctx *UnaryAddExprAltContext) Expression {
+func (v *ASTBuilder) VisitUnaryAddExprAlt(ctx *UnaryAddExprAltContext) interface{} {
 	expression := v.Visit(ctx.Expression()).(Expression)
 	switch ctx.op.GetTokenType() {
 	case GroovyParserADD:
@@ -3297,7 +3300,7 @@ func (v *ASTBuilder) isNonStringConstantOutsideParentheses(expression Expression
 	return false
 }
 
-func (v *ASTBuilder) VisitMultiplicativeExprAlt(ctx *MultiplicativeExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitMultiplicativeExprAlt(ctx *MultiplicativeExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
@@ -3305,7 +3308,7 @@ func (v *ASTBuilder) VisitAdditiveExprAlt(ctx *AdditiveExprAltContext) interface
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
-func (v *ASTBuilder) VisitShiftExprAlt(ctx *ShiftExprAltContext) Expression {
+func (v *ASTBuilder) VisitShiftExprAlt(ctx *ShiftExprAltContext) interface{} {
 	left := v.Visit(ctx.left).(Expression)
 	right := v.Visit(ctx.right).(Expression)
 
@@ -3337,7 +3340,7 @@ func (v *ASTBuilder) VisitShiftExprAlt(ctx *ShiftExprAltContext) Expression {
 	return configureAST(binaryExpression, ctx)
 }
 
-func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) Expression {
+func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) interface{} {
 	switch ctx.op.GetTokenType() {
 	case GroovyParserAS:
 		expr := v.Visit(ctx.left).(Expression)
@@ -3366,13 +3369,13 @@ func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) Expre
 	}
 }
 
-func (v *ASTBuilder) VisitEqualityExprAlt(ctx *EqualityExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitEqualityExprAlt(ctx *EqualityExprAltContext) interface{} {
 	return configureAST(
 		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitRegexExprAlt(ctx *RegexExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitRegexExprAlt(ctx *RegexExprAltContext) interface{} {
 	return configureAST(
 		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
 		ctx)
@@ -3382,33 +3385,33 @@ func (v *ASTBuilder) VisitAndExprAlt(ctx *AndExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
-func (v *ASTBuilder) VisitExclusiveOrExprAlt(ctx *ExclusiveOrExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitExclusiveOrExprAlt(ctx *ExclusiveOrExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
-func (v *ASTBuilder) VisitInclusiveOrExprAlt(ctx *InclusiveOrExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitInclusiveOrExprAlt(ctx *InclusiveOrExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
-func (v *ASTBuilder) VisitLogicalAndExprAlt(ctx *LogicalAndExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitLogicalAndExprAlt(ctx *LogicalAndExprAltContext) interface{} {
 	return configureAST(
 		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitLogicalOrExprAlt(ctx *LogicalOrExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitLogicalOrExprAlt(ctx *LogicalOrExprAltContext) interface{} {
 	return configureAST(
 		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitImplicationExprAlt(ctx *ImplicationExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitImplicationExprAlt(ctx *ImplicationExprAltContext) interface{} {
 	return configureAST(
 		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitConditionalExprAlt(ctx *ConditionalExprAltContext) Expression {
+func (v *ASTBuilder) VisitConditionalExprAlt(ctx *ConditionalExprAltContext) interface{} {
 	fbExpr := ctx.fb.(*ExpressionContext)
 	fbExpr.PutNodeMetaData(IS_INSIDE_CONDITIONAL_EXPRESSION, true)
 
@@ -3430,7 +3433,7 @@ func (v *ASTBuilder) VisitConditionalExprAlt(ctx *ConditionalExprAltContext) Exp
 		ctx)
 }
 
-func (v *ASTBuilder) VisitMultipleAssignmentExprAlt(ctx *MultipleAssignmentExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitMultipleAssignmentExprAlt(ctx *MultipleAssignmentExprAltContext) interface{} {
 	return configureAST(
 		NewBinaryExpression(
 			v.VisitVariableNames(ctx.left.(*VariableNamesContext)),
@@ -3439,7 +3442,7 @@ func (v *ASTBuilder) VisitMultipleAssignmentExprAlt(ctx *MultipleAssignmentExprA
 		ctx)
 }
 
-func (v *ASTBuilder) VisitAssignmentExprAlt(ctx *AssignmentExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitAssignmentExprAlt(ctx *AssignmentExprAltContext) interface{} {
 	leftExpr := v.Visit(ctx.left).(Expression)
 
 	if _, ok := leftExpr.(*VariableExpression); ok && v.isInsideParentheses(leftExpr) {
@@ -3481,7 +3484,7 @@ func (v *ASTBuilder) VisitAssignmentExprAlt(ctx *AssignmentExprAltContext) *Bina
 		ctx)
 }
 
-func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) Expression {
+func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) interface{} {
 	if ctx.TypeArguments() != nil {
 		classNode := MakeFromString(ctx.Identifier().GetText())
 
@@ -3494,20 +3497,20 @@ func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) Expre
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext))), ctx)
 }
 
-func (v *ASTBuilder) VisitNewPrmrAlt(ctx *NewPrmrAltContext) Expression {
-	return configureAST(v.VisitCreator(ctx.Creator().(*CreatorContext)), ctx)
+func (v *ASTBuilder) VisitNewPrmrAlt(ctx *NewPrmrAltContext) interface{} {
+	return configureAST(v.VisitCreator(ctx.Creator().(*CreatorContext)).(Expression), ctx)
 }
 
-func (v *ASTBuilder) VisitThisPrmrAlt(ctx *ThisPrmrAltContext) *VariableExpression {
+func (v *ASTBuilder) VisitThisPrmrAlt(ctx *ThisPrmrAltContext) interface{} {
 	return configureAST(NewVariableExpressionWithString(ctx.THIS().GetText()), ctx)
 }
 
-func (v *ASTBuilder) VisitSuperPrmrAlt(ctx *SuperPrmrAltContext) *VariableExpression {
+func (v *ASTBuilder) VisitSuperPrmrAlt(ctx *SuperPrmrAltContext) interface{} {
 	return configureAST(NewVariableExpressionWithString(ctx.SUPER().GetText()), ctx)
 }
 
-func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
-	classNode := v.VisitCreatedName(ctx.CreatedName().(*CreatedNameContext))
+func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) interface{} {
+	classNode := v.VisitCreatedName(ctx.CreatedName().(*CreatedNameContext)).(*ClassNode)
 
 	if ctx.Arguments() != nil { // create instance of class
 		arguments := v.VisitArguments(ctx.Arguments().(*ArgumentsContext)).(Expression)
@@ -3530,7 +3533,7 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
 
 		if ctx.AnonymousInnerClassDeclaration() != nil {
 			ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext).PutNodeMetaData(ANONYMOUS_INNER_CLASS_SUPER_CLASS, classNode)
-			anonymousInnerClassNode := v.VisitAnonymousInnerClassDeclaration(ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext))
+			anonymousInnerClassNode := v.VisitAnonymousInnerClassDeclaration(ctx.AnonymousInnerClassDeclaration().(*AnonymousInnerClassDeclarationContext)).(*InnerClassNode)
 
 			anonymousInnerClassList := v.peekAnonymousInnerClass()
 			if anonymousInnerClassList != nil { // if the anonymous class is created in a script, no anonymousInnerClassList is available.
@@ -3552,7 +3555,7 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
 
 		dimList := make([]Tuple3[Expression, []*AnnotationNode, antlr.TerminalNode], len(ctx.AllDim()))
 		for i, dim := range ctx.AllDim() {
-			dimList[i] = v.VisitDim(dim.(*DimContext))
+			dimList[i] = v.VisitDim(dim.(*DimContext)).(Tuple3[Expression, []*AnnotationNode, antlr.TerminalNode])
 		}
 
 		var invalidDimLBrack antlr.TerminalNode
@@ -3590,7 +3593,7 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
 
 			arrayExpression = NewArrayExpression(
 				elementType,
-				v.VisitArrayInitializer(ctx.ArrayInitializer().(*ArrayInitializerContext)),
+				v.VisitArrayInitializer(ctx.ArrayInitializer().(*ArrayInitializerContext)).([]Expression),
 				nil,
 			)
 
@@ -3645,7 +3648,7 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
 	panic(createParsingFailedException("Unsupported creator: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitDim(ctx *DimContext) Tuple3[Expression, []*AnnotationNode, antlr.TerminalNode] {
+func (v *ASTBuilder) VisitDim(ctx *DimContext) interface{} {
 	return NewTuple3(
 		v.Visit(ctx.Expression()).(Expression),
 		v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode),
@@ -3664,7 +3667,7 @@ func nextAnonymousClassName(outerClass *ClassNode) string {
 	return outerClass.GetName() + "$" + strconv.Itoa(anonymousClassCount+1)
 }
 
-func (v *ASTBuilder) VisitAnonymousInnerClassDeclaration(ctx *AnonymousInnerClassDeclarationContext) *InnerClassNode {
+func (v *ASTBuilder) VisitAnonymousInnerClassDeclaration(ctx *AnonymousInnerClassDeclarationContext) interface{} {
 	superClass := ctx.GetNodeMetaData(ANONYMOUS_INNER_CLASS_SUPER_CLASS).(*ClassNode)
 	if superClass == nil {
 		panic("superClass should not be nil")
@@ -3705,7 +3708,7 @@ func (v *ASTBuilder) VisitAnonymousInnerClassDeclaration(ctx *AnonymousInnerClas
 	return anonymousInnerClass
 }
 
-func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) *ClassNode {
+func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) interface{} {
 	var classNode *ClassNode
 
 	if ctx.QualifiedClassName() != nil {
@@ -3728,13 +3731,13 @@ func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) *ClassNode {
 	return classNode
 }
 
-func (v *ASTBuilder) VisitMap(ctx *MapContext) *MapExpression {
+func (v *ASTBuilder) VisitMap(ctx *MapContext) interface{} {
 	return configureAST(
-		NewMapExpressionWithEntries(v.VisitMapEntryList(ctx.MapEntryList().(*MapEntryListContext))),
+		NewMapExpressionWithEntries(v.VisitMapEntryList(ctx.MapEntryList().(*MapEntryListContext)).([]*MapEntryExpression)),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitMapEntryList(ctx *MapEntryListContext) []*MapEntryExpression {
+func (v *ASTBuilder) VisitMapEntryList(ctx *MapEntryListContext) interface{} {
 	if ctx == nil {
 		return []*MapEntryExpression{}
 	}
@@ -3749,20 +3752,20 @@ func (v *ASTBuilder) createMapEntryList(mapEntryContextList []IMapEntryContext) 
 
 	mapEntryList := make([]*MapEntryExpression, len(mapEntryContextList))
 	for i, mapEntryContext := range mapEntryContextList {
-		mapEntryList[i] = v.VisitMapEntry(mapEntryContext.(*MapEntryContext))
+		mapEntryList[i] = v.VisitMapEntry(mapEntryContext.(*MapEntryContext)).(*MapEntryExpression)
 	}
 
 	return mapEntryList
 }
 
-func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) *MapEntryExpression {
+func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) interface{} {
 	var keyExpr Expression
 	valueExpr := v.Visit(ctx.Expression()).(Expression)
 
 	if ctx.MUL() != nil {
 		keyExpr = configureAST(NewSpreadMapExpression(valueExpr), ctx)
 	} else if ctx.MapEntryLabel() != nil {
-		keyExpr = v.VisitMapEntryLabel(ctx.MapEntryLabel().(*MapEntryLabelContext))
+		keyExpr = v.VisitMapEntryLabel(ctx.MapEntryLabel().(*MapEntryLabelContext)).(Expression)
 	} else {
 		panic(createParsingFailedException("Unsupported map entry: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 	}
@@ -3772,9 +3775,9 @@ func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) *MapEntryExpression {
 		ctx)
 }
 
-func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) Expression {
+func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) interface{} {
 	if ctx.Keywords() != nil {
-		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)), ctx)
+		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
 	} else if ctx.Primary() != nil {
 		expression := v.Visit(ctx.Primary()).(Expression)
 
@@ -3791,11 +3794,11 @@ func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) Expression {
 	panic(createParsingFailedException("Unsupported map entry label: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitKeywords(ctx *KeywordsContext) *ConstantExpression {
+func (v *ASTBuilder) VisitKeywords(ctx *KeywordsContext) interface{} {
 	return configureAST(NewConstantExpression(ctx.GetText()), ctx)
 }
 
-func (v *ASTBuilder) VisitBuiltInType(ctx *BuiltInTypeContext) *VariableExpression {
+func (v *ASTBuilder) VisitBuiltInType(ctx *BuiltInTypeContext) interface{} {
 	var text string
 	if ctx.VOID() != nil {
 		text = ctx.VOID().GetText()
@@ -3817,11 +3820,11 @@ func (v *ASTBuilder) VisitList(ctx *ListContext) *ListExpression {
 
 	return configureAST(
 		NewListExpressionWithExpressions(
-			v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext))),
+			v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext)).([]Expression)),
 		ctx)
 }
 
-func (v *ASTBuilder) VisitExpressionList(ctx *ExpressionListContext) []Expression {
+func (v *ASTBuilder) VisitExpressionList(ctx *ExpressionListContext) interface{} {
 	if ctx == nil {
 		return []Expression{}
 	}
@@ -3836,12 +3839,12 @@ func (v *ASTBuilder) createExpressionList(expressionListElementContextList []IEx
 
 	expressions := make([]Expression, len(expressionListElementContextList))
 	for i, ctx := range expressionListElementContextList {
-		expressions[i] = v.VisitExpressionListElement(ctx.(*ExpressionListElementContext))
+		expressions[i] = v.VisitExpressionListElement(ctx.(*ExpressionListElementContext)).(Expression)
 	}
 	return expressions
 }
 
-func (v *ASTBuilder) VisitExpressionListElement(ctx *ExpressionListElementContext) Expression {
+func (v *ASTBuilder) VisitExpressionListElement(ctx *ExpressionListElementContext) interface{} {
 	expression := v.Visit(ctx.Expression()).(Expression)
 
 	v.validateExpressionListElement(ctx, expression)
@@ -3885,7 +3888,7 @@ func (v *ASTBuilder) VisitIntegerLiteralAlt(ctx *IntegerLiteralAltContext) *Cons
 	return configureAST(constantExpression, ctx)
 }
 
-func (v *ASTBuilder) VisitFloatingPointLiteralAlt(ctx *FloatingPointLiteralAltContext) *ConstantExpression {
+func (v *ASTBuilder) VisitFloatingPointLiteralAlt(ctx *FloatingPointLiteralAltContext) interface{} {
 	text := ctx.FloatingPointLiteral().GetText()
 	var num interface{}
 	//var err error
@@ -3903,7 +3906,7 @@ func (v *ASTBuilder) VisitFloatingPointLiteralAlt(ctx *FloatingPointLiteralAltCo
 	return configureAST(constantExpression, ctx)
 }
 
-func (v *ASTBuilder) VisitBooleanLiteralAlt(ctx *BooleanLiteralAltContext) *ConstantExpression {
+func (v *ASTBuilder) VisitBooleanLiteralAlt(ctx *BooleanLiteralAltContext) interface{} {
 	return configureAST(NewConstantExpression(ctx.BooleanLiteral().GetText() == "true"), ctx)
 }
 
@@ -4007,7 +4010,7 @@ func (v *ASTBuilder) VisitGstringValue(ctx *GstringValueContext) Expression {
 	}
 
 	if ctx.Closure() != nil {
-		closureExpression := v.VisitClosure(ctx.Closure().(*ClosureContext))
+		closureExpression := v.VisitClosure(ctx.Closure().(*ClosureContext)).(*ClosureExpression)
 		if !hasArrow(ctx) {
 			statementList := closureExpression.GetCode().(*BlockStatement).GetStatements()
 			size := len(statementList)
@@ -4077,7 +4080,7 @@ func (v *ASTBuilder) VisitStandardLambdaParameters(ctx *StandardLambdaParameters
 		return []*Parameter{parameter}
 	}
 
-	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext))
+	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
 	if len(parameters) > 0 {
 		return parameters
 	}
@@ -4086,12 +4089,12 @@ func (v *ASTBuilder) VisitStandardLambdaParameters(ctx *StandardLambdaParameters
 
 func (v *ASTBuilder) VisitLambdaBody(ctx *LambdaBodyContext) Statement {
 	if ctx.Block() != nil {
-		return configureAST(v.VisitBlock(ctx.Block().(*BlockContext)), ctx)
+		return configureAST(v.VisitBlock(ctx.Block().(*BlockContext)).(Statement), ctx)
 	}
 	return configureAST(v.Visit(ctx.StatementExpression()).(Statement), ctx)
 }
 
-func (v *ASTBuilder) VisitClosure(ctx *ClosureContext) *ClosureExpression {
+func (v *ASTBuilder) VisitClosure(ctx *ClosureContext) interface{} {
 	v.pushSwitchExpressionRuleContext(ctx)
 	v.visitingClosureCount++
 	defer func() {
@@ -4101,10 +4104,10 @@ func (v *ASTBuilder) VisitClosure(ctx *ClosureContext) *ClosureExpression {
 
 	var parameters []*Parameter
 	if ctx.FormalParameterList() != nil {
-		parameters = v.VisitFormalParameterList(ctx.FormalParameterList().(*FormalParameterListContext))
+		parameters = v.VisitFormalParameterList(ctx.FormalParameterList().(*FormalParameterListContext)).([]*Parameter)
 	}
 
-	code := v.VisitBlockStatementsOpt(ctx.BlockStatementsOpt().(*BlockStatementsOptContext))
+	code := v.VisitBlockStatementsOpt(ctx.BlockStatementsOpt().(*BlockStatementsOptContext)).(*BlockStatement)
 	if ctx.ARROW() == nil {
 		parameters = []*Parameter{}
 		if code.IsEmpty() {
@@ -4115,15 +4118,15 @@ func (v *ASTBuilder) VisitClosure(ctx *ClosureContext) *ClosureExpression {
 	return configureAST(NewClosureExpression(parameters, code), ctx)
 }
 
-func (v *ASTBuilder) VisitFormalParameters(ctx *FormalParametersContext) []*Parameter {
+func (v *ASTBuilder) VisitFormalParameters(ctx *FormalParametersContext) interface{} {
 	if ctx == nil {
 		return []*Parameter{}
 	}
 
-	return v.VisitFormalParameterList(ctx.FormalParameterList().(*FormalParameterListContext))
+	return v.VisitFormalParameterList(ctx.FormalParameterList().(*FormalParameterListContext)).([]*Parameter)
 }
 
-func (v *ASTBuilder) VisitFormalParameterList(ctx *FormalParameterListContext) []*Parameter {
+func (v *ASTBuilder) VisitFormalParameterList(ctx *FormalParameterListContext) interface{} {
 	if ctx == nil {
 		return []*Parameter{}
 	}
@@ -4139,7 +4142,7 @@ func (v *ASTBuilder) VisitFormalParameterList(ctx *FormalParameterListContext) [
 		v.validateVarArgParameter(formalParameterList)
 
 		for _, fp := range formalParameterList {
-			parameterList = append(parameterList, v.VisitFormalParameter(fp.(*FormalParameterContext)))
+			parameterList = append(parameterList, v.VisitFormalParameter(fp.(*FormalParameterContext)).(*Parameter))
 		}
 	}
 
@@ -4175,7 +4178,7 @@ func (v *ASTBuilder) validateParameterList(parameterList []*Parameter) {
 	}
 }
 
-func (v *ASTBuilder) VisitFormalParameter(ctx *FormalParameterContext) *Parameter {
+func (v *ASTBuilder) VisitFormalParameter(ctx *FormalParameterContext) interface{} {
 	return v.processFormalParameter(ctx, ctx.VariableModifiersOpt().(*VariableModifiersOptContext), ctx.Type_().(*TypeContext), ctx.ELLIPSIS(), ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext), ctx.Expression().(IExpressionContext))
 }
 
@@ -4183,23 +4186,23 @@ func (v *ASTBuilder) VisitThisFormalParameter(ctx *ThisFormalParameterContext) *
 	return configureAST(NewParameter(v.VisitType(ctx.Type_().(*TypeContext)), THIS_STR), ctx)
 }
 
-func (v *ASTBuilder) VisitClassOrInterfaceModifiersOpt(ctx *ClassOrInterfaceModifiersOptContext) []*ModifierNode {
+func (v *ASTBuilder) VisitClassOrInterfaceModifiersOpt(ctx *ClassOrInterfaceModifiersOptContext) interface{} {
 	if ctx.ClassOrInterfaceModifiers() != nil {
-		return v.VisitClassOrInterfaceModifiers(ctx.ClassOrInterfaceModifiers().(*ClassOrInterfaceModifiersContext))
+		return v.VisitClassOrInterfaceModifiers(ctx.ClassOrInterfaceModifiers().(*ClassOrInterfaceModifiersContext)).([]*ModifierNode)
 	}
 
 	return []*ModifierNode{}
 }
 
-func (v *ASTBuilder) VisitClassOrInterfaceModifiers(ctx *ClassOrInterfaceModifiersContext) []*ModifierNode {
+func (v *ASTBuilder) VisitClassOrInterfaceModifiers(ctx *ClassOrInterfaceModifiersContext) interface{} {
 	modifiers := []*ModifierNode{}
 	for _, modifier := range ctx.AllClassOrInterfaceModifier() {
-		modifiers = append(modifiers, v.VisitClassOrInterfaceModifier(modifier.(*ClassOrInterfaceModifierContext)))
+		modifiers = append(modifiers, v.VisitClassOrInterfaceModifier(modifier.(*ClassOrInterfaceModifierContext)).(*ModifierNode))
 	}
 	return modifiers
 }
 
-func (v *ASTBuilder) VisitClassOrInterfaceModifier(ctx *ClassOrInterfaceModifierContext) *ModifierNode {
+func (v *ASTBuilder) VisitClassOrInterfaceModifier(ctx *ClassOrInterfaceModifierContext) interface{} {
 	if ctx.Annotation() != nil {
 		return configureAST(NewModifierNodeWithAnnotation(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)).(*AnnotationNode), ctx.GetText()), ctx)
 	}
@@ -4213,7 +4216,7 @@ func (v *ASTBuilder) VisitClassOrInterfaceModifier(ctx *ClassOrInterfaceModifier
 
 func (v *ASTBuilder) VisitModifier(ctx *ModifierContext) *ModifierNode {
 	if ctx.ClassOrInterfaceModifier() != nil {
-		return configureAST(v.VisitClassOrInterfaceModifier(ctx.ClassOrInterfaceModifier().(*ClassOrInterfaceModifierContext)), ctx)
+		return configureAST(v.VisitClassOrInterfaceModifier(ctx.ClassOrInterfaceModifier().(*ClassOrInterfaceModifierContext)).(*ModifierNode), ctx)
 	}
 
 	if ctx.m != nil {
@@ -4267,7 +4270,7 @@ func (v *ASTBuilder) VisitVariableModifiers(ctx *VariableModifiersContext) []*Mo
 	return modifiers
 }
 
-func (v *ASTBuilder) VisitEmptyDims(ctx *EmptyDimsContext) [][]*AnnotationNode {
+func (v *ASTBuilder) VisitEmptyDims(ctx *EmptyDimsContext) interface{} {
 	dimList := make([][]*AnnotationNode, 0, len(ctx.AllAnnotationsOpt()))
 	for _, annotationsOpt := range ctx.AllAnnotationsOpt() {
 		dimList = append(dimList, v.VisitAnnotationsOpt(annotationsOpt.(*AnnotationsOptContext)).([]*AnnotationNode))
@@ -4281,12 +4284,12 @@ func (v *ASTBuilder) VisitEmptyDims(ctx *EmptyDimsContext) [][]*AnnotationNode {
 	return dimList
 }
 
-func (v *ASTBuilder) VisitEmptyDimsOpt(ctx *EmptyDimsOptContext) [][]*AnnotationNode {
+func (v *ASTBuilder) VisitEmptyDimsOpt(ctx *EmptyDimsOptContext) interface{} {
 	if ctx.EmptyDims() == nil {
 		return [][]*AnnotationNode{}
 	}
 
-	return v.VisitEmptyDims(ctx.EmptyDims().(*EmptyDimsContext))
+	return v.VisitEmptyDims(ctx.EmptyDims().(*EmptyDimsContext)).([][]*AnnotationNode)
 }
 
 func (v *ASTBuilder) VisitType(ctx *TypeContext) *ClassNode {
@@ -4314,7 +4317,7 @@ func (v *ASTBuilder) VisitType(ctx *TypeContext) *ClassNode {
 
 	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
-	dimList := v.VisitEmptyDimsOpt(ctx.EmptyDimsOpt().(*EmptyDimsOptContext))
+	dimList := v.VisitEmptyDimsOpt(ctx.EmptyDimsOpt().(*EmptyDimsOptContext)).([][]*AnnotationNode)
 	if len(dimList) > 0 {
 		classNode = v.createArrayTypeWithAnnotations(classNode, dimList)
 	}
@@ -4415,9 +4418,9 @@ func (v *ASTBuilder) VisitVariableNames(ctx *VariableNamesContext) *TupleExpress
 	return configureAST(NewTupleExpressionWithExpressions(expressions...), ctx)
 }
 
-func (v *ASTBuilder) VisitClosureOrLambdaExpression(ctx *ClosureOrLambdaExpressionContext) *ClosureExpression {
+func (v *ASTBuilder) VisitClosureOrLambdaExpression(ctx *ClosureOrLambdaExpressionContext) interface{} {
 	if ctx.Closure() != nil {
-		return configureAST(v.VisitClosure(ctx.Closure().(*ClosureContext)), ctx)
+		return configureAST(v.VisitClosure(ctx.Closure().(*ClosureContext)).(*ClosureExpression), ctx)
 	} else if ctx.LambdaExpression() != nil {
 		// TODO: implement this
 		panic("LambdaExpression is not implemented")
@@ -4427,27 +4430,27 @@ func (v *ASTBuilder) VisitClosureOrLambdaExpression(ctx *ClosureOrLambdaExpressi
 	panic(createParsingFailedException("The node is not expected here"+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitBlockStatementsOpt(ctx *BlockStatementsOptContext) *BlockStatement {
+func (v *ASTBuilder) VisitBlockStatementsOpt(ctx *BlockStatementsOptContext) interface{} {
 	if ctx.BlockStatements() != nil {
-		return configureAST(v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext)), ctx)
+		return configureAST(v.VisitBlockStatements(ctx.BlockStatements().(*BlockStatementsContext)).(*BlockStatement), ctx)
 	}
 
 	return configureAST(v.createBlockStatement(), ctx)
 }
 
-func (v *ASTBuilder) VisitBlockStatements(ctx *BlockStatementsContext) *BlockStatement {
+func (v *ASTBuilder) VisitBlockStatements(ctx *BlockStatementsContext) interface{} {
 	var statements []Statement
 	for _, stmt := range ctx.AllBlockStatement() {
-		if s := v.VisitBlockStatement(stmt.(*BlockStatementContext)); s != nil {
+		if s := v.VisitBlockStatement(stmt.(*BlockStatementContext)).(Statement); s != nil {
 			statements = append(statements, s)
 		}
 	}
 	return configureAST(v.createBlockStatement(statements...), ctx)
 }
 
-func (v *ASTBuilder) VisitBlockStatement(ctx *BlockStatementContext) Statement {
+func (v *ASTBuilder) VisitBlockStatement(ctx *BlockStatementContext) interface{} {
 	if ctx.LocalVariableDeclaration() != nil {
-		return configureAST(v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext)), ctx)
+		return configureAST(v.VisitLocalVariableDeclaration(ctx.LocalVariableDeclaration().(*LocalVariableDeclarationContext)).(*DeclarationListStatement), ctx)
 	}
 
 	if ctx.Statement() != nil {
@@ -4487,7 +4490,7 @@ func (v *ASTBuilder) VisitAnnotationsOpt(ctx *AnnotationsOptContext) interface{}
 func (v *ASTBuilder) VisitAnnotation(ctx *AnnotationContext) interface{} {
 	annotationName := v.VisitAnnotationName(ctx.AnnotationName().(*AnnotationNameContext)).(string)
 	annotationNode := NewAnnotationNode(MakeFromString(annotationName))
-	annotationElementValues := v.VisitElementValues(ctx.ElementValues().(*ElementValuesContext))
+	annotationElementValues := v.VisitElementValues(ctx.ElementValues().(*ElementValuesContext)).([]Tuple2[string, Expression])
 
 	for _, e := range annotationElementValues {
 		annotationNode.AddMember(e.V1, e.V2)
@@ -4496,7 +4499,7 @@ func (v *ASTBuilder) VisitAnnotation(ctx *AnnotationContext) interface{} {
 	return configureAST(annotationNode, ctx)
 }
 
-func (v *ASTBuilder) VisitElementValues(ctx *ElementValuesContext) []Tuple2[string, Expression] {
+func (v *ASTBuilder) VisitElementValues(ctx *ElementValuesContext) interface{} {
 	if ctx == nil {
 		return []Tuple2[string, Expression]{}
 	}
@@ -4504,11 +4507,11 @@ func (v *ASTBuilder) VisitElementValues(ctx *ElementValuesContext) []Tuple2[stri
 	var annotationElementValues []Tuple2[string, Expression]
 
 	if ctx.ElementValuePairs() != nil {
-		for key, value := range v.VisitElementValuePairs(ctx.ElementValuePairs().(*ElementValuePairsContext)) {
+		for key, value := range v.VisitElementValuePairs(ctx.ElementValuePairs().(*ElementValuePairsContext)).(map[string]Expression) {
 			annotationElementValues = append(annotationElementValues, NewTuple2(key, value))
 		}
 	} else if ctx.ElementValue() != nil {
-		annotationElementValues = append(annotationElementValues, NewTuple2(VALUE_STR, v.VisitElementValue(ctx.ElementValue().(*ElementValueContext))))
+		annotationElementValues = append(annotationElementValues, NewTuple2(VALUE_STR, v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)).(Expression)))
 	}
 
 	return annotationElementValues
@@ -4518,20 +4521,20 @@ func (v *ASTBuilder) VisitAnnotationName(ctx *AnnotationNameContext) interface{}
 	return v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).GetName()
 }
 
-func (v *ASTBuilder) VisitElementValuePairs(ctx *ElementValuePairsContext) map[string]Expression {
+func (v *ASTBuilder) VisitElementValuePairs(ctx *ElementValuePairsContext) interface{} {
 	elementValuePairs := make(map[string]Expression)
 	for _, pair := range ctx.AllElementValuePair() {
-		t := v.VisitElementValuePair(pair.(*ElementValuePairContext))
+		t := v.VisitElementValuePair(pair.(*ElementValuePairContext)).(Tuple2[string, Expression])
 		elementValuePairs[t.V1] = t.V2
 	}
 	return elementValuePairs
 }
 
-func (v *ASTBuilder) VisitElementValuePair(ctx *ElementValuePairContext) Tuple2[string, Expression] {
-	return NewTuple2(ctx.ElementValuePairName().GetText(), v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)))
+func (v *ASTBuilder) VisitElementValuePair(ctx *ElementValuePairContext) interface{} {
+	return NewTuple2(ctx.ElementValuePairName().GetText(), v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)).(Expression))
 }
 
-func (v *ASTBuilder) VisitElementValue(ctx *ElementValueContext) Expression {
+func (v *ASTBuilder) VisitElementValue(ctx *ElementValueContext) interface{} {
 	if ctx.Expression() != nil {
 		return configureAST(v.Visit(ctx.Expression()).(Expression), ctx)
 	}
@@ -4541,21 +4544,21 @@ func (v *ASTBuilder) VisitElementValue(ctx *ElementValueContext) Expression {
 	}
 
 	if ctx.ElementValueArrayInitializer() != nil {
-		return configureAST(v.VisitElementValueArrayInitializer(ctx.ElementValueArrayInitializer().(*ElementValueArrayInitializerContext)), ctx)
+		return configureAST(v.VisitElementValueArrayInitializer(ctx.ElementValueArrayInitializer().(*ElementValueArrayInitializerContext)).(*ListExpression), ctx)
 	}
 
 	panic(createParsingFailedException("Unsupported element value: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitElementValueArrayInitializer(ctx *ElementValueArrayInitializerContext) *ListExpression {
+func (v *ASTBuilder) VisitElementValueArrayInitializer(ctx *ElementValueArrayInitializerContext) interface{} {
 	var elementValues []Expression
 	for _, elementValue := range ctx.AllElementValue() {
-		elementValues = append(elementValues, v.VisitElementValue(elementValue.(*ElementValueContext)))
+		elementValues = append(elementValues, v.VisitElementValue(elementValue.(*ElementValueContext)).(Expression))
 	}
 	return configureAST(NewListExpressionWithExpressions(elementValues), ctx)
 }
 
-func (v *ASTBuilder) VisitClassName(ctx *ClassNameContext) string {
+func (v *ASTBuilder) VisitClassName(ctx *ClassNameContext) interface{} {
 	return ctx.GetText()
 }
 
