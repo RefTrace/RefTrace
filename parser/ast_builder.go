@@ -350,7 +350,7 @@ func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) *Pa
 	v.moduleNode.SetPackageName(packageName + DOT_STR)
 
 	packageNode := v.moduleNode.PackageNode
-	annotations := v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext))
+	annotations := v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode)
 
 	packageNode.AddAnnotations(annotations)
 
@@ -358,7 +358,7 @@ func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) *Pa
 }
 
 func (v *ASTBuilder) VisitImportDeclaration(ctx *ImportDeclarationContext) *ImportNode {
-	annotations := v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext))
+	annotations := v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode)
 
 	hasStatic := ctx.STATIC() != nil
 	hasStar := ctx.MUL() != nil
@@ -1598,7 +1598,7 @@ func (v *ASTBuilder) VisitEnumConstant(ctx *EnumConstantContext) *FieldNode {
 		v.createEnumConstantInitExpression(ctx.Arguments().(*ArgumentsContext), anonymousInnerClassNode),
 	)
 
-	enumConstant.AddAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)))
+	enumConstant.AddAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
 	//v.groovydocManager.Handle(enumConstant, ctx)
 
@@ -1746,7 +1746,7 @@ func (v *ASTBuilder) VisitTypeParameters(ctx *TypeParametersContext) []*Generics
 
 func (v *ASTBuilder) VisitTypeParameter(ctx *TypeParameterContext) *GenericsType {
 	baseType := configureAST(MakeWithoutCaching(v.VisitClassName(ctx.ClassName().(*ClassNameContext))), ctx)
-	baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)))
+	baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 	genericsType := NewGenericsType(baseType, v.VisitTypeBound(ctx.TypeBound().(*TypeBoundContext)), nil)
 	return configureAST(genericsType, ctx)
 }
@@ -3378,7 +3378,7 @@ func (v *ASTBuilder) VisitRegexExprAlt(ctx *RegexExprAltContext) *BinaryExpressi
 		ctx)
 }
 
-func (v *ASTBuilder) VisitAndExprAlt(ctx *AndExprAltContext) *BinaryExpression {
+func (v *ASTBuilder) VisitAndExprAlt(ctx *AndExprAltContext) interface{} {
 	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
 }
 
@@ -3648,7 +3648,7 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) Expression {
 func (v *ASTBuilder) VisitDim(ctx *DimContext) Tuple3[Expression, []*AnnotationNode, antlr.TerminalNode] {
 	return NewTuple3(
 		v.Visit(ctx.Expression()).(Expression),
-		v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)),
+		v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode),
 		ctx.LBRACK(),
 	)
 }
@@ -3723,7 +3723,7 @@ func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) *ClassNode {
 		panic(createParsingFailedException("Unsupported created name: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 	}
 
-	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext))) // GROOVY-11178
+	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode)) // GROOVY-11178
 
 	return classNode
 }
@@ -4201,7 +4201,7 @@ func (v *ASTBuilder) VisitClassOrInterfaceModifiers(ctx *ClassOrInterfaceModifie
 
 func (v *ASTBuilder) VisitClassOrInterfaceModifier(ctx *ClassOrInterfaceModifierContext) *ModifierNode {
 	if ctx.Annotation() != nil {
-		return configureAST(NewModifierNodeWithAnnotation(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)), ctx.GetText()), ctx)
+		return configureAST(NewModifierNodeWithAnnotation(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)).(*AnnotationNode), ctx.GetText()), ctx)
 	}
 
 	if ctx.m != nil {
@@ -4241,7 +4241,7 @@ func (v *ASTBuilder) VisitModifiersOpt(ctx *ModifiersOptContext) []*ModifierNode
 
 func (v *ASTBuilder) VisitVariableModifier(ctx *VariableModifierContext) *ModifierNode {
 	if ctx.Annotation() != nil {
-		return configureAST(NewModifierNodeWithAnnotation(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)), ctx.GetText()), ctx)
+		return configureAST(NewModifierNodeWithAnnotation(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)).(*AnnotationNode), ctx.GetText()), ctx)
 	}
 
 	if ctx.m != nil {
@@ -4270,7 +4270,7 @@ func (v *ASTBuilder) VisitVariableModifiers(ctx *VariableModifiersContext) []*Mo
 func (v *ASTBuilder) VisitEmptyDims(ctx *EmptyDimsContext) [][]*AnnotationNode {
 	dimList := make([][]*AnnotationNode, 0, len(ctx.AllAnnotationsOpt()))
 	for _, annotationsOpt := range ctx.AllAnnotationsOpt() {
-		dimList = append(dimList, v.VisitAnnotationsOpt(annotationsOpt.(*AnnotationsOptContext)))
+		dimList = append(dimList, v.VisitAnnotationsOpt(annotationsOpt.(*AnnotationsOptContext)).([]*AnnotationNode))
 	}
 
 	// Reverse the dimList
@@ -4312,7 +4312,7 @@ func (v *ASTBuilder) VisitType(ctx *TypeContext) *ClassNode {
 		panic(createParsingFailedException("Unsupported type: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 	}
 
-	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)))
+	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
 	dimList := v.VisitEmptyDimsOpt(ctx.EmptyDimsOpt().(*EmptyDimsOptContext))
 	if len(dimList) > 0 {
@@ -4369,7 +4369,7 @@ func (v *ASTBuilder) VisitTypeArguments(ctx *TypeArgumentsContext) []*GenericsTy
 func (v *ASTBuilder) VisitTypeArgument(ctx *TypeArgumentContext) *GenericsType {
 	if ctx.QUESTION() != nil {
 		baseType := configureASTWithToken(MakeWithoutCaching(QUESTION_STR), ctx.QUESTION().GetSymbol())
-		baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)))
+		baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
 		if ctx.Type_() == nil {
 			genericsType := NewGenericsTypeWithBasicType(baseType)
@@ -4472,20 +4472,20 @@ func (v *ASTBuilder) VisitBlockStatement(ctx *BlockStatementContext) Statement {
 	panic(createParsingFailedException("Unsupported block statement: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitAnnotationsOpt(ctx *AnnotationsOptContext) []*AnnotationNode {
+func (v *ASTBuilder) VisitAnnotationsOpt(ctx *AnnotationsOptContext) interface{} {
 	if ctx == nil {
 		return []*AnnotationNode{}
 	}
 
 	var annotations []*AnnotationNode
 	for _, ann := range ctx.AllAnnotation() {
-		annotations = append(annotations, v.VisitAnnotation(ann.(*AnnotationContext)))
+		annotations = append(annotations, v.VisitAnnotation(ann.(*AnnotationContext)).(*AnnotationNode))
 	}
 	return annotations
 }
 
-func (v *ASTBuilder) VisitAnnotation(ctx *AnnotationContext) *AnnotationNode {
-	annotationName := v.VisitAnnotationName(ctx.AnnotationName().(*AnnotationNameContext))
+func (v *ASTBuilder) VisitAnnotation(ctx *AnnotationContext) interface{} {
+	annotationName := v.VisitAnnotationName(ctx.AnnotationName().(*AnnotationNameContext)).(string)
 	annotationNode := NewAnnotationNode(MakeFromString(annotationName))
 	annotationElementValues := v.VisitElementValues(ctx.ElementValues().(*ElementValuesContext))
 
@@ -4514,7 +4514,7 @@ func (v *ASTBuilder) VisitElementValues(ctx *ElementValuesContext) []Tuple2[stri
 	return annotationElementValues
 }
 
-func (v *ASTBuilder) VisitAnnotationName(ctx *AnnotationNameContext) string {
+func (v *ASTBuilder) VisitAnnotationName(ctx *AnnotationNameContext) interface{} {
 	return v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).GetName()
 }
 
@@ -4537,7 +4537,7 @@ func (v *ASTBuilder) VisitElementValue(ctx *ElementValueContext) Expression {
 	}
 
 	if ctx.Annotation() != nil {
-		return configureAST(NewAnnotationConstantExpression(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext))), ctx)
+		return configureAST(NewAnnotationConstantExpression(v.VisitAnnotation(ctx.Annotation().(*AnnotationContext)).(*AnnotationNode)), ctx)
 	}
 
 	if ctx.ElementValueArrayInitializer() != nil {
@@ -4571,10 +4571,10 @@ func (v *ASTBuilder) VisitQualifiedName(ctx *QualifiedNameContext) string {
 	return strings.Join(elements, DOT_STR)
 }
 
-func (v *ASTBuilder) VisitAnnotatedQualifiedClassName(ctx *AnnotatedQualifiedClassNameContext) *ClassNode {
+func (v *ASTBuilder) VisitAnnotatedQualifiedClassName(ctx *AnnotatedQualifiedClassNameContext) interface{} {
 	classNode := v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext))
 
-	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)))
+	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
 	return classNode
 }
@@ -4586,7 +4586,7 @@ func (v *ASTBuilder) VisitQualifiedClassNameList(ctx *QualifiedClassNameListCont
 
 	var classNodes []*ClassNode
 	for _, annotatedQualifiedClassName := range ctx.AllAnnotatedQualifiedClassName() {
-		classNodes = append(classNodes, v.VisitAnnotatedQualifiedClassName(annotatedQualifiedClassName.(*AnnotatedQualifiedClassNameContext)))
+		classNodes = append(classNodes, v.VisitAnnotatedQualifiedClassName(annotatedQualifiedClassName.(*AnnotatedQualifiedClassNameContext)).(*ClassNode))
 	}
 	return classNodes
 }
