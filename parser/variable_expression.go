@@ -8,7 +8,7 @@ var _ Variable = (*VariableExpression)(nil)
 
 // VariableExpression represents a local variable name, the simplest form of expression. e.g. "foo".
 type VariableExpression struct {
-	Expression
+	*BaseExpression
 	variable         string
 	modifiers        int
 	inStaticContext  bool
@@ -26,9 +26,9 @@ var (
 
 func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
 	ve := &VariableExpression{
-		Expression: NewBaseExpression(),
-		variable:   name,
-		originType: typ,
+		BaseExpression: NewBaseExpression(),
+		variable:       name,
+		originType:     typ,
 	}
 	if IsPrimitiveType(typ) {
 		ve.SetType(GetWrapper(typ))
@@ -70,7 +70,7 @@ func (ve *VariableExpression) String() string {
 	if !ve.IsDynamicTyped() {
 		typeStr = fmt.Sprintf(" type: %v", ve.GetType())
 	}
-	return fmt.Sprintf("%v[variable: %s%s]", ve.Expression.GetText(), ve.variable, typeStr)
+	return fmt.Sprintf("%v[variable: %s%s]", ve.BaseExpression.GetText(), ve.variable, typeStr)
 }
 
 func (ve *VariableExpression) GetInitialExpression() Expression {
@@ -93,7 +93,7 @@ func (ve *VariableExpression) SetInStaticContext(inStaticContext bool) {
 }
 
 func (ve *VariableExpression) SetType(cn *ClassNode) {
-	ve.Expression.SetType(cn)
+	ve.BaseExpression.SetType(cn)
 	ve.isDynamicTyped = ve.isDynamicTyped || IsDynamicTyped(cn)
 }
 
@@ -131,7 +131,7 @@ func (ve *VariableExpression) GetType() *ClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
 		return ve.accessedVariable.GetType()
 	}
-	return ve.Expression.GetType()
+	return ve.BaseExpression.GetType()
 }
 
 func (ve *VariableExpression) GetOriginType() *ClassNode {

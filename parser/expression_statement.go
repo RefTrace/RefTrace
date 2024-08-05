@@ -7,7 +7,7 @@ import (
 // ExpressionStatement represents a simple statement such as a method call
 // where the return value is ignored
 type ExpressionStatement struct {
-	Statement
+	*BaseStatement
 	expression Expression
 }
 
@@ -16,7 +16,7 @@ func NewExpressionStatement(expression Expression) (*ExpressionStatement, error)
 	if expression == nil {
 		return nil, fmt.Errorf("expression cannot be nil")
 	}
-	return &ExpressionStatement{expression: expression}, nil
+	return &ExpressionStatement{BaseStatement: NewBaseStatement(), expression: expression}, nil
 }
 
 // Visit implements the Statement interface
@@ -41,5 +41,5 @@ func (e *ExpressionStatement) GetText() string {
 
 // String implements the Stringer interface
 func (e *ExpressionStatement) String() string {
-	return fmt.Sprintf("%s[expression:%v]", e.Statement.GetText(), e.expression)
+	return fmt.Sprintf("%s[expression:%v]", e.BaseStatement.GetText(), e.expression)
 }

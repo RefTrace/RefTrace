@@ -9,6 +9,7 @@ var _ Statement = (*BaseStatement)(nil)
 // NewBaseStatement creates and returns a new BaseStatement instance.
 func NewBaseStatement() *BaseStatement {
 	return &BaseStatement{
+		BaseASTNode:     NewBaseASTNode(),
 		statementLabels: list.New(),
 	}
 }
@@ -28,7 +29,7 @@ type Statement interface {
 
 // BaseStatement represents the base struct for any statement implementation.
 type BaseStatement struct {
-	ASTNode
+	*BaseASTNode
 	statementLabels *list.List
 }
 

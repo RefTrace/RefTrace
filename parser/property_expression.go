@@ -7,7 +7,7 @@ import (
 
 // PropertyExpression represents a property access such as the expression "foo.bar".
 type PropertyExpression struct {
-	Expression
+	*BaseExpression
 	objectExpression Expression
 	property         Expression
 	safe             bool
@@ -26,6 +26,7 @@ func NewPropertyExpressionWithProperty(objectExpression, property Expression) *P
 
 func NewPropertyExpressionWithSafe(objectExpression, property Expression, safe bool) *PropertyExpression {
 	return &PropertyExpression{
+		BaseExpression:   NewBaseExpression(),
 		objectExpression: objectExpression,
 		property:         property,
 		safe:             safe,
@@ -117,5 +118,5 @@ func (p *PropertyExpression) SetStatic(isStatic bool) {
 }
 
 func (p *PropertyExpression) String() string {
-	return fmt.Sprintf("%s[object: %v property: %v]", p.Expression.GetText(), p.GetObjectExpression(), p.GetProperty())
+	return fmt.Sprintf("%s[object: %v property: %v]", p.BaseExpression.GetText(), p.GetObjectExpression(), p.GetProperty())
 }

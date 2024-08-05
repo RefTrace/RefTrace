@@ -221,11 +221,13 @@ func (builder *ASTBuilder) Visit(tree antlr.ParseTree) interface{} {
 }
 
 func (builder *ASTBuilder) VisitChildren(tree antlr.RuleNode) interface{} {
+	var result interface{}
 	for _, c := range tree.GetChildren() {
 		v := c.(antlr.ParseTree)
-		builder.Visit(v)
+		//builder.Visit(v)
+		result = v.Accept(builder)
 	}
-	return nil
+	return result
 }
 
 // pushAnonymousInnerClass adds a new list of InnerClassNode to the stack
@@ -301,7 +303,7 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) int
 		switch n := node.(type) {
 		case *DeclarationListStatement:
 			for _, stmt := range n.GetDeclarationStatements() {
-				builder.moduleNode.AddStatement(stmt.Statement)
+				builder.moduleNode.AddStatement(stmt)
 			}
 		case Statement:
 			builder.moduleNode.AddStatement(n)
@@ -2520,7 +2522,10 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) inter
 		baseExpr.PutNodeMetaData(IS_COMMAND_EXPRESSION, true)
 	}
 
-	result := methodCallExpression
+	var result Expression = methodCallExpression
+	if result == (*MethodCallExpression)(nil) {
+		result = baseExpr
+	}
 
 	for _, cmdArgCtx := range ctx.AllCommandArgument() {
 		commandArgumentContext := cmdArgCtx.(*CommandArgumentContext)
@@ -2685,7 +2690,11 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 
 	if ctx.NamePart() != nil {
 		namePartExpr := v.VisitNamePart(ctx.NamePart().(*NamePartContext)).(Expression)
-		genericsTypes := (v.VisitNonWildcardTypeArguments(ctx.NonWildcardTypeArguments().(*NonWildcardTypeArgumentsContext))).([]*GenericsType)
+		var nonWildcardTypeArgumentsContext *NonWildcardTypeArgumentsContext
+		if ctx.NonWildcardTypeArguments() != nil {
+			nonWildcardTypeArgumentsContext = ctx.NonWildcardTypeArguments().(*NonWildcardTypeArgumentsContext)
+		}
+		genericsTypes := (v.VisitNonWildcardTypeArguments(nonWildcardTypeArgumentsContext)).([]*GenericsType)
 
 		if ctx.DOT() != nil {
 			isSafeChain := isTrue(baseExpr, PATH_EXPRESSION_BASE_EXPR_SAFE_CHAIN)
@@ -2910,7 +2919,7 @@ func (v *ASTBuilder) createCallMethodCallExpressionWithImplicitThis(baseExpr Exp
 // []*GenericsType
 func (v *ASTBuilder) VisitNonWildcardTypeArguments(ctx *NonWildcardTypeArgumentsContext) interface{} {
 	if ctx == nil {
-		return nil
+		return []*GenericsType{}
 	}
 
 	typeList := v.VisitTypeList(ctx.TypeList().(*TypeListContext)).([]*ClassNode)

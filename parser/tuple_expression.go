@@ -5,20 +5,20 @@ import (
 )
 
 type TupleExpression struct {
-	Expression
+	*BaseExpression
 	expressions []Expression
 }
 
 func NewTupleExpression() *TupleExpression {
-	return &TupleExpression{expressions: make([]Expression, 0)}
+	return &TupleExpression{BaseExpression: NewBaseExpression(), expressions: make([]Expression, 0)}
 }
 
 func NewTupleExpressionWithCapacity(capacity int) *TupleExpression {
-	return &TupleExpression{expressions: make([]Expression, 0, capacity)}
+	return &TupleExpression{BaseExpression: NewBaseExpression(), expressions: make([]Expression, 0, capacity)}
 }
 
 func NewTupleExpressionWithExpressions(expressions ...Expression) *TupleExpression {
-	return &TupleExpression{expressions: expressions}
+	return &TupleExpression{BaseExpression: NewBaseExpression(), expressions: expressions}
 }
 
 func (t *TupleExpression) PrependExpression(expression Expression) *TupleExpression {
@@ -64,5 +64,5 @@ func (t *TupleExpression) GetText() string {
 }
 
 func (t *TupleExpression) String() string {
-	return t.Expression.GetText() + t.GetText()
+	return t.BaseExpression.GetText() + t.GetText()
 }
