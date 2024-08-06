@@ -7,7 +7,7 @@ import (
 
 // ArrayExpression represents an array object construction.
 type ArrayExpression struct {
-	Expression
+	*BaseExpression
 	initExpressions []Expression
 	sizeExpressions []Expression
 	elementType     *ClassNode
@@ -27,7 +27,7 @@ func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
 
 func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
 	ae := &ArrayExpression{
-		Expression:      NewBaseExpression(),
+		BaseExpression:  NewBaseExpression(),
 		elementType:     elementType,
 		initExpressions: initExpressions,
 		sizeExpressions: sizeExpressions,
@@ -140,7 +140,7 @@ func (ae *ArrayExpression) GetSizeExpression() []Expression {
 
 func (ae *ArrayExpression) String() string {
 	if ae.HasInitializer() {
-		return fmt.Sprintf("%s[elementType: %v, init: {%s}]", ae.Expression.GetText(), ae.GetElementType(), ae.formatInitExpressions())
+		return fmt.Sprintf("%s[elementType: %v, init: {%s}]", ae.BaseExpression.GetText(), ae.GetElementType(), ae.formatInitExpressions())
 	}
-	return fmt.Sprintf("%s[elementType: %v, size: %s]", ae.Expression.GetText(), ae.GetElementType(), ae.formatSizeExpressions())
+	return fmt.Sprintf("%s[elementType: %v, size: %s]", ae.BaseExpression.GetText(), ae.GetElementType(), ae.formatSizeExpressions())
 }

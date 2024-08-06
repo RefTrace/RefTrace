@@ -15,11 +15,11 @@ func NewArgumentListExpression() *ArgumentListExpression {
 }
 
 func NewArgumentListExpressionFromList(expressions []Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{&TupleExpression{expressions: expressions}}
+	return &ArgumentListExpression{NewTupleExpressionWithExpressions(expressions...)}
 }
 
 func NewArgumentListExpressionFromSlice(expressions ...Expression) *ArgumentListExpression {
-	return &ArgumentListExpression{&TupleExpression{expressions: expressions}}
+	return &ArgumentListExpression{NewTupleExpressionWithExpressions(expressions...)}
 }
 
 func NewArgumentListExpressionFromParameters(parameters []*Parameter) *ArgumentListExpression {

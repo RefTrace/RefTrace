@@ -8,7 +8,7 @@ var _ MethodCall = (*StaticMethodCallExpression)(nil)
 
 // StaticMethodCallExpression represents a static method call on a class
 type StaticMethodCallExpression struct {
-	Expression
+	*BaseExpression
 	ownerType *ClassNode
 	method    string
 	arguments Expression
@@ -16,10 +16,10 @@ type StaticMethodCallExpression struct {
 
 func NewStaticMethodCallExpression(expr Expression, ownerType *ClassNode, method string, arguments Expression) *StaticMethodCallExpression {
 	return &StaticMethodCallExpression{
-		Expression: expr,
-		ownerType:  ownerType,
-		method:     method,
-		arguments:  arguments,
+		BaseExpression: NewBaseExpression(),
+		ownerType:      ownerType,
+		method:         method,
+		arguments:      arguments,
 	}
 }
 
@@ -57,7 +57,7 @@ func (s *StaticMethodCallExpression) GetText() string {
 }
 
 func (s *StaticMethodCallExpression) String() string {
-	return fmt.Sprintf("%s[%s#%s arguments: %v]", s.Expression.GetText(), s.GetOwnerType().GetName(), s.method, s.arguments)
+	return fmt.Sprintf("%s[%s#%s arguments: %v]", s.BaseExpression.GetText(), s.GetOwnerType().GetName(), s.method, s.arguments)
 }
 
 func (s *StaticMethodCallExpression) GetOwnerType() *ClassNode {

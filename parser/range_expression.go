@@ -3,7 +3,7 @@ package parser
 // RangeExpression represents a range expression such as for iterating.
 // E.g.: for i := range 0..10 {...}
 type RangeExpression struct {
-	Expression
+	*BaseExpression
 	from           Expression
 	to             Expression
 	exclusiveLeft  bool
@@ -16,6 +16,7 @@ func NewRangeExpression(from, to Expression, inclusive bool) *RangeExpression {
 
 func NewRangeExpressionWithExclusive(from, to Expression, exclusiveLeft, exclusiveRight bool) *RangeExpression {
 	r := &RangeExpression{
+		BaseExpression: NewBaseExpression(),
 		from:           from,
 		to:             to,
 		exclusiveLeft:  exclusiveLeft,

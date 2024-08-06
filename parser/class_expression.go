@@ -3,11 +3,11 @@ package parser
 // ClassExpression represents access to a Java/Groovy class in an expression,
 // such as when invoking a static method or accessing a static type
 type ClassExpression struct {
-	Expression
+	*BaseExpression
 }
 
 func NewClassExpression(typ *ClassNode) *ClassExpression {
-	ce := &ClassExpression{}
+	ce := &ClassExpression{BaseExpression: NewBaseExpression()}
 	ce.SetType(typ)
 	return ce
 }
@@ -25,5 +25,5 @@ func (ce *ClassExpression) GetText() string {
 }
 
 func (ce *ClassExpression) String() string {
-	return ce.Expression.GetText() + "[type: " + ce.GetType().GetName() + "]"
+	return ce.BaseExpression.GetText() + "[type: " + ce.GetType().GetName() + "]"
 }

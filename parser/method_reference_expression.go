@@ -26,10 +26,10 @@ func (m *MethodReferenceExpression) Visit(visitor GroovyCodeVisitor) {
 func (m *MethodReferenceExpression) TransformExpression(transformer ExpressionTransformer) Expression {
 	var ret Expression
 	mname := transformer.Transform(m.methodName)
-	if m.Expression == nil {
+	if m.BaseExpression == nil {
 		ret = NewMethodReferenceExpression(THIS_EXPRESSION, mname)
 	} else {
-		ret = NewMethodReferenceExpression(transformer.Transform(m.Expression), mname)
+		ret = NewMethodReferenceExpression(transformer.Transform(m.BaseExpression), mname)
 	}
 	ret.SetSourcePosition(m)
 	ret.CopyNodeMetaData(m)

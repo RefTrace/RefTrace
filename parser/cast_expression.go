@@ -6,7 +6,7 @@ import (
 
 // CastExpression represents a typecast expression.
 type CastExpression struct {
-	Expression
+	*BaseExpression
 	expression       Expression
 	ignoreAutoboxing bool
 	coerce           bool
@@ -28,6 +28,7 @@ func NewCastExpression(typ *ClassNode, expression Expression) *CastExpression {
 // NewCastExpressionWithAutoboxing creates a new CastExpression with autoboxing option.
 func NewCastExpressionWithAutoboxing(typ *ClassNode, expression Expression, ignoreAutoboxing bool) *CastExpression {
 	ce := &CastExpression{
+		BaseExpression:   NewBaseExpression(),
 		expression:       expression,
 		ignoreAutoboxing: ignoreAutoboxing,
 	}
@@ -72,7 +73,7 @@ func (ce *CastExpression) SetStrict(strict bool) {
 
 // String returns a string representation of the CastExpression.
 func (ce *CastExpression) String() string {
-	return fmt.Sprintf("%s[%s]", ce.Expression.GetText(), ce.GetText())
+	return fmt.Sprintf("%s[%s]", ce.BaseExpression.GetText(), ce.GetText())
 }
 
 // Visit calls the appropriate visit method on the GroovyCodeVisitor.

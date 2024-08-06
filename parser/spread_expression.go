@@ -2,14 +2,15 @@ package parser
 
 // SpreadExpression represents a spread expression *x in the list expression [1, *x, 2].
 type SpreadExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 }
 
 // NewSpreadExpression creates a new SpreadExpression with the given expression.
 func NewSpreadExpression(expression Expression) *SpreadExpression {
 	return &SpreadExpression{
-		expression: expression,
+		BaseExpression: NewBaseExpression(),
+		expression:     expression,
 	}
 }
 

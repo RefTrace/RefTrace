@@ -43,7 +43,7 @@ func (t *TernaryExpression) GetType() *ClassNode {
 }
 
 func (t *TernaryExpression) String() string {
-	return fmt.Sprintf("%s[%s ? %s : %s]", t.BaseExpression.GetText(), t.booleanExpression, t.truthExpression, t.falseExpression)
+	return fmt.Sprintf("%s[%s ? %s : %s]", t.BaseExpression.GetText(), t.booleanExpression.GetText(), t.truthExpression.GetText(), t.falseExpression.GetText())
 }
 
 func (t *TernaryExpression) Visit(visitor GroovyCodeVisitor) {

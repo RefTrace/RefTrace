@@ -9,15 +9,16 @@ import (
 // This is equivalent to:
 // foo.metaClass.getMethodPointer(foo, "bar")
 type MethodPointerExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 	methodName Expression
 }
 
 func NewMethodPointerExpression(expression, methodName Expression) *MethodPointerExpression {
 	mpe := &MethodPointerExpression{
-		expression: expression,
-		methodName: methodName,
+		BaseExpression: NewBaseExpression(),
+		expression:     expression,
+		methodName:     methodName,
 	}
 	mpe.SetType(CLOSURE_TYPE.GetPlainNodeReference())
 	return mpe

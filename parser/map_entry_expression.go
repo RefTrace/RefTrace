@@ -2,13 +2,14 @@ package parser
 
 // MapEntryExpression represents an entry inside a map expression such as 1 : 2 or 'foo' : 'bar'.
 type MapEntryExpression struct {
-	Expression
+	*BaseExpression
 	keyExpression   Expression
 	valueExpression Expression
 }
 
 func NewMapEntryExpression(keyExpression, valueExpression Expression) *MapEntryExpression {
 	return &MapEntryExpression{
+		BaseExpression:  NewBaseExpression(),
 		keyExpression:   keyExpression,
 		valueExpression: valueExpression,
 	}
@@ -29,7 +30,7 @@ func (m *MapEntryExpression) TransformExpression(transformer ExpressionTransform
 }
 
 func (m *MapEntryExpression) String() string {
-	return m.Expression.GetText() + "(key: " + m.keyExpression.GetText() + ", value: " + m.valueExpression.GetText() + ")"
+	return m.BaseExpression.GetText() + "(key: " + m.keyExpression.GetText() + ", value: " + m.valueExpression.GetText() + ")"
 }
 
 func (m *MapEntryExpression) GetKeyExpression() Expression {

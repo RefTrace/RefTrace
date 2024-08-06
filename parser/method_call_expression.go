@@ -6,7 +6,7 @@ import (
 
 // MethodCallExpression represents a method call on an object or class.
 type MethodCallExpression struct {
-	Expression
+	*BaseExpression
 	ObjectExpression Expression
 	Method           Expression
 	Arguments        Expression
@@ -23,7 +23,8 @@ var NoArguments = &TupleExpression{
 
 func NewMethodCallExpression(objectExpression Expression, method interface{}, arguments Expression) *MethodCallExpression {
 	mce := &MethodCallExpression{
-		ImplicitThis: true,
+		BaseExpression: NewBaseExpression(),
+		ImplicitThis:   true,
 	}
 	mce.SetObjectExpression(objectExpression)
 
@@ -203,7 +204,7 @@ type MethodCall interface {
 }
 
 func (mce *MethodCallExpression) SetSourcePosition(node ASTNode) {
-	mce.Expression.SetSourcePosition(node)
+	mce.BaseExpression.SetSourcePosition(node)
 
 	switch n := node.(type) {
 	case MethodCall:
@@ -224,6 +225,6 @@ func (mce *MethodCallExpression) SetSourcePosition(node ASTNode) {
 }
 
 func (mce *MethodCallExpression) String() string {
-	return mce.Expression.GetText() + "[object: " + mce.ObjectExpression.GetText() +
+	return mce.BaseExpression.GetText() + "[object: " + mce.ObjectExpression.GetText() +
 		" method: " + mce.Method.GetText() + " arguments: " + mce.Arguments.GetText() + "]"
 }

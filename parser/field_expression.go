@@ -6,7 +6,7 @@ import (
 
 // FieldExpression represents a field access such as the expression "this.foo".
 type FieldExpression struct {
-	Expression
+	*BaseExpression
 	field  *FieldNode
 	useRef bool
 }
@@ -16,7 +16,7 @@ func NewFieldExpression(field *FieldNode) *FieldExpression {
 	if field == nil {
 		panic("field cannot be nil")
 	}
-	return &FieldExpression{field: field}
+	return &FieldExpression{BaseExpression: NewBaseExpression(), field: field}
 }
 
 // Visit implements the GroovyCodeVisitor interface

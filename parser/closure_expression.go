@@ -3,7 +3,7 @@ package parser
 // ClosureExpression represents a closure expression such as { statement }
 // or { i -> statement } or { i, x, String y ->  statement }
 type ClosureExpression struct {
-	Expression
+	*BaseExpression
 	Parameters    []*Parameter
 	Code          Statement
 	VariableScope *VariableScope
@@ -12,8 +12,9 @@ type ClosureExpression struct {
 // NewClosureExpression creates a new ClosureExpression
 func NewClosureExpression(parameters []*Parameter, code Statement) *ClosureExpression {
 	ce := &ClosureExpression{
-		Parameters: parameters,
-		Code:       code,
+		BaseExpression: NewBaseExpression(),
+		Parameters:     parameters,
+		Code:           code,
 	}
 	ce.SetType(CLOSURE_TYPE.GetPlainNodeReference())
 	return ce
@@ -61,7 +62,7 @@ func (ce *ClosureExpression) String() string {
 	if ce.Code != nil {
 		codeStr = ce.Code.GetText()
 	}
-	return ce.Expression.GetText() + ce.toString(codeStr)
+	return ce.BaseExpression.GetText() + ce.toString(codeStr)
 }
 
 func (ce *ClosureExpression) toString(bodyText string) string {

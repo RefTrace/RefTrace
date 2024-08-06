@@ -1,12 +1,12 @@
 package parser
 
 type UnaryMinusExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 }
 
 func NewUnaryMinusExpression(expression Expression) *UnaryMinusExpression {
-	return &UnaryMinusExpression{expression: expression}
+	return &UnaryMinusExpression{BaseExpression: NewBaseExpression(), expression: expression}
 }
 
 func (u *UnaryMinusExpression) GetExpression() Expression {

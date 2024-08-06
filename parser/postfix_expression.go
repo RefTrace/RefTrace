@@ -6,14 +6,15 @@ import (
 
 // PostfixExpression represents a postfix expression like foo++ or bar++
 type PostfixExpression struct {
-	Expression
+	*BaseExpression
 	operation  *Token
 	expression Expression
 }
 
 func NewPostfixExpression(expression Expression, operation *Token) *PostfixExpression {
 	p := &PostfixExpression{
-		operation: operation,
+		BaseExpression: NewBaseExpression(),
+		operation:      operation,
 	}
 	p.SetExpression(expression)
 	return p
@@ -40,7 +41,7 @@ func (p *PostfixExpression) GetType() *ClassNode {
 }
 
 func (p *PostfixExpression) String() string {
-	return fmt.Sprintf("%s[%s%s]", p.Expression.GetText(), p.GetExpression(), p.GetOperation())
+	return fmt.Sprintf("%s[%s%s]", p.BaseExpression.GetText(), p.GetExpression(), p.GetOperation().GetText())
 }
 
 func (p *PostfixExpression) TransformExpression(transformer ExpressionTransformer) Expression {

@@ -8,7 +8,7 @@ import (
 // GStringExpression represents a String expression which contains embedded values inside
 // it such as "hello there ${user} how are you" which is expanded lazily
 type GStringExpression struct {
-	Expression
+	*BaseExpression
 	verbatimText string
 	strings      []*ConstantExpression
 	values       []Expression
@@ -16,9 +16,10 @@ type GStringExpression struct {
 
 func NewGStringExpression(verbatimText string) *GStringExpression {
 	return &GStringExpression{
-		verbatimText: verbatimText,
-		strings:      make([]*ConstantExpression, 0),
-		values:       make([]Expression, 0),
+		BaseExpression: NewBaseExpression(),
+		verbatimText:   verbatimText,
+		strings:        make([]*ConstantExpression, 0),
+		values:         make([]Expression, 0),
 	}
 }
 
@@ -35,7 +36,7 @@ func (g *GStringExpression) Visit(visitor GroovyCodeVisitor) {
 }
 
 func (g *GStringExpression) String() string {
-	return fmt.Sprintf("%s[strings: %v values: %v]", g.Expression.GetText(), g.strings, g.values)
+	return fmt.Sprintf("%s[strings: %v values: %v]", g.BaseExpression.GetText(), g.strings, g.values)
 }
 
 func (g *GStringExpression) GetText() string {

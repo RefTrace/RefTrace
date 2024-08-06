@@ -8,12 +8,12 @@ import (
 // in the map expression [1, *:m, 2, "c":100]
 // or in the method invoke expression func(1, *:m, 2, "c":100).
 type SpreadMapExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 }
 
 func NewSpreadMapExpression(expression Expression) *SpreadMapExpression {
-	return &SpreadMapExpression{expression: expression}
+	return &SpreadMapExpression{BaseExpression: NewBaseExpression(), expression: expression}
 }
 
 func (s *SpreadMapExpression) GetExpression() Expression {

@@ -1,12 +1,12 @@
 package parser
 
 type BitwiseNegationExpression struct {
-	Expression
+	*BaseExpression
 	expression Expression
 }
 
 func NewBitwiseNegationExpression(expression Expression) *BitwiseNegationExpression {
-	return &BitwiseNegationExpression{expression: expression}
+	return &BitwiseNegationExpression{BaseExpression: NewBaseExpression(), expression: expression}
 }
 
 func (b *BitwiseNegationExpression) GetExpression() Expression {

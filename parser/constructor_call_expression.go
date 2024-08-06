@@ -6,14 +6,14 @@ import (
 
 // ConstructorCallExpression represents a constructor call.
 type ConstructorCallExpression struct {
-	Expression
+	*BaseExpression
 	arguments               Expression
 	usesAnonymousInnerClass bool
 }
 
 // NewConstructorCallExpression creates a new ConstructorCallExpression.
 func NewConstructorCallExpression(typ *ClassNode, arguments Expression) *ConstructorCallExpression {
-	cce := &ConstructorCallExpression{}
+	cce := &ConstructorCallExpression{BaseExpression: NewBaseExpression()}
 	cce.SetType(typ)
 
 	if _, ok := arguments.(*TupleExpression); !ok {
@@ -95,5 +95,5 @@ func (cce *ConstructorCallExpression) SetUsingAnonymousInnerClass(usage bool) {
 
 // String returns a string representation of the expression.
 func (cce *ConstructorCallExpression) String() string {
-	return fmt.Sprintf("%s[type: %v arguments: %v]", cce.Expression.GetText(), cce.GetType(), cce.arguments)
+	return fmt.Sprintf("%s[type: %v arguments: %v]", cce.BaseExpression.GetText(), cce.GetType(), cce.arguments)
 }

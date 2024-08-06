@@ -2470,7 +2470,8 @@ func (v *ASTBuilder) getOriginalText(ctx antlr.ParserRuleContext) string {
 }
 
 func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) interface{} {
-	hasArgumentList := ctx.ArgumentList() != nil
+	// var hasArgumentList = false
+	hasArgumentList := ctx.ArgumentList() != nil && len(ctx.ArgumentList().AllArgumentListElement()) > 0
 	hasCommandArgument := len(ctx.AllCommandArgument()) > 0
 
 	if (hasArgumentList || hasCommandArgument) && v.visitingArrayInitializerCount > 0 {
@@ -2874,12 +2875,27 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 			return configureAST(methodCallExpression, ctx)
 		}
 
-		if _, ok := baseExpr.(*VariableExpression); ok {
+		if ve, ok := baseExpr.(*VariableExpression); ok {
 			// Handle VariableExpression
-		} else if _, ok := baseExpr.(*GStringExpression); ok {
+			methodCallExpression := v.createMethodCallExpression(
+				ve,
+				configureASTFromSource(NewArgumentListExpressionFromSlice(closureExpression), closureExpression),
+			)
+			return configureAST(methodCallExpression, ctx)
+		} else if gse, ok := baseExpr.(*GStringExpression); ok {
 			// Handle GStringExpression
+			methodCallExpression := v.createMethodCallExpression(
+				gse,
+				configureASTFromSource(NewArgumentListExpressionFromSlice(closureExpression), closureExpression),
+			)
+			return configureAST(methodCallExpression, ctx)
 		} else if ce, ok := baseExpr.(*ConstantExpression); ok && isTrue(ce, IS_STRING) {
 			// Handle ConstantExpression that is a string
+			methodCallExpression := v.createMethodCallExpression(
+				ce,
+				configureASTFromSource(NewArgumentListExpressionFromSlice(closureExpression), closureExpression),
+			)
+			return configureAST(methodCallExpression, ctx)
 		}
 
 		methodCallExpression := v.createMethodCallExpression(

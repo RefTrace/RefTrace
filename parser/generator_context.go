@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -67,16 +68,16 @@ func (gc *GeneratorContext) getNextInnerName(owner, enclosingClass *ClassNode, e
 	}
 
 	gc.closureClassIdx++
-	return methodName + "_" + classifier + string(gc.closureClassIdx-1)
+	return methodName + "_" + classifier + strconv.Itoa(gc.closureClassIdx-1)
 }
 
 // GetNextConstructorReferenceSyntheticMethodName generates the next constructor reference synthetic method name.
 func (gc *GeneratorContext) GetNextConstructorReferenceSyntheticMethodName(enclosingMethodNode *MethodNode) string {
 	gc.syntheticMethodIdx++
 	if enclosingMethodNode == nil {
-		return "ctorRef$" + string(gc.syntheticMethodIdx-1)
+		return "ctorRef$" + strconv.Itoa(gc.syntheticMethodIdx-1)
 	}
-	return "ctorRef$" + strings.NewReplacer("<", "", ">", "").Replace(enclosingMethodNode.name) + "$" + string(gc.syntheticMethodIdx-1)
+	return "ctorRef$" + strings.NewReplacer("<", "", ">", "").Replace(enclosingMethodNode.name) + "$" + strconv.Itoa(gc.syntheticMethodIdx-1)
 }
 
 var charactersToEncode = map[rune]bool{
