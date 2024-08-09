@@ -907,7 +907,7 @@ commandArgument
         //
         (   pathElement+
         |   argumentList
-        )?
+        )
     ;
 
 /**

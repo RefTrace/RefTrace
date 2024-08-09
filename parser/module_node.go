@@ -34,6 +34,7 @@ func NewModuleNode() *ModuleNode {
 		StarImports:       []*ImportNode{},
 		StaticImports:     make(map[string]*ImportNode),
 		StaticStarImports: make(map[string]*ImportNode),
+		StatementBlock:    NewBlockStatement(),
 	}
 }
 

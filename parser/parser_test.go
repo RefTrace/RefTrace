@@ -162,12 +162,14 @@ func TestInclude2(t *testing.T) {
 
 	// Parse the file
 	tree := parser.CompilationUnit()
-	fmt.Println(tree)
+	//fmt.Println(tree)
 	//stmt := tree.ScriptStatements().ScriptStatement(0)
 	//ctx := stmt.(*ScriptStatementContext).GetChild(0).(*ExpressionStmtAltContext).StatementContext.GetChild(0).(*CommandExprAltContext).CommandExpression()
 	//cmdArgCtx := ctx.GetChild(1).(*CommandArgumentContext)
 	//_ = cmdArgCtx
 	builder := NewASTBuilder(filePath)
-	foo := builder.Visit(tree)
-	fmt.Println(foo)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	
+	fmt.Println(ast.StatementBlock.GetText())
 }

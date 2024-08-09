@@ -325,7 +325,8 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) int
 		builder.moduleNode.AddStatement(RETURN_NULL_OR_VOID)
 	}
 
-	builder.configureScriptClassNode()
+	// TODO: implement this
+	//builder.configureScriptClassNode()
 
 	if builder.numberFormatError != nil {
 		panic(createParsingFailedException(builder.numberFormatError.Exception.Error(), parserRuleContextAdapter{builder.numberFormatError.Context}))
@@ -2471,7 +2472,7 @@ func (v *ASTBuilder) getOriginalText(ctx antlr.ParserRuleContext) string {
 
 func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) interface{} {
 	// var hasArgumentList = false
-	hasArgumentList := ctx.ArgumentList() != nil
+	hasArgumentList := ctx.ArgumentList() != nil && len(ctx.ArgumentList().AllArgumentListElement()) > 0
 	hasCommandArgument := len(ctx.AllCommandArgument()) > 0
 
 	if (hasArgumentList || hasCommandArgument) && v.visitingArrayInitializerCount > 0 {
@@ -2492,7 +2493,7 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) inter
 	var methodCallExpression *MethodCallExpression
 
 	if hasArgumentList {
-		arguments := v.VisitEnhancedArgumentListInPar(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
+		arguments := v.VisitArgumentList(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
 
 		if propertyExpr, ok := baseExpr.(*PropertyExpression); ok { // e.g. obj.a 1, 2
 			methodCallExpression = configureAST(v.createMethodCallExpression(propertyExpr, arguments), ctx.Expression())
@@ -2575,38 +2576,37 @@ func (v *ASTBuilder) VisitCommandArgument(ctx *CommandArgumentContext) interface
 	baseExpr := ctx.GetNodeMetaData(CMD_EXPRESSION_BASE_EXPR).(Expression)
 
 	primaryExpr := v.Visit(ctx.CommandPrimary()).(Expression)
-	if ctx.EnhancedArgumentListInPar() != nil {
-		foo := ctx.EnhancedArgumentListInPar()
-		var _ = foo
+	if ctx.ArgumentList() != nil {
+		foo := ctx.ArgumentList()
+		child := foo.FirstArgumentListElement()
+		var _ = child
 	}
 
-	/*
-		if ctx.EnhancedArgumentListInPar() != nil { // e.g. x y a b
-			if _, ok := baseExpr.(*PropertyExpression); ok { // the branch should never reach, because a.b.c will be parsed as a path expression, not a method call
-				panic(createParsingFailedException("Unsupported command argument: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
-			}
-
-			// the following code will process "a b" of "x y a b"
-			methodCallExpression := NewMethodCallExpression(
-				baseExpr,
-				v.createConstantExpression(primaryExpr),
-				v.VisitEnhancedArgumentListInPar(ctx.EnhancedArgumentListInPar().(*EnhancedArgumentListInParContext)),
-			)
-			methodCallExpression.SetImplicitThis(false)
-
-			return configureAST(methodCallExpression, ctx)
-		} else if len(ctx.AllPathElement()) > 0 { // e.g. x y a.b
-			pathExpression := v.createPathExpression(
-				configureASTFromSource(
-					NewPropertyExpressionWithProperty(baseExpr, v.createConstantExpression(primaryExpr)),
-					primaryExpr,
-				),
-				ctx.AllPathElement(),
-			)
-
-			return configureAST(pathExpression, ctx)
+	if ctx.ArgumentList() != nil && ctx.ArgumentList().FirstArgumentListElement() != nil { // e.g. x y a b
+		if _, ok := baseExpr.(*PropertyExpression); ok { // the branch should never reach, because a.b.c will be parsed as a path expression, not a method call
+			panic(createParsingFailedException("Unsupported command argument: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 		}
-	*/
+
+		// the following code will process "a b" of "x y a b"
+		methodCallExpression := NewMethodCallExpression(
+			baseExpr,
+			v.createConstantExpression(primaryExpr),
+			v.VisitArgumentList(ctx.ArgumentList().(*ArgumentListContext)).(Expression),
+		)
+		methodCallExpression.SetImplicitThis(false)
+
+		return configureAST(methodCallExpression, ctx)
+	} else if len(ctx.AllPathElement()) > 0 { // e.g. x y a.b
+		pathExpression := v.createPathExpression(
+			configureASTFromSource(
+				NewPropertyExpressionWithProperty(baseExpr, v.createConstantExpression(primaryExpr)),
+				primaryExpr,
+			),
+			ctx.AllPathElement(),
+		)
+
+		return configureAST(pathExpression, ctx)
+	}
 
 	if len(ctx.AllPathElement()) > 0 { // e.g. x y a.b
 		pathExpression := v.createPathExpression(
@@ -2975,7 +2975,7 @@ func (v *ASTBuilder) VisitArguments(ctx *ArgumentsContext) interface{} {
 	return configureAST(v.VisitEnhancedArgumentListInPar(ctx.EnhancedArgumentListInPar().(*EnhancedArgumentListInParContext)).(Expression), ctx)
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *EnhancedArgumentListInParContext) interface{} {
+func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInParContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -2984,7 +2984,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *EnhancedArgumentLis
 	var mapEntryExpressionList []*MapEntryExpression
 
 	for _, element := range ctx.AllEnhancedArgumentListElement() {
-		e := v.VisitEnhancedArgumentListElementArg(element.(*EnhancedArgumentListElementContext)).(Expression)
+		e := v.VisitEnhancedArgumentListElement(element.(*EnhancedArgumentListElementContext)).(Expression)
 
 		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
 			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
@@ -3018,7 +3018,7 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *EnhancedArgumentLis
 	panic(createParsingFailedException("Unsupported argument list: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInParContext) interface{} {
+func (v *ASTBuilder) VisitArgumentList(ctx *ArgumentListContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -3026,8 +3026,19 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInPar(ctx *EnhancedArgumentListInP
 	var expressionList []Expression
 	var mapEntryExpressionList []*MapEntryExpression
 
-	for _, element := range ctx.AllEnhancedArgumentListElement() {
-		e := v.VisitEnhancedArgumentListElement(element.(*EnhancedArgumentListElementContext)).(Expression)
+	if ctx.FirstArgumentListElement() != nil {
+		e := v.VisitFirstArgumentListElement(ctx.FirstArgumentListElement().(*FirstArgumentListElementContext)).(Expression)
+
+		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
+			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
+			mapEntryExpressionList = append(mapEntryExpressionList, mapEntryExpr)
+		} else {
+			expressionList = append(expressionList, e)
+		}
+	}
+
+	for _, element := range ctx.AllArgumentListElement() {
+		e := v.VisitArgumentListElement(element.(*ArgumentListElementContext)).(Expression)
 
 		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
 			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
@@ -3108,6 +3119,38 @@ func (v *ASTBuilder) VisitEnhancedArgumentListElement(ctx *EnhancedArgumentListE
 
 	if ctx.StandardLambdaExpression() != nil {
 		return configureAST(v.VisitStandardLambdaExpression(ctx.StandardLambdaExpression().(*StandardLambdaExpressionContext)).(*LambdaExpression), ctx)
+	}
+
+	// TODO: implement this
+
+	/*
+		if ctx.MapEntry() != nil {
+			return configureAST(v.VisitMapEntry(ctx.MapEntry().(*MapEntryContext)), ctx)
+		}
+	*/
+
+	panic(createParsingFailedException("Unsupported enhanced argument list element: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+}
+
+func (v *ASTBuilder) VisitArgumentListElement(ctx *ArgumentListElementContext) interface{} {
+	if ctx.ExpressionListElement() != nil {
+		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
+	}
+
+	// TODO: implement this
+
+	/*
+		if ctx.MapEntry() != nil {
+			return configureAST(v.VisitMapEntry(ctx.MapEntry().(*MapEntryContext)), ctx)
+		}
+	*/
+
+	panic(createParsingFailedException("Unsupported enhanced argument list element: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+}
+
+func (v *ASTBuilder) VisitFirstArgumentListElement(ctx *FirstArgumentListElementContext) interface{} {
+	if ctx.ExpressionListElement() != nil {
+		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
 
 	// TODO: implement this
