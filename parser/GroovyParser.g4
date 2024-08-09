@@ -278,7 +278,7 @@ methodDeclaration[int t, int ct]
             DEFAULT nls elementValue
         |
             (nls THROWS nls qualifiedClassNameList)?
-            (nls methodBody)?
+            (nls methodBody)
         )?
     ;
 
@@ -924,7 +924,7 @@ commandArgument
  */
 pathExpression returns [int t]
     :   (
-            primary
+            basicPrimary
         |
             // if 'static' followed by DOT, we can treat them as identifiers, e.g. static.unused = { -> }
             { p.GetTokenStream().LT(2).GetTokenType() == GroovyParserDOT }?
@@ -1017,7 +1017,7 @@ namedPropertyArgs
     :   (SAFE_INDEX | LBRACK) (namedPropertyArgList | COLON) RBRACK
     ;
 
-primary
+basicPrimary
     :
         // Append `typeArguments?` to `identifier` to support constructor reference with generics, e.g. HashMap<String, Integer>::new
         // Though this is not a graceful solution, it is much faster than replacing `builtInType` with `type`
@@ -1034,7 +1034,7 @@ primary
     |   builtInType                                                                         #builtInTypePrmrAlt
     ;
 
-namedPropertyArgPrimary
+basicNamedPropertyArgPrimary
     :   identifier                                                                          #identifierPrmrAltNamedPropertyArgPrimary
     |   literal                                                                             #literalPrmrAltNamedPropertyArgPrimary
     |   gstring                                                                             #gstringPrmrAltNamedPropertyArgPrimary
@@ -1043,16 +1043,30 @@ namedPropertyArgPrimary
     |   map                                                                                 #mapPrmrAltNamedPropertyArgPrimary
     ;
 
-namedArgPrimary
+namedPropertyArgPrimary
+    :   basicNamedPropertyArgPrimary
+    |   basicPrimary
+    ;
+
+basicNamedArgPrimary
     :   identifier                                                                          #identifierPrmrAltNamedArgPrimary
     |   literal                                                                             #literalPrmrAltNamedArgPrimary
     |   gstring                                                                             #gstringPrmrAltNamedArgPrimary
     ;
 
-commandPrimary
+namedArgPrimary
+    :   basicNamedArgPrimary
+    |   basicPrimary
+    ;
+
+basicCommandPrimary
     :   identifier                                                                          #identifierPrmrAltCommandPrimary
     |   literal                                                                             #literalPrmrAltCommandPrimary
     |   gstring                                                                             #gstringPrmrAltCommandPrimary
+    ;
+
+commandPrimary
+    :   basicCommandPrimary
     ;
 
 list
@@ -1092,7 +1106,7 @@ namedArg
 
 mapEntryLabel
     :   keywords
-    |   primary
+    |   basicPrimary
     ;
 
 namedPropertyArgLabel
@@ -1151,10 +1165,11 @@ arguments
     ;
 
 argumentList
-    :   firstArgumentListElement
-        (   COMMA nls
-            argumentListElement
-        )*
+    : firstArgumentListElement
+      (
+        COMMA nls
+        argumentListElement
+      )*
     ;
 
 enhancedArgumentListInPar

@@ -2471,7 +2471,7 @@ func (v *ASTBuilder) getOriginalText(ctx antlr.ParserRuleContext) string {
 
 func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) interface{} {
 	// var hasArgumentList = false
-	hasArgumentList := ctx.ArgumentList() != nil && len(ctx.ArgumentList().AllArgumentListElement()) > 0
+	hasArgumentList := ctx.ArgumentList() != nil
 	hasCommandArgument := len(ctx.AllCommandArgument()) > 0
 
 	if (hasArgumentList || hasCommandArgument) && v.visitingArrayInitializerCount > 0 {
@@ -2492,7 +2492,7 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) inter
 	var methodCallExpression *MethodCallExpression
 
 	if hasArgumentList {
-		arguments := v.VisitEnhancedArgumentListInParArgs(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
+		arguments := v.VisitEnhancedArgumentListInPar(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
 
 		if propertyExpr, ok := baseExpr.(*PropertyExpression); ok { // e.g. obj.a 1, 2
 			methodCallExpression = configureAST(v.createMethodCallExpression(propertyExpr, arguments), ctx.Expression())
@@ -2575,6 +2575,10 @@ func (v *ASTBuilder) VisitCommandArgument(ctx *CommandArgumentContext) interface
 	baseExpr := ctx.GetNodeMetaData(CMD_EXPRESSION_BASE_EXPR).(Expression)
 
 	primaryExpr := v.Visit(ctx.CommandPrimary()).(Expression)
+	if ctx.EnhancedArgumentListInPar() != nil {
+		foo := ctx.EnhancedArgumentListInPar()
+		var _ = foo
+	}
 
 	/*
 		if ctx.EnhancedArgumentListInPar() != nil { // e.g. x y a b
@@ -2677,7 +2681,7 @@ func (v *ASTBuilder) VisitPathExpression(ctx *PathExpressionContext) interface{}
 	if staticTerminalNode != nil {
 		primaryExpr = NewVariableExpressionWithString(staticTerminalNode.GetText())
 	} else {
-		primaryExpr = v.Visit(ctx.Primary()).(Expression)
+		primaryExpr = v.Visit(ctx.BasicPrimary()).(Expression)
 	}
 
 	return v.createPathExpression(primaryExpr, ctx.AllPathElement())
@@ -2971,7 +2975,7 @@ func (v *ASTBuilder) VisitArguments(ctx *ArgumentsContext) interface{} {
 	return configureAST(v.VisitEnhancedArgumentListInPar(ctx.EnhancedArgumentListInPar().(*EnhancedArgumentListInParContext)).(Expression), ctx)
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext) interface{} {
+func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *EnhancedArgumentListInParContext) interface{} {
 	if ctx == nil {
 		return nil
 	}
@@ -2979,8 +2983,8 @@ func (v *ASTBuilder) VisitEnhancedArgumentListInParArgs(ctx *ArgumentListContext
 	var expressionList []Expression
 	var mapEntryExpressionList []*MapEntryExpression
 
-	for _, element := range ctx.AllArgumentListElement() {
-		e := v.VisitEnhancedArgumentListElementArg(element.(*ArgumentListElementContext)).(Expression)
+	for _, element := range ctx.AllEnhancedArgumentListElement() {
+		e := v.VisitEnhancedArgumentListElementArg(element.(*EnhancedArgumentListElementContext)).(Expression)
 
 		if mapEntryExpr, ok := e.(*MapEntryExpression); ok {
 			v.validateDuplicatedNamedParameter(mapEntryExpressionList, mapEntryExpr)
@@ -3078,7 +3082,7 @@ func (v *ASTBuilder) validateDuplicatedNamedParameter(mapEntryExpressionList []*
 	panic(createParsingFailedException("Duplicated named parameter '"+parameterName+"' found", astNodeAdapter{mapEntryExpression}))
 }
 
-func (v *ASTBuilder) VisitEnhancedArgumentListElementArg(ctx *ArgumentListElementContext) interface{} {
+func (v *ASTBuilder) VisitEnhancedArgumentListElementArg(ctx *EnhancedArgumentListElementContext) interface{} {
 	if ctx.ExpressionListElement() != nil {
 		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
@@ -3522,6 +3526,11 @@ func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) inter
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
 }
 
+func (v *ASTBuilder) VisitIdentifierPrmrAltCommandPrimary(ctx *IdentifierPrmrAltCommandPrimaryContext) interface{} {
+
+	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
+}
+
 func (v *ASTBuilder) VisitNewPrmrAlt(ctx *NewPrmrAltContext) interface{} {
 	return configureAST(v.VisitCreator(ctx.Creator().(*CreatorContext)).(Expression), ctx)
 }
@@ -3803,8 +3812,8 @@ func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) interface{} {
 func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) interface{} {
 	if ctx.Keywords() != nil {
 		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
-	} else if ctx.Primary() != nil {
-		expression := v.Visit(ctx.Primary()).(Expression)
+	} else if ctx.BasicPrimary() != nil {
+		expression := v.Visit(ctx.BasicPrimary()).(Expression)
 
 		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
 		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {
