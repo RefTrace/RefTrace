@@ -339,3 +339,76 @@ func TestElvis(t *testing.T) {
 		t.Fatalf("Expected 'ascat_genome', but got '%s'", constExpr.GetText())
 	}
 }
+
+func TestTernary(t *testing.T) {
+	filePath := filepath.Join("testdata", "ternary.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+	stmt := bs.statements[0]
+	exprStmt, ok := stmt.(*ExpressionStatement)
+	if !ok {
+		t.Fatalf("Expected statement to be an ExpressionStatement, but got %T", stmt)
+	}
+	binaryExpr, ok := exprStmt.GetExpression().(*BinaryExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an BinaryExpression, but got %T", exprStmt.GetExpression())
+	}
+	left, ok := binaryExpr.leftExpression.(*VariableExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an PropertyExpression, but got %T", binaryExpr.leftExpression)
+	}
+	if left.variable != "dbsnp_vqsr" {
+		t.Fatalf("Expected 'dbsnp_vqsr', but got '%s'", left.variable)
+	}
+	right, ok := binaryExpr.rightExpression.(*TernaryExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an TernaryExpression, but got %T", binaryExpr.rightExpression)
+	}
+	truth, ok := right.truthExpression.(*MethodCallExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be a PropertyExpression, but got %T", right.truthExpression)
+	}
+	truthConst, ok := truth.Method.(*ConstantExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be a VariableExpression, but got %T", truth.Method)
+	}
+	if truthConst.GetText() != "value" {
+		t.Fatalf("Expected 'value', but got '%s'", truthConst.GetText())
+	}
+	objExpr := truth.ObjectExpression.(*VariableExpression)
+	if objExpr.variable != "Channel" {
+		t.Fatalf("Expected 'Channel', but got '%s'", objExpr.variable)
+	}
+	args := truth.GetArguments().(*TupleExpression).expressions[0].(*ArgumentListExpression)
+	if len(args.expressions) != 1 {
+		t.Fatalf("Expected exactly 1 argument in the TupleExpression, but got %d", len(args.expressions))
+	}
+	property := args.expressions[0].(*PropertyExpression)
+	obj := property.GetObjectExpression().(*VariableExpression)
+	prop := property.GetProperty().(*ConstantExpression)
+	if obj.variable != "params" {
+		t.Fatalf("Expected 'params', but got '%s'", obj.variable)
+	}
+	if prop.GetText() != "dbsnp_vqsr" {
+		t.Fatalf("Expected 'dbsnp_vqsr', but got '%s'", prop.GetText())
+	}
+}

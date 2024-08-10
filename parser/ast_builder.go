@@ -3506,8 +3506,18 @@ func (v *ASTBuilder) VisitConditionalExprAlt(ctx *ConditionalExprAltContext) int
 			ctx)
 	}
 
-	tbExpr := ctx.tb.(*ExpressionContext)
-	tbExpr.PutNodeMetaData(IS_INSIDE_CONDITIONAL_EXPRESSION, true)
+	tbValue := reflect.ValueOf(ctx.tb).Elem()
+	if tbValue.Kind() == reflect.Struct {
+		exprContextField := tbValue.FieldByName("ExpressionContext")
+		if exprContextField.IsValid() {
+			exprContext := exprContextField.Addr().Interface().(*ExpressionContext)
+			exprContext.PutNodeMetaData(IS_INSIDE_CONDITIONAL_EXPRESSION, true)
+		} else {
+			panic("ExpressionContext field not found")
+		}
+	} else {
+		panic("ctx.tb is not a pointer to a struct")
+	}
 
 	return configureAST(
 		NewTernaryExpression(
