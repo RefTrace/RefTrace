@@ -11,7 +11,7 @@ var (
 )
 
 func NewArgumentListExpression() *ArgumentListExpression {
-	return &ArgumentListExpression{}
+	return &ArgumentListExpression{NewTupleExpression()}
 }
 
 func NewArgumentListExpressionFromList(expressions []Expression) *ArgumentListExpression {

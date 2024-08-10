@@ -8,11 +8,7 @@ type ElvisOperatorExpression struct {
 // NewElvisOperatorExpression creates a new ElvisOperatorExpression
 func NewElvisOperatorExpression(base, falseValue Expression) *ElvisOperatorExpression {
 	return &ElvisOperatorExpression{
-		TernaryExpression: &TernaryExpression{
-			booleanExpression: asBooleanExpression(base),
-			truthExpression:   base,
-			falseExpression:   falseValue,
-		},
+		NewTernaryExpression(asBooleanExpression(base), base, falseValue),
 	}
 }
 
@@ -21,7 +17,7 @@ func asBooleanExpression(base Expression) *BooleanExpression {
 	if be, ok := baseInterface.(*BooleanExpression); ok {
 		return be
 	}
-	be := &BooleanExpression{BaseExpression: NewBaseExpression()}
+	be := NewBooleanExpression(base)
 	be.SetSourcePosition(base)
 	return be
 }

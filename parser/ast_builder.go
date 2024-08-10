@@ -3,13 +3,12 @@ package parser
 import (
 	"container/list"
 	"fmt"
+	"github.com/antlr4-go/antlr/v4"
 	"reflect"
 	"slices"
 	"strconv"
 	"strings"
 	"unicode"
-
-	"github.com/antlr4-go/antlr/v4"
 )
 
 var _ GroovyParserVisitor = (*ASTBuilder)(nil)
@@ -3484,12 +3483,26 @@ func (v *ASTBuilder) VisitImplicationExprAlt(ctx *ImplicationExprAltContext) int
 }
 
 func (v *ASTBuilder) VisitConditionalExprAlt(ctx *ConditionalExprAltContext) interface{} {
-	fbExpr := ctx.fb.(*ExpressionContext)
-	fbExpr.PutNodeMetaData(IS_INSIDE_CONDITIONAL_EXPRESSION, true)
+	fbValue := reflect.ValueOf(ctx.fb).Elem()
+	if fbValue.Kind() == reflect.Struct {
+		exprContextField := fbValue.FieldByName("ExpressionContext")
+		if exprContextField.IsValid() {
+			exprContext := exprContextField.Addr().Interface().(*ExpressionContext)
+			exprContext.PutNodeMetaData(IS_INSIDE_CONDITIONAL_EXPRESSION, true)
+		} else {
+			panic("ExpressionContext field not found")
+		}
+	} else {
+		panic("ctx.fb is not a pointer to a struct")
+	}
 
 	if ctx.ELVIS() != nil { // e.g. a == 6 ?: 0
+		conExpr := v.Visit(ctx.con).(Expression)
+		foo := v.Visit(ctx.fb)
+		_ = foo
+		fbExpr := v.Visit(ctx.fb).(Expression)
 		return configureAST(
-			NewElvisOperatorExpression(v.Visit(ctx.con).(Expression), v.Visit(ctx.fb).(Expression)),
+			NewElvisOperatorExpression(conExpr, fbExpr),
 			ctx)
 	}
 
@@ -4797,11 +4810,11 @@ func (v *ASTBuilder) createPathExpression(primaryExpr Expression, pathElementCon
 
 	for _, e := range pathElementContextList {
 		pathElementContext := e.(*PathElementContext)
-		pathElementContext.SetNodeMetaData(PATH_EXPRESSION_BASE_EXPR, result)
+		pathElementContext.PutNodeMetaData(PATH_EXPRESSION_BASE_EXPR, result)
 		expression := v.VisitPathElement(pathElementContext).(Expression)
 
 		if isTrue(result, PATH_EXPRESSION_BASE_EXPR_SAFE_CHAIN) {
-			expression.SetNodeMetaData(PATH_EXPRESSION_BASE_EXPR_SAFE_CHAIN, true)
+			expression.PutNodeMetaData(PATH_EXPRESSION_BASE_EXPR_SAFE_CHAIN, true)
 		}
 
 		result = expression
