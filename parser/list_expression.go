@@ -24,8 +24,9 @@ func NewListExpression() *ListExpression {
 // NewListExpressionWithExpressions creates a new ListExpression with initial expressions
 func NewListExpressionWithExpressions(expressions []Expression) *ListExpression {
 	le := &ListExpression{
-		expressions: expressions,
-		wrapped:     false,
+		BaseExpression: NewBaseExpression(),
+		expressions:    expressions,
+		wrapped:        false,
 	}
 	// TODO: get the types of the expressions to specify the
 	// list type to List<X> if possible.

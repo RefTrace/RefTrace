@@ -412,3 +412,117 @@ func TestTernary(t *testing.T) {
 		t.Fatalf("Expected 'dbsnp_vqsr', but got '%s'", prop.GetText())
 	}
 }
+
+func TestTernaryClosure(t *testing.T) {
+	filePath := filepath.Join("testdata", "ternary_closure.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+	stmt := bs.statements[0]
+	exprStmt, ok := stmt.(*ExpressionStatement)
+	if !ok {
+		t.Fatalf("Expected statement to be an ExpressionStatement, but got %T", stmt)
+	}
+	binaryExpr, ok := exprStmt.GetExpression().(*BinaryExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an BinaryExpression, but got %T", exprStmt.GetExpression())
+	}
+	left, ok := binaryExpr.leftExpression.(*VariableExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an PropertyExpression, but got %T", binaryExpr.leftExpression)
+	}
+	if left.variable != "fasta" {
+		t.Fatalf("Expected 'fasta', but got '%s'", left.variable)
+	}
+	right, ok := binaryExpr.rightExpression.(*TernaryExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be an TernaryExpression, but got %T", binaryExpr.rightExpression)
+	}
+	truth, ok := right.truthExpression.(*MethodCallExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be a PropertyExpression, but got %T", right.truthExpression)
+	}
+	truthConst, ok := truth.Method.(*ConstantExpression)
+	if !ok {
+		t.Fatalf("Expected expression to be a VariableExpression, but got %T", truth.Method)
+	}
+	if truthConst.GetText() != "collect" {
+		t.Fatalf("Expected 'collect', but got '%s'", truthConst.GetText())
+	}
+	mce := truth.ObjectExpression.(*MethodCallExpression).ObjectExpression.(*MethodCallExpression)
+	objExpr := mce.ObjectExpression.(*VariableExpression)
+	if objExpr.variable != "Channel" {
+		t.Fatalf("Expected 'Channel', but got '%s'", objExpr.variable)
+	}
+	constExpr := mce.Method.(*ConstantExpression)
+	if constExpr.GetText() != "fromPath" {
+		t.Fatalf("Expected 'fromPath', but got '%s'", constExpr.GetText())
+	}
+	// closure
+	args := truth.GetObjectExpression().(*MethodCallExpression).GetArguments().(*TupleExpression).GetExpressions()[0].(*ArgumentListExpression).GetExpressions()[0].(*ClosureExpression)
+	params := args.GetParameters()
+	param := params[0]
+	if param.GetName() != "it" {
+		t.Fatalf("Expected 'it', but got '%s'", param.GetName())
+	}
+	exprs := args.GetCode().(*BlockStatement).GetStatements()[0].(*ExpressionStatement).GetExpression().(*ListExpression).GetExpressions()
+	mapExpr := exprs[0].(*MapExpression)
+	varExpr := exprs[1].(*VariableExpression)
+	if varExpr.variable != "it" {
+		t.Fatalf("Expected 'it', but got '%s'", varExpr.variable)
+	}
+	mapEntry := mapExpr.GetMapEntryExpressions()[0]
+	if mapEntry.GetKeyExpression().(*ConstantExpression).GetText() != "id" {
+		t.Fatalf("Expected 'id', but got '%s'", mapEntry.GetKeyExpression().GetText())
+	}
+	propExpr := mapEntry.GetValueExpression().(*PropertyExpression)
+	if propExpr.GetProperty().(*ConstantExpression).GetText() != "baseName" {
+		t.Fatalf("Expected 'baseName', but got '%s'", propExpr.GetProperty().GetText())
+	}
+	if propExpr.GetObjectExpression().(*VariableExpression).variable != "it" {
+		t.Fatalf("Expected 'it', but got '%s'", propExpr.GetObjectExpression().GetText())
+	}
+}
+
+func TestTopLevelIf(t *testing.T) {
+	filePath := filepath.Join("testdata", "top_level_if.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+}

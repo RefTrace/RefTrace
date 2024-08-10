@@ -4242,7 +4242,8 @@ func (v *ASTBuilder) VisitFormalParameterList(ctx *FormalParameterListContext) i
 		v.validateVarArgParameter(formalParameterList)
 
 		for _, fp := range formalParameterList {
-			parameterList = append(parameterList, v.VisitFormalParameter(fp.(*FormalParameterContext)).(*Parameter))
+			res := v.VisitFormalParameter(fp.(*FormalParameterContext))
+			parameterList = append(parameterList, res.(*Parameter))
 		}
 	}
 
@@ -4279,7 +4280,15 @@ func (v *ASTBuilder) validateParameterList(parameterList []*Parameter) {
 }
 
 func (v *ASTBuilder) VisitFormalParameter(ctx *FormalParameterContext) interface{} {
-	return v.processFormalParameter(ctx, ctx.VariableModifiersOpt().(*VariableModifiersOptContext), ctx.Type_().(*TypeContext), ctx.ELLIPSIS(), ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext), ctx.Expression().(IExpressionContext))
+	var typeCtxPtr *TypeContext
+	if ctx.Type_() != nil {
+		typeCtxPtr = ctx.Type_().(*TypeContext)
+	}
+	var expressionCtxPtr IExpressionContext
+	if ctx.Expression() != nil {
+		expressionCtxPtr = ctx.Expression().(IExpressionContext)
+	}
+	return v.processFormalParameter(ctx, ctx.VariableModifiersOpt().(*VariableModifiersOptContext), typeCtxPtr, ctx.ELLIPSIS(), ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext), expressionCtxPtr)
 }
 
 func (v *ASTBuilder) VisitThisFormalParameter(ctx *ThisFormalParameterContext) interface{} {
@@ -4796,11 +4805,12 @@ func (v *ASTBuilder) processFormalParameter(ctx *FormalParameterContext, variabl
 	}
 
 	modifierManager := NewModifierManager(v, v.VisitVariableModifiersOpt(variableModifiersOptContext).([]*ModifierNode))
+	declID := v.VisitVariableDeclaratorId(variableDeclaratorIdContext)
 	parameter := modifierManager.ProcessParameter(
 		configureAST(
 			NewParameter(
 				classNode,
-				v.VisitVariableDeclaratorId(variableDeclaratorIdContext).(*VariableExpression).GetName(),
+				declID.(*VariableExpression).GetName(),
 			),
 			ctx,
 		),
@@ -4846,9 +4856,9 @@ func (v *ASTBuilder) createConstantExpression(expression Expression) *ConstantEx
 	return configureASTFromSource(NewConstantExpression(expression.GetText()), expression)
 }
 
-func (v *ASTBuilder) createBinaryExpressionHelper(left, right *ExpressionContext, op antlr.Token) *BinaryExpression {
+func (v *ASTBuilder) createBinaryExpressionHelper(left, right *IExpressionContext, op antlr.Token) *BinaryExpression {
 	return NewBinaryExpression(
-		v.Visit(left).(Expression),
+		v.Visit(left.GetParser()).(Expression),
 		v.createGroovyToken(op),
 		v.Visit(right).(Expression),
 	)

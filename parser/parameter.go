@@ -7,7 +7,7 @@ import (
 var _ Variable = (*Parameter)(nil)
 
 type Parameter struct {
-	AnnotatedNode
+	*AnnotatedNode
 	paramType       *ClassNode
 	name            string
 	originType      *ClassNode
@@ -21,9 +21,10 @@ type Parameter struct {
 
 func NewParameter(paramType *ClassNode, name string) *Parameter {
 	p := &Parameter{
-		name:       name,
-		paramType:  paramType,
-		originType: paramType,
+		AnnotatedNode: NewAnnotatedNode(),
+		name:          name,
+		paramType:     paramType,
+		originType:    paramType,
 	}
 	p.setType(paramType)
 	return p
@@ -125,7 +126,8 @@ func (p Parameter) IsReceiver() bool {
 
 func isDynamicTyped(cn *ClassNode) bool {
 	// Implement this function based on your ClassHelper.isDynamicTyped logic
-	return false
+	// TODO: implement this
+	return true
 }
 
 // Add this method to explicitly implement the IsFinal method for Parameter
