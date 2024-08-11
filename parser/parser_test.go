@@ -44,7 +44,7 @@ func TestGroovyParserUtils(t *testing.T) {
 	//tokens := lexer.GetAllTokens()
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -68,7 +68,7 @@ func TestGroovyParserExpression(t *testing.T) {
 	//tokens := lexer.GetAllTokens()
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -92,7 +92,7 @@ func TestGroovyParserCommandExpr(t *testing.T) {
 	//tokens := lexer.GetAllTokens()
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	/*
 		defer func() {
@@ -120,7 +120,7 @@ func TestInclude(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	/*
 		defer func() {
@@ -216,7 +216,7 @@ func TestParams(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	/*
 		defer func() {
@@ -294,7 +294,7 @@ func TestElvis(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -354,7 +354,7 @@ func TestTernary(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -427,7 +427,7 @@ func TestTernaryClosure(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -516,7 +516,7 @@ func TestTopLevelIf(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -547,7 +547,7 @@ func TestSimpleWorkflow(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -582,7 +582,7 @@ func TestFunction(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -595,6 +595,7 @@ func TestFunction(t *testing.T) {
 }
 
 func TestSarekMain(t *testing.T) {
+	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "sarek_main_workflow.nf")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
@@ -607,7 +608,7 @@ func TestSarekMain(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -647,7 +648,7 @@ func TestSarekEntireMain(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
