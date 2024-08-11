@@ -3,12 +3,13 @@ package parser
 import (
 	"container/list"
 	"fmt"
-	"github.com/antlr4-go/antlr/v4"
 	"reflect"
 	"slices"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/antlr4-go/antlr/v4"
 )
 
 var _ GroovyParserVisitor = (*ASTBuilder)(nil)
@@ -3453,32 +3454,32 @@ func (v *ASTBuilder) VisitRegexExprAlt(ctx *RegexExprAltContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitAndExprAlt(ctx *AndExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitExclusiveOrExprAlt(ctx *ExclusiveOrExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitInclusiveOrExprAlt(ctx *InclusiveOrExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitLogicalAndExprAlt(ctx *LogicalAndExprAltContext) interface{} {
 	return configureAST(
-		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
+		v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx),
 		ctx)
 }
 
 func (v *ASTBuilder) VisitLogicalOrExprAlt(ctx *LogicalOrExprAltContext) interface{} {
 	return configureAST(
-		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
+		v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx),
 		ctx)
 }
 
 func (v *ASTBuilder) VisitImplicationExprAlt(ctx *ImplicationExprAltContext) interface{} {
 	return configureAST(
-		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
+		v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx),
 		ctx)
 }
 
@@ -4856,15 +4857,20 @@ func (v *ASTBuilder) createConstantExpression(expression Expression) *ConstantEx
 	return configureASTFromSource(NewConstantExpression(expression.GetText()), expression)
 }
 
-func (v *ASTBuilder) createBinaryExpressionHelper(left, right *IExpressionContext, op antlr.Token) *BinaryExpression {
+func (v *ASTBuilder) createBinaryExpressionHelper(left, right antlr.ParseTree, op antlr.Token) *BinaryExpression {
 	return NewBinaryExpression(
-		v.Visit(left.GetParser()).(Expression),
+		v.Visit(left).(Expression),
 		v.createGroovyToken(op),
 		v.Visit(right).(Expression),
 	)
 }
 
-func (v *ASTBuilder) createBinaryExpression(left, right *ExpressionContext, op antlr.Token, ctx *ExpressionContext) *BinaryExpression {
+type NodeMetaDataParserRuleContext interface {
+	NodeMetaDataHandler
+	antlr.ParserRuleContext
+}
+
+func (v *ASTBuilder) createBinaryExpression(left, right antlr.ParseTree, op antlr.Token, ctx NodeMetaDataParserRuleContext) *BinaryExpression {
 	binaryExpression := v.createBinaryExpressionHelper(left, right, op)
 
 	if ctx != nil {
