@@ -6,7 +6,7 @@ import (
 )
 
 type GenericsType struct {
-	ASTNode
+	*BaseASTNode
 	name        string
 	typ         *ClassNode
 	lowerBound  *ClassNode
@@ -20,6 +20,7 @@ var EmptyGenericsTypeArray = []*GenericsType{}
 
 func NewGenericsType(typ *ClassNode, upperBounds []*ClassNode, lowerBound *ClassNode) *GenericsType {
 	gt := &GenericsType{
+		BaseASTNode: NewBaseASTNode(),
 		typ:         typ,
 		lowerBound:  lowerBound,
 		upperBounds: upperBounds,

@@ -7,7 +7,7 @@ import (
 
 // ModifierNode represents a modifier
 type ModifierNode struct {
-	ASTNode
+	*BaseASTNode
 	Type           int
 	Opcode         int
 	Text           string
@@ -48,9 +48,10 @@ func NewModifierNode(modType int) *ModifierNode {
 	}
 
 	return &ModifierNode{
-		Type:       modType,
-		Opcode:     opcode,
-		Repeatable: modType == AnnotationType,
+		BaseASTNode: NewBaseASTNode(),
+		Type:        modType,
+		Opcode:      opcode,
+		Repeatable:  modType == AnnotationType,
 	}
 }
 

@@ -11,6 +11,7 @@ type NodeMetaDataHandler interface {
 	GetNodeMetaData(key interface{}) interface{}
 	SetNodeMetaData(key, value interface{})
 	PutNodeMetaData(key, value interface{}) interface{}
+	CopyNodeMetaData(other NodeMetaDataHandler)
 }
 
 type DefaultNodeMetaDataHandler struct {

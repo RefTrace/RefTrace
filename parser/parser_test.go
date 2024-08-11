@@ -566,3 +566,28 @@ func TestSimpleWorkflow(t *testing.T) {
 		t.Errorf("Expected 'main', but got '%s'", mainStmt.GetStatementLabel())
 	}
 }
+
+func TestFunction(t *testing.T) {
+	filePath := filepath.Join("testdata", "function.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	methods := ast.Methods
+	if len(methods) != 1 {
+		t.Errorf("Expected exactly 1 method in the block, but got %d", len(methods))
+	}
+}

@@ -16,7 +16,6 @@ type ASTNode interface {
 	GetLastColumnNumber() int
 	SetLastColumnNumber(int)
 	SetSourcePosition(ASTNode)
-	CopyNodeMetaData(ASTNode)
 	GetMetaDataMap() map[interface{}]interface{}
 	SetMetaDataMap(map[interface{}]interface{})
 	CopyNodeMetaDataHandler(NodeMetaDataHandler)
@@ -81,10 +80,6 @@ func (node *BaseASTNode) SetSourcePosition(other ASTNode) {
 	node.columnNumber = other.GetColumnNumber()
 	node.lastLineNumber = other.GetLastLineNumber()
 	node.lastColumnNumber = other.GetLastColumnNumber()
-}
-
-func (node *BaseASTNode) CopyNodeMetaData(other ASTNode) {
-	node.CopyNodeMetaDataHandler(other)
 }
 
 func (node *BaseASTNode) GetMetaDataMap() map[interface{}]interface{} {

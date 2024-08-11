@@ -29,7 +29,7 @@ func (icn *InnerClassNode) IsInnerClass() bool {
 	return true
 }
 
-func (icn *InnerClassNode) SetEnclosingMethod(m *MethodNode) {
+func (icn *InnerClassNode) SetEnclosingMethod(m MethodOrConstructorNode) {
 	icn.ClassNode.SetEnclosingMethod(m)
 }
 

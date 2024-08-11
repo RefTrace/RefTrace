@@ -272,7 +272,7 @@ func (v *ASTBuilder) popSwitchExpressionRuleContext() antlr.ParserRuleContext {
 
 func (v *ASTBuilder) peekSwitchExpressionRuleContext() antlr.ParserRuleContext {
 	if v.switchExpressionRuleContextStack.Len() == 0 {
-		panic("peek empty rule context")
+		return nil
 	}
 	return v.switchExpressionRuleContextStack.Front().Value.(antlr.ParserRuleContext)
 }
@@ -1739,7 +1739,7 @@ func (v *ASTBuilder) VisitMemberDeclaration(ctx *MemberDeclarationContext) inter
 
 func (v *ASTBuilder) VisitTypeParameters(ctx *TypeParametersContext) interface{} {
 	if ctx == nil {
-		return nil
+		return []*GenericsType{} // Return an empty slice instead of nil
 	}
 
 	typeParameters := make([]*GenericsType, len(ctx.AllTypeParameter()))
@@ -1871,6 +1871,21 @@ func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorD
 	return nil
 }
 
+type MethodOrConstructorNode interface {
+	NodeMetaDataHandler
+	ASTNode
+	GetName() string
+	GetModifiers() int
+	IsAbstract() bool
+	IsConstructor() bool
+	SetGenericsTypes(genericsTypes []*GenericsType)
+	SetSyntheticPublic(syntheticPublic bool)
+	GetParameters() []*Parameter
+	GetVariableScope() *VariableScope
+	Code() Statement
+	Name() string
+}
+
 func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) interface{} {
 	modifierManager := v.createModifierManager(ctx)
 
@@ -1879,17 +1894,30 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 	}
 
 	methodName := v.VisitMethodName(ctx.MethodName().(*MethodNameContext)).(string)
-	returnType := v.VisitReturnType(ctx.ReturnType().(*ReturnTypeContext)).(*ClassNode)
+	var returnTypeCtxPtr *ReturnTypeContext
+	if ctx.ReturnType() != nil {
+		returnTypeCtxPtr = ctx.ReturnType().(*ReturnTypeContext)
+	}
+	returnType := v.VisitReturnType(returnTypeCtxPtr).(*ClassNode)
 	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
-	exceptions := v.VisitQualifiedClassNameList(ctx.QualifiedClassNameList().(*QualifiedClassNameListContext)).([]*ClassNode)
+	var qualifiedClassNameListCtxPtr *QualifiedClassNameListContext
+	if ctx.QualifiedClassNameList() != nil {
+		qualifiedClassNameListCtxPtr = ctx.QualifiedClassNameList().(*QualifiedClassNameListContext)
+	}
+	exceptions := v.VisitQualifiedClassNameList(qualifiedClassNameListCtxPtr).([]*ClassNode)
 
 	v.pushAnonymousInnerClass(list.New())
 	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext)).(Statement)
 	anonymousInnerClassList := v.popAnonymousInnerClass()
 
-	var methodNode *MethodNode
+	var methodNode MethodOrConstructorNode
+
+	var classNode *ClassNode
 	// if classNode is not null, the method declaration is for class declaration
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	maybeClassNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE)
+	if maybeClassNode != nil {
+		classNode = maybeClassNode.(*ClassNode)
+	}
 	if classNode != nil {
 		v.validateParametersOfMethodDeclaration(parameters, classNode)
 
@@ -1902,7 +1930,12 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 		e.Value.(*InnerClassNode).SetEnclosingMethod(methodNode)
 	}
 
-	methodNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)).([]*GenericsType))
+	var typeParametersPtr *TypeParametersContext
+	if ctx.TypeParameters() != nil {
+		typeParametersPtr = ctx.TypeParameters().(*TypeParametersContext)
+	}
+	typeParameters := v.VisitTypeParameters(typeParametersPtr).([]*GenericsType)
+	methodNode.SetGenericsTypes(typeParameters)
 	methodNode.SetSyntheticPublic(
 		v.isSyntheticPublic(
 			v.isAnnotationDeclaration(classNode),
@@ -1927,7 +1960,7 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 	return methodNode
 }
 
-func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, methodNode *MethodNode, modifierManager *ModifierManager, classNode *ClassNode) {
+func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, methodNode MethodOrConstructorNode, modifierManager *ModifierManager, classNode *ClassNode) {
 	if ctx.t == 1 || ctx.t == 2 || ctx.t == 3 { // 1: normal method declaration; 2: abstract method declaration; 3: normal method declaration OR abstract method declaration
 		if !(ctx.ModifiersOpt().Modifiers() != nil || ctx.ReturnType() != nil) {
 			panic(createParsingFailedException("Modifiers or return type is required", parserRuleContextAdapter{ctx}))
@@ -1947,13 +1980,18 @@ func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, me
 	}
 
 	isAbstractMethod := methodNode.IsAbstract()
-	hasMethodBody := methodNode.code != nil && !IsInstanceOf(methodNode.code, (*ExpressionStatement)(nil))
+	// TODO: fix how IsInstanceOf works
+	exprInstance := false
+	if methodNode.Code() != nil {
+		_, exprInstance = methodNode.Code().(*ExpressionStatement)
+	}
+	hasMethodBody := methodNode.Code() != nil && !exprInstance
 
 	if ctx.ct == 9 { // script
 		if isAbstractMethod || !hasMethodBody { // method should not be declared abstract in the script
 			msg := fmt.Sprintf("You cannot define %s method[%s] %sin the script. Try %s%s%s",
 				ternary(isAbstractMethod, "an abstract", "a"),
-				methodNode.name,
+				methodNode.Name(),
 				ternary(!hasMethodBody, "without method body ", ""),
 				ternary(isAbstractMethod, "removing the 'abstract'", ""),
 				ternary(isAbstractMethod && !hasMethodBody, " and", ""),
@@ -1994,11 +2032,12 @@ func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, me
 	modifierManager.Validate(methodNode)
 
 	// TODO: add this
-	/*
-		if IsInstanceOf(methodNode, (*ConstructorNode)(nil)) {
-			modifierManager.ValidateConstructor(methodNode.(*ConstructorNode))
-		}
-	*/
+
+	// First, check if the methodNode is a ConstructorNode
+	constructorNode, ok := methodNode.(*ConstructorNode)
+	if ok {
+		modifierManager.ValidateConstructor(constructorNode)
+	}
 }
 
 // Helper function for ternary operation
@@ -2029,7 +2068,7 @@ func (v *ASTBuilder) createScriptMethodNode(modifierManager *ModifierManager, me
 	return methodNode
 }
 
-func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode) *MethodNode {
+func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode) MethodOrConstructorNode {
 	className := classNode.GetNodeMetaData(CLASS_NAME).(string)
 	modifiers := modifierManager.GetClassMemberModifiersOpValue()
 
@@ -2037,7 +2076,7 @@ func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclaratio
 	hasMethodBody := ctx.MethodBody() != nil
 
 	if !hasReturnType && hasMethodBody && methodName == className {
-		return v.createConstructorNodeForClass(methodName, parameters, exceptions, code, classNode, modifiers).MethodNode
+		return v.createConstructorNodeForClass(methodName, parameters, exceptions, code, classNode, modifiers)
 	} else {
 		if !hasReturnType && hasMethodBody && modifierManager.GetModifierCount() == 0 {
 			panic(createParsingFailedException("Invalid method declaration: "+methodName, parserRuleContextAdapter{ctx}))

@@ -6,7 +6,7 @@ import (
 )
 
 type MethodNode struct {
-	AnnotatedNode
+	*AnnotatedNode
 	name              string
 	modifiers         int
 	syntheticPublic   bool
@@ -23,10 +23,11 @@ type MethodNode struct {
 
 func NewMethodNode(name string, modifiers int, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement) *MethodNode {
 	mn := &MethodNode{
-		name:       name,
-		modifiers:  modifiers,
-		exceptions: exceptions,
-		code:       code,
+		AnnotatedNode: NewAnnotatedNode(),
+		name:          name,
+		modifiers:     modifiers,
+		exceptions:    exceptions,
+		code:          code,
 	}
 	mn.SetReturnType(returnType)
 	mn.SetParameters(parameters)
@@ -37,6 +38,14 @@ func (mn *MethodNode) SetModifiers(modifiers int) {
 	mn.invalidateCachedData()
 	mn.modifiers = modifiers
 	mn.variableScope.SetInStaticContext(mn.IsStatic())
+}
+
+func (mn *MethodNode) Name() string {
+	return mn.name
+}
+
+func (mn *MethodNode) Code() Statement {
+	return mn.code
 }
 
 func (mn *MethodNode) GetModifiers() int {

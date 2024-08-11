@@ -31,7 +31,7 @@ type ClassNode struct {
 	fieldIndex          map[string]*FieldNode
 	innerClasses        []*InnerClassNode
 	syntheticPublic     bool
-	enclosingMethod     *MethodNode
+	enclosingMethod     MethodOrConstructorNode
 	typeAnnotations     []*AnnotationNode
 	annotated           bool
 	objectInitializers  []Statement
@@ -244,14 +244,14 @@ func (cn *ClassNode) AddTypeAnnotations(annotations []*AnnotationNode) {
 	}
 }
 
-func (cn *ClassNode) GetEnclosingMethod() *MethodNode {
+func (cn *ClassNode) GetEnclosingMethod() MethodOrConstructorNode {
 	if cn.redirect != nil {
 		return cn.redirect.GetEnclosingMethod()
 	}
 	return cn.enclosingMethod
 }
 
-func (cn *ClassNode) SetEnclosingMethod(enclosingMethod *MethodNode) {
+func (cn *ClassNode) SetEnclosingMethod(enclosingMethod MethodOrConstructorNode) {
 	if cn.redirect != nil {
 		cn.redirect.SetEnclosingMethod(enclosingMethod)
 	} else {
