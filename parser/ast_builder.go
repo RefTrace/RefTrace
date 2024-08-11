@@ -3121,13 +3121,9 @@ func (v *ASTBuilder) VisitEnhancedArgumentListElement(ctx *EnhancedArgumentListE
 		return configureAST(v.VisitStandardLambdaExpression(ctx.StandardLambdaExpression().(*StandardLambdaExpressionContext)).(*LambdaExpression), ctx)
 	}
 
-	// TODO: implement this
-
-	/*
-		if ctx.MapEntry() != nil {
-			return configureAST(v.VisitMapEntry(ctx.MapEntry().(*MapEntryContext)), ctx)
-		}
-	*/
+	if ctx.NamedPropertyArg() != nil {
+		return configureAST(v.VisitNamedPropertyArg(ctx.NamedPropertyArg().(*NamedPropertyArgContext)).(*MapEntryExpression), ctx)
+	}
 
 	panic(createParsingFailedException("Unsupported enhanced argument list element: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 }
@@ -3593,6 +3589,10 @@ func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) inter
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
 }
 
+func (v *ASTBuilder) VisitIdentifierPrmrAltNamedPropertyArgPrimary(ctx *IdentifierPrmrAltNamedPropertyArgPrimaryContext) interface{} {
+	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
+}
+
 func (v *ASTBuilder) VisitIdentifierPrmrAltCommandPrimary(ctx *IdentifierPrmrAltCommandPrimaryContext) interface{} {
 
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
@@ -3876,11 +3876,47 @@ func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) interface{} {
 		ctx)
 }
 
+func (v *ASTBuilder) VisitNamedPropertyArg(ctx *NamedPropertyArgContext) interface{} {
+	var keyExpr Expression
+	valueExpr := v.Visit(ctx.Expression()).(Expression)
+
+	if ctx.MUL() != nil {
+		keyExpr = configureAST(NewSpreadMapExpression(valueExpr), ctx)
+	} else if ctx.NamedPropertyArgLabel() != nil {
+		keyExpr = v.VisitNamedPropertyArgLabel(ctx.NamedPropertyArgLabel().(*NamedPropertyArgLabelContext)).(Expression)
+	} else {
+		panic(createParsingFailedException("Unsupported map entry: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+	}
+
+	return configureAST(
+		NewMapEntryExpression(keyExpr, valueExpr),
+		ctx)
+}
+
 func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) interface{} {
 	if ctx.Keywords() != nil {
 		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
 	} else if ctx.BasicPrimary() != nil {
 		expression := v.Visit(ctx.BasicPrimary()).(Expression)
+
+		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
+		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {
+			expression = configureASTFromSource(
+				NewConstantExpression(varExpr.GetName()),
+				expression)
+		}
+
+		return configureAST(expression, ctx)
+	}
+
+	panic(createParsingFailedException("Unsupported map entry label: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+}
+
+func (v *ASTBuilder) VisitNamedPropertyArgLabel(ctx *NamedPropertyArgLabelContext) interface{} {
+	if ctx.Keywords() != nil {
+		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
+	} else if ctx.NamedPropertyArgPrimary() != nil {
+		expression := v.Visit(ctx.NamedPropertyArgPrimary()).(Expression)
 
 		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
 		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {

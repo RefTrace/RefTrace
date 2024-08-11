@@ -525,4 +525,44 @@ func TestTopLevelIf(t *testing.T) {
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
 	}
+	ifStmt := bs.GetStatements()[0].(*IfStatement)
+	op := ifStmt.GetBooleanExpression().GetExpression().(*BinaryExpression).GetOperation()
+	if op.GetText() != "&&" {
+		t.Errorf("Expected '&&', but got '%s'", op.GetText())
+	}
+}
+
+func TestSimpleWorkflow(t *testing.T) {
+	filePath := filepath.Join("testdata", "simple_workflow.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+	stmt := bs.GetStatements()[0].(*ExpressionStatement)
+	closure := stmt.GetExpression().(*MethodCallExpression).GetArguments().(*TupleExpression).GetExpressions()[0].(*ArgumentListExpression).GetExpressions()[0].(*ClosureExpression)
+	stmts := closure.GetCode().(*BlockStatement).GetStatements()
+	if len(stmts) != 3 {
+		t.Errorf("Expected exactly 3 statement in the block, but got %d", len(stmts))
+	}
+	mainStmt := stmts[0].(*ExpressionStatement)
+	if mainStmt.GetStatementLabel() != "main" {
+		t.Errorf("Expected 'main', but got '%s'", mainStmt.GetStatementLabel())
+	}
 }
