@@ -2511,7 +2511,7 @@ func (v *ASTBuilder) getOriginalText(ctx antlr.ParserRuleContext) string {
 
 func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) interface{} {
 	// var hasArgumentList = false
-	hasArgumentList := ctx.ArgumentList() != nil && len(ctx.ArgumentList().AllArgumentListElement()) > 0
+	hasArgumentList := ctx.ArgumentList() != nil && (len(ctx.ArgumentList().AllArgumentListElement()) > 0 || ctx.ArgumentList().FirstArgumentListElement() != nil)
 	hasCommandArgument := len(ctx.AllCommandArgument()) > 0
 
 	if (hasArgumentList || hasCommandArgument) && v.visitingArrayInitializerCount > 0 {
@@ -2534,6 +2534,11 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) inter
 	if hasArgumentList {
 		arguments := v.VisitArgumentList(ctx.ArgumentList().(*ArgumentListContext)).(Expression)
 
+		_, isVarExpr := baseExpr.(*VariableExpression)
+		_, isGStringExpr := baseExpr.(*GStringExpression)
+		_, isConstExpr := baseExpr.(*ConstantExpression)
+		baseExprIsString := isTrue(baseExpr, IS_STRING)
+
 		if propertyExpr, ok := baseExpr.(*PropertyExpression); ok { // e.g. obj.a 1, 2
 			methodCallExpression = configureAST(v.createMethodCallExpression(propertyExpr, arguments), ctx.Expression())
 		} else if methodCallExpr, ok := baseExpr.(*MethodCallExpression); ok && !v.isInsideParentheses(baseExpr) { // e.g. m {} a, b  OR  m(...) a, b
@@ -2543,9 +2548,9 @@ func (v *ASTBuilder) VisitCommandExpression(ctx *CommandExpressionContext) inter
 			}
 			methodCallExpression = methodCallExpr
 		} else if !v.isInsideParentheses(baseExpr) &&
-			(IsInstanceOf(baseExpr, (*VariableExpression)(nil)) || // e.g. m 1, 2
-				IsInstanceOf(baseExpr, (*GStringExpression)(nil)) || // e.g. "$m" 1, 2
-				(IsInstanceOf(baseExpr, (*ConstantExpression)(nil)) && isTrue(baseExpr, IS_STRING))) { // e.g. "m" 1, 2
+			(isVarExpr || // e.g. m 1, 2
+				isGStringExpr || // e.g. "$m" 1, 2
+				(isConstExpr && baseExprIsString)) { // e.g. "m" 1, 2
 			v.validateInvalidMethodDefinition(baseExpr, arguments)
 			methodCallExpression = configureAST(v.createMethodCallExpression(baseExpr, arguments), ctx.Expression())
 		} else { // e.g. a[x] b, new A() b, etc.
@@ -3348,7 +3353,7 @@ func (v *ASTBuilder) VisitCastExprAlt(ctx *CastExprAltContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitPowerExprAlt(ctx *PowerExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitUnaryAddExprAlt(ctx *UnaryAddExprAltContext) interface{} {
@@ -3408,11 +3413,11 @@ func (v *ASTBuilder) isNonStringConstantOutsideParentheses(expression Expression
 }
 
 func (v *ASTBuilder) VisitMultiplicativeExprAlt(ctx *MultiplicativeExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitAdditiveExprAlt(ctx *AdditiveExprAltContext) interface{} {
-	return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+	return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 }
 
 func (v *ASTBuilder) VisitShiftExprAlt(ctx *ShiftExprAltContext) interface{} {
@@ -3469,7 +3474,7 @@ func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) inter
 		)
 
 	case GroovyParserGT, GroovyParserGE, GroovyParserLT, GroovyParserLE, GroovyParserIN, GroovyParserNOT_IN:
-		return v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext)
+		return v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx)
 
 	default:
 		panic(createParsingFailedException("Unsupported relational expression: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
@@ -3478,13 +3483,13 @@ func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) inter
 
 func (v *ASTBuilder) VisitEqualityExprAlt(ctx *EqualityExprAltContext) interface{} {
 	return configureAST(
-		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
+		v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx),
 		ctx)
 }
 
 func (v *ASTBuilder) VisitRegexExprAlt(ctx *RegexExprAltContext) interface{} {
 	return configureAST(
-		v.createBinaryExpression(ctx.left.(*ExpressionContext), ctx.right.(*ExpressionContext), ctx.op, &ctx.ExpressionContext),
+		v.createBinaryExpression(ctx.left, ctx.right, ctx.op, ctx),
 		ctx)
 }
 
@@ -3994,9 +3999,14 @@ func (v *ASTBuilder) VisitList(ctx *ListContext) interface{} {
 		panic(createParsingFailedException("Empty list constructor should not contain any comma(,)", tokenAdapter{ctx.COMMA().GetSymbol()}))
 	}
 
+	var expressionListPtr *ExpressionListContext
+	if ctx.ExpressionList() != nil {
+		expressionListPtr = ctx.ExpressionList().(*ExpressionListContext)
+	}
+
 	return configureAST(
 		NewListExpressionWithExpressions(
-			v.VisitExpressionList(ctx.ExpressionList().(*ExpressionListContext)).([]Expression)),
+			v.VisitExpressionList(expressionListPtr).([]Expression)),
 		ctx)
 }
 

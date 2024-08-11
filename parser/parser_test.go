@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"path/filepath"
+	"runtime/debug"
 	"testing"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -533,6 +534,7 @@ func TestTopLevelIf(t *testing.T) {
 }
 
 func TestSimpleWorkflow(t *testing.T) {
+	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "simple_workflow.nf")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
@@ -589,5 +591,78 @@ func TestFunction(t *testing.T) {
 	methods := ast.Methods
 	if len(methods) != 1 {
 		t.Errorf("Expected exactly 1 method in the block, but got %d", len(methods))
+	}
+}
+
+func TestSarekMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "sarek_main_workflow.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+	workflow := bs.statements[0].(*ExpressionStatement).GetExpression().(*MethodCallExpression)
+	workflowName := workflow.Method.(*ConstantExpression).GetText()
+	if workflowName != "workflow" {
+		t.Errorf("Expected 'workflow', but got '%s'", workflowName)
+	}
+	mce := workflow.GetArguments().(*TupleExpression).GetExpressions()[0].(*ArgumentListExpression).GetExpressions()[0].(*MethodCallExpression)
+	if mce.Method.(*ConstantExpression).GetText() != "NFCORE_SAREK" {
+		t.Errorf("Expected 'NFCORE_SAREK', but got '%s'", mce.Method.(*ConstantExpression).GetText())
+	}
+	closure := mce.GetArguments().(*TupleExpression).GetExpressions()[0].(*ArgumentListExpression).GetExpressions()[0].(*ClosureExpression)
+	stmts := closure.GetCode().(*BlockStatement).GetStatements()
+	if len(stmts) != 41 {
+		t.Errorf("Expected exactly 41 statements in the block, but got %d", len(stmts))
+	}
+}
+
+func TestSarekEntireMain(t *testing.T) {
+	debug.SetGCPercent(-1)
+	filePath := filepath.Join("testdata", "sarek_entire_main.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 71 {
+		t.Errorf("Expected exactly 71 statements in the block, but got %d", len(bs.statements))
+	}
+	_, ok := bs.statements[67].(*IfStatement)
+	if !ok {
+		t.Errorf("Expected statement to be an IfStatement, but got %T", bs.statements[67])
+	}
+	_, ok = bs.statements[68].(*IfStatement)
+	if !ok {
+		t.Errorf("Expected statement to be an IfStatement, but got %T", bs.statements[68])
 	}
 }

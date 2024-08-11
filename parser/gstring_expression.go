@@ -25,9 +25,10 @@ func NewGStringExpression(verbatimText string) *GStringExpression {
 
 func NewGStringExpressionWithValues(verbatimText string, strings []*ConstantExpression, values []Expression) *GStringExpression {
 	return &GStringExpression{
-		verbatimText: verbatimText,
-		strings:      strings,
-		values:       values,
+		BaseExpression: NewBaseExpression(),
+		verbatimText:   verbatimText,
+		strings:        strings,
+		values:         values,
 	}
 }
 
