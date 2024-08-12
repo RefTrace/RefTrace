@@ -88,14 +88,14 @@ func (e *EmptyExpression) SetSynthetic(b bool) {
 	}
 }
 
-func (e *EmptyExpression) SetType(node *ClassNode) {
+func (e *EmptyExpression) SetType(node IClassNode) {
 	if e != INSTANCE {
 		e.BaseExpression.SetType(node)
 	}
 }
 
 // Implement Expression interface methods
-func (e *EmptyExpression) GetType() *ClassNode {
+func (e *EmptyExpression) GetType() IClassNode {
 	return e.BaseExpression.GetType()
 }
 

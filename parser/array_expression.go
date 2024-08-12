@@ -10,10 +10,10 @@ type ArrayExpression struct {
 	*BaseExpression
 	initExpressions []Expression
 	sizeExpressions []Expression
-	elementType     *ClassNode
+	elementType     IClassNode
 }
 
-func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
+func makeArray(base IClassNode, sizeExpressions []Expression) *ClassNode {
 	ret := base.MakeArray()
 	if sizeExpressions == nil {
 		return ret
@@ -25,7 +25,7 @@ func makeArray(base *ClassNode, sizeExpressions []Expression) *ClassNode {
 	return ret
 }
 
-func NewArrayExpression(elementType *ClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
+func NewArrayExpression(elementType IClassNode, initExpressions, sizeExpressions []Expression) *ArrayExpression {
 	ae := &ArrayExpression{
 		BaseExpression:  NewBaseExpression(),
 		elementType:     elementType,
@@ -106,7 +106,7 @@ func (ae *ArrayExpression) GetExpression(i int) Expression {
 	return ae.initExpressions[i]
 }
 
-func (ae *ArrayExpression) GetElementType() *ClassNode {
+func (ae *ArrayExpression) GetElementType() IClassNode {
 	return ae.elementType
 }
 

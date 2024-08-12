@@ -6,9 +6,7 @@ import (
 	"strings"
 )
 
-// WideningCategories provides helper methods to determine the type resulting from
-// a widening operation, such as in an addition expression.
-type WideningCategories struct{}
+var _ IClassNode = (*LowestUpperBoundClassNode)(nil)
 
 // NumberTypesPrecedence maps types to their precedence
 var NumberTypesPrecedence = map[reflect.Kind]int{
@@ -21,69 +19,69 @@ var NumberTypesPrecedence = map[reflect.Kind]int{
 }
 
 // IsInt checks if type is an int
-func (WideningCategories) IsInt(t *ClassNode) bool {
+func IsInt(t *ClassNode) bool {
 	return t.Equals(INT_TYPE)
 }
 
 // IsFloat checks if type is a float
-func (WideningCategories) IsFloat(t *ClassNode) bool {
+func IsFloat(t *ClassNode) bool {
 	return t.Equals(FLOAT_TYPE)
 }
 
 // IsDouble checks if type is a double
-func (WideningCategories) IsDouble(t *ClassNode) bool {
+func IsDouble(t *ClassNode) bool {
 	return t.Equals(DOUBLE_TYPE)
 }
 
 // IsIntCategory checks if type is an int, byte, char or short
-func (WideningCategories) IsIntCategory(t *ClassNode) bool {
+func IsIntCategory(t *ClassNode) bool {
 	return t.Equals(INT_TYPE) || t.Equals(BYTE_TYPE) || t.Equals(CHAR_TYPE) || t.Equals(SHORT_TYPE)
 }
 
 // IsLongCategory checks if type is a long, int, byte, char or short
-func (WideningCategories) IsLongCategory(t *ClassNode) bool {
-	return t.Equals(LONG_TYPE) || WideningCategories{}.IsIntCategory(t)
+func IsLongCategory(t *ClassNode) bool {
+	return t.Equals(LONG_TYPE) || IsIntCategory(t)
 }
 
 // IsBigIntCategory checks if type is a BigInteger, long, int, byte, char or short
-func (WideningCategories) IsBigIntCategory(t *ClassNode) bool {
-	return IsBigIntegerType(t) || WideningCategories{}.IsLongCategory(t)
+func IsBigIntCategory(t *ClassNode) bool {
+	return IsBigIntegerType(t) || IsLongCategory(t)
 }
 
 // IsBigDecCategory checks if type is a BigDecimal, BigInteger, long, int, byte, char or short
-func (WideningCategories) IsBigDecCategory(t *ClassNode) bool {
-	return IsBigDecimalType(t) || WideningCategories{}.IsBigIntCategory(t)
+func IsBigDecCategory(t *ClassNode) bool {
+	return IsBigDecimalType(t) || IsBigIntCategory(t)
 }
 
 // IsDoubleCategory checks if type is a float, double or BigDecimal (category)
-func (WideningCategories) IsDoubleCategory(t *ClassNode) bool {
-	return t.Equals(FLOAT_TYPE) || t.Equals(DOUBLE_TYPE) || WideningCategories{}.IsBigDecCategory(t)
+func IsDoubleCategory(t *ClassNode) bool {
+	return t.Equals(FLOAT_TYPE) || t.Equals(DOUBLE_TYPE) || IsBigDecCategory(t)
 }
 
 // IsFloatingCategory checks if type is a float or double
-func (WideningCategories) IsFloatingCategory(t *ClassNode) bool {
+func IsFloatingCategory(t IClassNode) bool {
 	return t.Equals(FLOAT_TYPE) || t.Equals(DOUBLE_TYPE)
 }
 
 // IsNumberCategory checks if type is a BigDecimal (category) or Number
-func (WideningCategories) IsNumberCategory(t *ClassNode) bool {
-	return WideningCategories{}.IsBigDecCategory(t) || t.IsDerivedFrom(NUMBER_TYPE)
+func IsNumberCategory(t *ClassNode) bool {
+	return IsBigDecCategory(t) || t.IsDerivedFrom(NUMBER_TYPE)
 }
 
 // LowestUpperBound finds the lowest upper bound of a list of types
-func (WideningCategories) LowestUpperBound(nodes []*ClassNode) *ClassNode {
+func LowestUpperBound(nodes []IClassNode) IClassNode {
 	n := len(nodes)
 	if n == 1 {
 		return nodes[0]
 	}
 	if n == 2 {
-		return WideningCategories{}.lowestUpperBound(nodes[0], nodes[1])
+		return LowestUpperBoundPair(nodes[0], nodes[1])
 	}
-	return WideningCategories{}.lowestUpperBound(nodes[0], WideningCategories{}.LowestUpperBound(nodes[1:]))
+	return LowestUpperBoundPair(nodes[0], LowestUpperBound(nodes[1:]))
 }
 
-// lowestUpperBound finds the lowest upper bound of two types
-func (WideningCategories) lowestUpperBound(a, b *ClassNode) *ClassNode {
+// LowestUpperBoundPair finds the lowest upper bound of two types
+func LowestUpperBoundPair(a, b IClassNode) IClassNode {
 	// This is a simplified version. The actual implementation would be more complex.
 	if a.Equals(b) {
 		return a
@@ -92,7 +90,7 @@ func (WideningCategories) lowestUpperBound(a, b *ClassNode) *ClassNode {
 		return OBJECT_TYPE
 	}
 	if a.IsArray() && b.IsArray() {
-		return WideningCategories{}.lowestUpperBound(a.GetComponentType(), b.GetComponentType()).MakeArray()
+		return LowestUpperBoundPair(a.GetComponentType(), b.GetComponentType()).MakeArray()
 	}
 	// More complex logic would be needed here to handle interfaces, inheritance, etc.
 	return OBJECT_TYPE
@@ -101,12 +99,12 @@ func (WideningCategories) lowestUpperBound(a, b *ClassNode) *ClassNode {
 // LowestUpperBoundClassNode represents a lowest upper bound that can't be represented by an existing type
 type LowestUpperBoundClassNode struct {
 	*ClassNode
-	upper      *ClassNode
-	interfaces []*ClassNode
+	upper      IClassNode
+	interfaces []IClassNode
 }
 
 // NewLowestUpperBoundClassNode creates a new LowestUpperBoundClassNode
-func NewLowestUpperBoundClassNode(name string, upper *ClassNode, interfaces ...*ClassNode) *LowestUpperBoundClassNode {
+func NewLowestUpperBoundClassNode(name string, upper IClassNode, interfaces ...IClassNode) *LowestUpperBoundClassNode {
 	sort.Slice(interfaces, func(i, j int) bool {
 		return interfaces[i].GetName() < interfaces[j].GetName()
 	})
@@ -141,7 +139,7 @@ func (lub *LowestUpperBoundClassNode) GetText() string {
 
 // AsGenericsType returns the lowest upper bound as a generics type
 func (lub *LowestUpperBoundClassNode) AsGenericsType() *GenericsType {
-	var ubs []*ClassNode
+	var ubs []IClassNode
 	if !IsObjectType(lub.upper) {
 		ubs = append(ubs, lub.upper)
 	}
@@ -153,8 +151,8 @@ func (lub *LowestUpperBoundClassNode) AsGenericsType() *GenericsType {
 }
 
 // GetPlainNodeReference returns a plain node reference of the lowest upper bound
-func (lub *LowestUpperBoundClassNode) GetPlainNodeReference() *LowestUpperBoundClassNode {
-	faces := make([]*ClassNode, len(lub.interfaces))
+func (lub *LowestUpperBoundClassNode) GetPlainNodeReference() IClassNode {
+	faces := make([]IClassNode, len(lub.interfaces))
 	for i, iface := range lub.interfaces {
 		faces[i] = iface.GetPlainNodeReference()
 	}
@@ -162,12 +160,12 @@ func (lub *LowestUpperBoundClassNode) GetPlainNodeReference() *LowestUpperBoundC
 }
 
 // GetUpper returns the upper bound of the LowestUpperBoundClassNode
-func (lub *LowestUpperBoundClassNode) GetUpper() *ClassNode {
+func (lub *LowestUpperBoundClassNode) GetUpper() IClassNode {
 	return lub.upper
 }
 
 // GetInterfaces returns the interfaces of the LowestUpperBoundClassNode
-func (lub *LowestUpperBoundClassNode) GetInterfaces() []*ClassNode {
+func (lub *LowestUpperBoundClassNode) GetInterfaces() []IClassNode {
 	return lub.interfaces
 }
 

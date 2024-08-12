@@ -36,7 +36,7 @@ func (f *ForStatement) GetVariable() *Parameter {
 	return f.Variable
 }
 
-func (f *ForStatement) GetVariableType() *ClassNode {
+func (f *ForStatement) GetVariableType() IClassNode {
 	return f.Variable.GetType()
 }
 

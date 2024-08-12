@@ -8,8 +8,8 @@ import (
 type CompileUnit struct {
 	metaDataMap           map[interface{}]interface{}
 	modules               []*ModuleNode
-	classes               map[string]*ClassNode
-	classesToCompile      map[string]*ClassNode
+	classes               map[string]IClassNode
+	classesToCompile      map[string]IClassNode
 	generatedInnerClasses map[string]*InnerClassNode
 	mu                    sync.RWMutex
 }
@@ -17,8 +17,8 @@ type CompileUnit struct {
 // NewCompileUnit creates a new CompileUnit
 func NewCompileUnit() *CompileUnit {
 	return &CompileUnit{
-		classes:               make(map[string]*ClassNode),
-		classesToCompile:      make(map[string]*ClassNode),
+		classes:               make(map[string]IClassNode),
+		classesToCompile:      make(map[string]IClassNode),
 		generatedInnerClasses: make(map[string]*InnerClassNode),
 	}
 }
@@ -39,11 +39,11 @@ func (cu *CompileUnit) GetModules() []*ModuleNode {
 }
 
 // GetClasses returns a list of all classes in each module
-func (cu *CompileUnit) GetClasses() []*ClassNode {
+func (cu *CompileUnit) GetClasses() []IClassNode {
 	cu.mu.RLock()
 	defer cu.mu.RUnlock()
 
-	var answer []*ClassNode
+	var answer []IClassNode
 	for _, module := range cu.modules {
 		answer = append(answer, module.GetClasses()...)
 	}
@@ -51,7 +51,7 @@ func (cu *CompileUnit) GetClasses() []*ClassNode {
 }
 
 // GetClass returns the ClassNode for the given qualified name
-func (cu *CompileUnit) GetClass(name string) *ClassNode {
+func (cu *CompileUnit) GetClass(name string) IClassNode {
 	cu.mu.RLock()
 	defer cu.mu.RUnlock()
 
@@ -63,7 +63,7 @@ func (cu *CompileUnit) GetClass(name string) *ClassNode {
 }
 
 // GetClassesToCompile returns the map of classes to compile
-func (cu *CompileUnit) GetClassesToCompile() map[string]*ClassNode {
+func (cu *CompileUnit) GetClassesToCompile() map[string]IClassNode {
 	cu.mu.RLock()
 	defer cu.mu.RUnlock()
 	return cu.classesToCompile
@@ -84,14 +84,14 @@ func (cu *CompileUnit) GetGeneratedInnerClass(name string) *InnerClassNode {
 }
 
 // AddClasses adds a list of ClassNodes to the CompileUnit
-func (cu *CompileUnit) AddClasses(list []*ClassNode) {
+func (cu *CompileUnit) AddClasses(list []IClassNode) {
 	for _, node := range list {
 		cu.AddClass(node)
 	}
 }
 
 // AddClass adds a ClassNode to the CompileUnit
-func (cu *CompileUnit) AddClass(node *ClassNode) {
+func (cu *CompileUnit) AddClass(node IClassNode) {
 	cu.mu.Lock()
 	defer cu.mu.Unlock()
 

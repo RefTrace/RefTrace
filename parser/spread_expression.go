@@ -25,7 +25,7 @@ func (s *SpreadExpression) GetText() string {
 }
 
 // GetType returns the type of the underlying expression.
-func (s *SpreadExpression) GetType() *ClassNode {
+func (s *SpreadExpression) GetType() IClassNode {
 	return s.expression.GetType()
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 // GetClassText returns a string representation of a ClassNode
-func GetClassText(node *ClassNode) string {
+func GetClassText(node IClassNode) string {
 	if node == nil {
 		return "<unknown>"
 	}
@@ -45,7 +45,7 @@ func GetParametersText(parameters []*Parameter) string {
 }
 
 // GetThrowsClauseText returns a string representation of exception classes
-func GetThrowsClauseText(exceptions []*ClassNode) string {
+func GetThrowsClauseText(exceptions []IClassNode) string {
 	if len(exceptions) == 0 {
 		return ""
 	}

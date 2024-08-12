@@ -36,7 +36,7 @@ func (pe *PrefixExpression) GetText() string {
 	return fmt.Sprintf("(%s%s)", pe.GetOperation().GetText(), pe.GetExpression().GetText())
 }
 
-func (pe *PrefixExpression) GetType() *ClassNode {
+func (pe *PrefixExpression) GetType() IClassNode {
 	return pe.GetExpression().GetType()
 }
 

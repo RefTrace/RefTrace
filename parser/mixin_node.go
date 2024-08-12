@@ -14,7 +14,7 @@ func NewMixinNode(name string, modifiers int, superType *ClassNode) *MixinNode {
 }
 
 // NewMixinNodeWithInterfaces creates a new MixinNode with the given parameters including interfaces
-func NewMixinNodeWithInterfaces(name string, modifiers int, superType *ClassNode, interfaces []*ClassNode) *MixinNode {
+func NewMixinNodeWithInterfaces(name string, modifiers int, superType *ClassNode, interfaces []IClassNode) *MixinNode {
 	return &MixinNode{
 		ClassNode: NewClassNodeWithInterfaces(name, modifiers, superType, interfaces, EmptyMixinNodeArray),
 	}

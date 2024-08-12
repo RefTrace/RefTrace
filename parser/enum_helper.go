@@ -11,9 +11,9 @@ const (
 
 type EnumHelper struct{}
 
-func MakeEnumNode(name string, modifiers int, interfaces []*ClassNode, outerClass *ClassNode) *ClassNode {
+func MakeEnumNode(name string, modifiers int, interfaces []IClassNode, outerClass IClassNode) IClassNode {
 	modifiers = modifiers | ACC_FINAL | ACC_ENUM
-	var enumClass *ClassNode
+	var enumClass IClassNode
 
 	if outerClass == nil {
 		enumClass = NewClassNodeWithInterfaces(name, modifiers, nil, interfaces, nil)
@@ -28,14 +28,14 @@ func MakeEnumNode(name string, modifiers int, interfaces []*ClassNode, outerClas
 	// "enum X" -> class X extends Enum<X>
 	gt := &GenericsType{typ: enumClass} // Changed Type to typ
 	superClass := MakeWithoutCaching("java.lang.Enum")
-	superClass.genericsTypes = []*GenericsType{gt}
+	superClass.SetGenericsTypes([]*GenericsType{gt})
 	enumClass.SetSuperClass(superClass)
 	superClass.SetRedirect(ENUM_TYPE)
 
 	return enumClass
 }
 
-func AddEnumConstant(enumClass *ClassNode, name string, init Expression) *FieldNode {
+func AddEnumConstant(enumClass IClassNode, name string, init Expression) *FieldNode {
 	modifiers := PUBLIC_FS | ACC_ENUM
 
 	if init != nil {

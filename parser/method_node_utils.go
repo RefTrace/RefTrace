@@ -67,14 +67,14 @@ func GetPropertyName(mNode *MethodNode) string {
 }
 
 // GetCodeAsBlock returns the method's code as a BlockStatement
-func GetCodeAsBlock(mNode *MethodNode) *BlockStatement {
-	if mNode.code == nil {
+func GetCodeAsBlock(mNode MethodOrConstructorNode) *BlockStatement {
+	if mNode.Code() == nil {
 		return &BlockStatement{}
 	}
-	if block, ok := mNode.code.(*BlockStatement); ok {
+	if block, ok := mNode.Code().(*BlockStatement); ok {
 		return block
 	}
-	return &BlockStatement{statements: []Statement{mNode.code}}
+	return &BlockStatement{statements: []Statement{mNode.Code()}}
 }
 
 // IsGetterCandidate determines if the method is a getter candidate
@@ -87,8 +87,8 @@ func IsGetterCandidate(mNode *MethodNode) bool {
 }
 
 // WithDefaultArgumentMethods returns a new list including methods for default arguments
-func WithDefaultArgumentMethods(methods []*MethodNode) []*MethodNode {
-	result := make([]*MethodNode, 0, len(methods))
+func WithDefaultArgumentMethods(methods []MethodOrConstructorNode) []MethodOrConstructorNode {
+	result := make([]MethodOrConstructorNode, 0, len(methods))
 
 	for _, method := range methods {
 		result = append(result, method)
@@ -105,8 +105,8 @@ func WithDefaultArgumentMethods(methods []*MethodNode) []*MethodNode {
 }
 
 // Helper functions (to be implemented based on your specific needs)
-func FormatTypeName(cn *ClassNode) string {
-	return cn.name // Simplified for this example
+func FormatTypeName(cn IClassNode) string {
+	return cn.GetName() // Simplified for this example
 }
 
 func Decapitalize(s string) string {
@@ -117,11 +117,11 @@ func Decapitalize(s string) string {
 }
 
 func IsVoidMethod(mNode *MethodNode) bool {
-	return mNode.returnType.name == "void"
+	return mNode.returnType.GetName() == "void"
 }
 
-func IsPrimitiveBoolean(cn *ClassNode) bool {
-	return cn.name == "bool"
+func IsPrimitiveBoolean(cn IClassNode) bool {
+	return cn.GetName() == "bool"
 }
 
 func IsPublic(modifiers int) bool {
@@ -139,7 +139,7 @@ func IsAbstract(modifiers int) bool {
 	return false
 }
 
-func HasDefaultValue(mNode *MethodNode) bool {
+func HasDefaultValue(mNode MethodOrConstructorNode) bool {
 	// Implement based on your method node structure
 	return false
 }

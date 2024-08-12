@@ -3,8 +3,8 @@ package parser
 // AnnotatedNode represents an AST node that can be annotated
 type AnnotatedNode struct {
 	*BaseASTNode
-	annotations    []AnnotationNode
-	declaringClass *ClassNode
+	annotations    []*AnnotationNode
+	declaringClass IClassNode
 	synthetic      bool
 }
 
@@ -12,20 +12,20 @@ type AnnotatedNode struct {
 func NewAnnotatedNode() *AnnotatedNode {
 	return &AnnotatedNode{
 		BaseASTNode:    NewBaseASTNode(),
-		annotations:    make([]AnnotationNode, 0),
+		annotations:    make([]*AnnotationNode, 0),
 		declaringClass: nil,
 		synthetic:      false,
 	}
 }
 
 // GetAnnotations returns all annotations for this node
-func (an *AnnotatedNode) GetAnnotations() []AnnotationNode {
+func (an *AnnotatedNode) GetAnnotations() []*AnnotationNode {
 	return an.annotations
 }
 
 // GetAnnotationsOfType returns annotations of a specific type
-func (an *AnnotatedNode) GetAnnotationsOfType(typ *ClassNode) []AnnotationNode {
-	var result []AnnotationNode
+func (an *AnnotatedNode) GetAnnotationsOfType(typ IClassNode) []*AnnotationNode {
+	var result []*AnnotationNode
 	for _, node := range an.annotations {
 		if node.GetClassNode().Equals(typ) {
 			result = append(result, node)
@@ -35,7 +35,7 @@ func (an *AnnotatedNode) GetAnnotationsOfType(typ *ClassNode) []AnnotationNode {
 }
 
 // AddAnnotation adds a new annotation of the given type
-func (an *AnnotatedNode) AddAnnotation(typ *ClassNode) *AnnotationNode {
+func (an *AnnotatedNode) AddAnnotation(typ IClassNode) *AnnotationNode {
 	node := NewAnnotationNode(typ)
 	an.AddAnnotationNode(node)
 	return node
@@ -44,7 +44,7 @@ func (an *AnnotatedNode) AddAnnotation(typ *ClassNode) *AnnotationNode {
 // AddAnnotationNode addAnnotationNode adds an existing annotation node
 func (an *AnnotatedNode) AddAnnotationNode(annotation *AnnotationNode) {
 	if annotation != nil {
-		an.annotations = append(an.annotations, *annotation)
+		an.annotations = append(an.annotations, annotation)
 	}
 }
 
@@ -56,12 +56,12 @@ func (an *AnnotatedNode) AddAnnotations(annotations []*AnnotationNode) {
 }
 
 // GetDeclaringClass returns the declaring class of this node
-func (an *AnnotatedNode) GetDeclaringClass() *ClassNode {
+func (an *AnnotatedNode) GetDeclaringClass() IClassNode {
 	return an.declaringClass
 }
 
 // SetDeclaringClass sets the declaring class of this node
-func (an *AnnotatedNode) SetDeclaringClass(declaringClass *ClassNode) {
+func (an *AnnotatedNode) SetDeclaringClass(declaringClass IClassNode) {
 	an.declaringClass = declaringClass
 }
 

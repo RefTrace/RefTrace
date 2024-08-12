@@ -24,14 +24,14 @@ func ParametersEqualWithWrapperType(a, b []*Parameter) bool {
 
 // ParametersCompatible checks if the source parameters are compatible with the target parameters
 func ParametersCompatible(source, target []*Parameter) bool {
-	return parametersMatch(source, target, func(sourceType, targetType *ClassNode) bool {
+	return parametersMatch(source, target, func(sourceType, targetType IClassNode) bool {
 		return IsAssignableTo(sourceType, targetType)
 	})
 }
 
 // parametersEqual is a helper function to check parameter equality
 func parametersEqual(a, b []*Parameter, wrapType bool) bool {
-	return parametersMatch(a, b, func(aType, bType *ClassNode) bool {
+	return parametersMatch(a, b, func(aType, bType IClassNode) bool {
 		if wrapType {
 			aType = GetWrapper(aType)
 			bType = GetWrapper(bType)
@@ -41,7 +41,7 @@ func parametersEqual(a, b []*Parameter, wrapType bool) bool {
 }
 
 // parametersMatch is a generic helper function to match parameters based on a type checker function
-func parametersMatch(a, b []*Parameter, typeChecker func(*ClassNode, *ClassNode) bool) bool {
+func parametersMatch(a, b []*Parameter, typeChecker func(IClassNode, IClassNode) bool) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -60,7 +60,7 @@ func parametersMatch(a, b []*Parameter, typeChecker func(*ClassNode, *ClassNode)
 
 // IsAssignableTo checks if sourceType is assignable to targetType
 // This is a placeholder function and needs to be implemented based on your type system
-func IsAssignableTo(sourceType, targetType *ClassNode) bool {
+func IsAssignableTo(sourceType, targetType IClassNode) bool {
 	// Implement the logic to check if sourceType is assignable to targetType
 	// This might involve checking inheritance, interfaces, etc.
 	return false

@@ -37,9 +37,8 @@ func (t *TernaryExpression) GetText() string {
 	return fmt.Sprintf("(%s) ? %s : %s", t.booleanExpression.GetText(), t.truthExpression.GetText(), t.falseExpression.GetText())
 }
 
-func (t *TernaryExpression) GetType() *ClassNode {
-	w := WideningCategories{}
-	return w.lowestUpperBound(t.truthExpression.GetType(), t.falseExpression.GetType())
+func (t *TernaryExpression) GetType() IClassNode {
+	return LowestUpperBoundPair(t.truthExpression.GetType(), t.falseExpression.GetType())
 }
 
 func (t *TernaryExpression) String() string {

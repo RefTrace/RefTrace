@@ -17,7 +17,7 @@ func (u *UnaryMinusExpression) GetText() string {
 	return "-(" + u.GetExpression().GetText() + ")"
 }
 
-func (u *UnaryMinusExpression) GetType() *ClassNode {
+func (u *UnaryMinusExpression) GetType() IClassNode {
 	return u.GetExpression().GetType()
 }
 

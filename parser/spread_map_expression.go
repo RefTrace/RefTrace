@@ -24,7 +24,7 @@ func (s *SpreadMapExpression) GetText() string {
 	return fmt.Sprintf("*:%s", s.GetExpression().GetText())
 }
 
-func (s *SpreadMapExpression) GetType() *ClassNode {
+func (s *SpreadMapExpression) GetType() IClassNode {
 	return s.GetExpression().GetType()
 }
 

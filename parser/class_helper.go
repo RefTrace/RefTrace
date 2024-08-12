@@ -6,66 +6,152 @@ import (
 )
 
 var (
-	OBJECT_TYPE  = NewClassNode("java.lang.Object", ACC_PUBLIC, nil)
-	VOID_TYPE    = NewClassNode("void", 0, nil)
-	BOOLEAN_TYPE = NewClassNode("boolean", 0, nil)
-	CHAR_TYPE    = NewClassNode("char", 0, nil)
-	BYTE_TYPE    = NewClassNode("byte", 0, nil)
-	SHORT_TYPE   = NewClassNode("short", 0, nil)
-	INT_TYPE     = NewClassNode("int", 0, nil)
-	LONG_TYPE    = NewClassNode("long", 0, nil)
-	FLOAT_TYPE   = NewClassNode("float", 0, nil)
-	DOUBLE_TYPE  = NewClassNode("double", 0, nil)
-	STRING_TYPE  = NewClassNode("java.lang.String", ACC_PUBLIC, OBJECT_TYPE)
-	LIST_TYPE    = NewClassNode("java.util.List", ACC_PUBLIC, OBJECT_TYPE)
-	// New additions
-	SCRIPT_TYPE          = NewClassNode("groovy.lang.Script", ACC_PUBLIC, OBJECT_TYPE)
-	GSTRING_TYPE         = NewClassNode("groovy.lang.GString", ACC_PUBLIC, OBJECT_TYPE)
-	CLOSURE_TYPE         = NewClassNode("groovy.lang.Closure", ACC_PUBLIC, OBJECT_TYPE)
-	RANGE_TYPE           = NewClassNode("groovy.lang.Range", ACC_PUBLIC, OBJECT_TYPE)
-	PATTERN_TYPE         = NewClassNode("java.util.regex.Pattern", ACC_PUBLIC, OBJECT_TYPE)
-	BINDING_TYPE         = NewClassNode("groovy.lang.Binding", ACC_PUBLIC, OBJECT_TYPE)
-	BIGINTEGER_TYPE      = NewClassNode("java.math.BigInteger", ACC_PUBLIC, OBJECT_TYPE)
-	BIGDECIMAL_TYPE      = NewClassNode("java.math.BigDecimal", ACC_PUBLIC, OBJECT_TYPE)
-	NUMBER_TYPE          = NewClassNode("java.math.Number", ACC_PUBLIC, OBJECT_TYPE)
-	MAP_TYPE             = NewClassNode("java.util.Map", ACC_PUBLIC, OBJECT_TYPE)
-	ENUM_TYPE            = NewClassNode("java.util.Enum", ACC_PUBLIC, OBJECT_TYPE)
-	TUPLE_TYPE           = NewClassNode("groovy.lang.Tuple", ACC_PUBLIC, OBJECT_TYPE)
-	ANNOTATION_NODE_TYPE = NewClassNode("groovy.lang.Annotation", ACC_PUBLIC, OBJECT_TYPE)
+	OBJECT_TYPE                = MakeCached(reflect.TypeOf((*interface{})(nil)).Elem())
+	CLOSURE_TYPE               = NewClassNode("groovy.lang.Closure", ACC_PUBLIC, OBJECT_TYPE)
+	GSTRING_TYPE               = NewClassNode("groovy.lang.GString", ACC_PUBLIC, OBJECT_TYPE)
+	RANGE_TYPE                 = NewClassNode("groovy.lang.Range", ACC_PUBLIC, OBJECT_TYPE)
+	PATTERN_TYPE               = NewClassNode("java.util.regex.Pattern", ACC_PUBLIC, OBJECT_TYPE)
+	STRING_TYPE                = MakeCached(reflect.TypeOf(""))
+	SCRIPT_TYPE                = NewClassNode("groovy.lang.Script", ACC_PUBLIC, OBJECT_TYPE)
+	BINDING_TYPE               = NewClassNode("groovy.lang.Binding", ACC_PUBLIC, OBJECT_TYPE)
+	THROWABLE_TYPE             = NewClassNode("java.lang.Throwable", ACC_PUBLIC, OBJECT_TYPE)
+	BOOLEAN_TYPE               = MakeCached(reflect.TypeOf(false))
+	CHAR_TYPE                  = MakeCached(reflect.TypeOf(int32(0))) // Go doesn't have a char type, using rune (int32)
+	BYTE_TYPE                  = MakeCached(reflect.TypeOf(int8(0)))
+	INT_TYPE                   = MakeCached(reflect.TypeOf(int(0)))
+	LONG_TYPE                  = MakeCached(reflect.TypeOf(int64(0)))
+	SHORT_TYPE                 = MakeCached(reflect.TypeOf(int16(0)))
+	DOUBLE_TYPE                = MakeCached(reflect.TypeOf(float64(0)))
+	FLOAT_TYPE                 = MakeCached(reflect.TypeOf(float32(0)))
+	VOID_TYPE                  = NewClassNode("void", 0, nil)
+	VOID_WRAPPER_TYPE          = NewClassNode("java.lang.Void", ACC_PUBLIC, OBJECT_TYPE)
+	METACLASS_TYPE             = NewClassNode("groovy.lang.MetaClass", ACC_PUBLIC, OBJECT_TYPE)
+	ITERATOR_TYPE              = NewClassNode("java.util.Iterator", ACC_PUBLIC, OBJECT_TYPE)
+	ANNOTATION_TYPE            = NewClassNode("java.lang.annotation.Annotation", ACC_PUBLIC, OBJECT_TYPE)
+	ELEMENT_TYPE_TYPE          = NewClassNode("java.lang.annotation.ElementType", ACC_PUBLIC, OBJECT_TYPE)
+	AUTOCLOSEABLE_TYPE         = NewClassNode("java.lang.AutoCloseable", ACC_PUBLIC, OBJECT_TYPE)
+	SERIALIZABLE_TYPE          = NewClassNode("java.io.Serializable", ACC_PUBLIC, OBJECT_TYPE)
+	SERIALIZEDLAMBDA_TYPE      = NewClassNode("java.lang.invoke.SerializedLambda", ACC_PUBLIC, OBJECT_TYPE)
+	SEALED_TYPE                = NewClassNode("java.lang.Sealed", ACC_PUBLIC, OBJECT_TYPE)
+	OVERRIDE_TYPE              = NewClassNode("java.lang.Override", ACC_PUBLIC, OBJECT_TYPE)
+	DEPRECATED_TYPE            = NewClassNode("java.lang.Deprecated", ACC_PUBLIC, OBJECT_TYPE)
+	MAP_TYPE                   = MakeWithoutCaching("java.util.Map")
+	SET_TYPE                   = MakeWithoutCaching("java.util.Set")
+	LIST_TYPE                  = MakeWithoutCaching("java.util.List")
+	ENUM_TYPE                  = MakeWithoutCaching("java.lang.Enum")
+	CLASS_TYPE                 = MakeWithoutCaching("java.lang.Class")
+	TUPLE_TYPE                 = MakeWithoutCaching("groovy.lang.Tuple")
+	STREAM_TYPE                = MakeWithoutCaching("java.util.stream.Stream")
+	ITERABLE_TYPE              = MakeWithoutCaching("java.lang.Iterable")
+	REFERENCE_TYPE             = MakeWithoutCaching("java.lang.ref.Reference")
+	COLLECTION_TYPE            = MakeWithoutCaching("java.util.Collection")
+	COMPARABLE_TYPE            = MakeWithoutCaching("java.lang.Comparable")
+	GROOVY_OBJECT_TYPE         = MakeWithoutCaching("groovy.lang.GroovyObject")
+	GENERATED_LAMBDA_TYPE      = MakeWithoutCaching("groovy.lang.GeneratedLambda")
+	GENERATED_CLOSURE_TYPE     = MakeWithoutCaching("groovy.lang.GeneratedClosure")
+	GROOVY_INTERCEPTABLE_TYPE  = MakeWithoutCaching("groovy.lang.GroovyInterceptable")
+	GROOVY_OBJECT_SUPPORT_TYPE = MakeWithoutCaching("groovy.lang.GroovyObjectSupport")
+	BIGINTEGER_TYPE            = NewClassNode("java.math.BigInteger", ACC_PUBLIC, OBJECT_TYPE)
+	BIGDECIMAL_TYPE            = NewClassNode("java.math.BigDecimal", ACC_PUBLIC, OBJECT_TYPE)
+	NUMBER_TYPE                = NewClassNode("java.lang.Number", ACC_PUBLIC, OBJECT_TYPE)
 )
 
 var (
 	primitiveClassNames = []string{"boolean", "char", "byte", "short", "int", "long", "float", "double", "void"}
-	classes             = []*ClassNode{BOOLEAN_TYPE, CHAR_TYPE, BYTE_TYPE, SHORT_TYPE, INT_TYPE, LONG_TYPE, FLOAT_TYPE, DOUBLE_TYPE, VOID_TYPE}
+	classes             = []IClassNode{BOOLEAN_TYPE, CHAR_TYPE, BYTE_TYPE, SHORT_TYPE, INT_TYPE, LONG_TYPE, FLOAT_TYPE, DOUBLE_TYPE, VOID_TYPE}
 )
 
 const DYNAMIC_TYPE_METADATA = "_DYNAMIC_TYPE_METADATA_"
 
-func IsPrimitiveVoid(type_ *ClassNode) bool {
-	return type_.redirect.Equals(VOID_TYPE)
+// TODO: implement traits
+func HasDefaultImplementation(method MethodOrConstructorNode) bool {
+	// assume all methods have a default implementation in the trait
+	return true
 }
 
-func IsObjectType(type_ *ClassNode) bool {
+// findSAM returns the single abstract method of a class node, if it is a SAM type, or nil otherwise.
+//
+// Parameters:
+//   - type_: a type for which to search for a single abstract method
+//
+// Returns:
+//   - the method node if type_ is a SAM type, nil otherwise
+func FindSAM(type_ IClassNode) MethodOrConstructorNode {
+	if type_ == nil {
+		return nil
+	}
+	if type_.IsInterface() {
+		var sam MethodOrConstructorNode
+		for _, mn := range type_.GetAbstractMethods() {
+			// ignore methods that will have an implementation
+			if HasDefaultImplementation(mn) {
+				continue
+			}
+			/*
+				name := mn.GetName()
+				if OBJECT_METHOD_NAME_SET[name] {
+					// Avoid unnecessary checking for `Object` methods as possible as we could
+					if OBJECT_TYPE.GetDeclaredMethod(name, mn.GetParameters()) != nil {
+						continue
+					}
+				}
+
+				// we have two methods, so no SAM
+				if sam != nil {
+					return nil
+				}
+				sam = mn
+			*/
+		}
+		return sam
+	}
+	// TODO: implement abstract methods
+	/*
+		if type_.IsAbstract() {
+			var sam MethodOrConstructorNode
+			for _, mn := range type_.GetAbstractMethods() {
+				if !hasUsableImplementation(type_, mn) {
+					if sam != nil {
+						return nil
+					}
+					sam = mn
+				}
+			}
+			return sam
+		}
+	*/
+	return nil
+}
+
+func IsPrimitiveVoid(type_ IClassNode) bool {
+	return type_.Redirect().Equals(VOID_TYPE)
+}
+
+func IsObjectType(type_ IClassNode) bool {
 	return OBJECT_TYPE.Equals(type_)
 }
 
-func IsBigIntegerType(type_ *ClassNode) bool {
+func IsBigIntegerType(type_ IClassNode) bool {
 	return BIGINTEGER_TYPE.Equals(type_)
 }
 
-func IsBigDecimalType(type_ *ClassNode) bool {
+func IsBigDecimalType(type_ IClassNode) bool {
 	return BIGDECIMAL_TYPE.Equals(type_)
 }
 
-func dynamicType() *ClassNode {
-	node := OBJECT_TYPE.GetPlainNodeReference()
-	node.PutNodeMetaData(DYNAMIC_TYPE_METADATA, true)
-	return node
+func IsClassType(type_ IClassNode) bool {
+	return CLASS_TYPE.Equals(type_)
 }
 
-func MakeFromString(name string) *ClassNode {
+func DynamicType() IClassNode {
+	node := OBJECT_TYPE.GetPlainNodeReference()
+	node.PutNodeMetaData(DYNAMIC_TYPE_METADATA, true)
+	return node.(IClassNode)
+}
+
+func MakeFromString(name string) IClassNode {
 	if name == "" {
-		return dynamicType()
+		return DynamicType()
 	}
 
 	for i, primitiveName := range primitiveClassNames {
@@ -83,7 +169,7 @@ func MakeFromString(name string) *ClassNode {
 	return MakeWithoutCaching(name)
 }
 
-func Make(t reflect.Type) *ClassNode {
+func Make(t reflect.Type) IClassNode {
 	switch t.Kind() {
 	case reflect.Bool:
 		return BOOLEAN_TYPE
@@ -121,22 +207,26 @@ func Make(t reflect.Type) *ClassNode {
 	}
 }
 
-func IsPrimitiveType(cn *ClassNode) bool {
-	return cn == BOOLEAN_TYPE || cn == CHAR_TYPE || cn == BYTE_TYPE ||
-		cn == SHORT_TYPE || cn == INT_TYPE || cn == LONG_TYPE ||
-		cn == FLOAT_TYPE || cn == DOUBLE_TYPE || cn == VOID_TYPE
+func IsGroovyObjectType(type_ IClassNode) bool {
+	return GROOVY_OBJECT_TYPE.Equals(type_)
 }
 
-func IsNumberType(cn *ClassNode) bool {
+func IsPrimitiveType(cn IClassNode) bool {
+	return cn.Equals(BOOLEAN_TYPE) || cn.Equals(CHAR_TYPE) || cn.Equals(BYTE_TYPE) ||
+		cn.Equals(SHORT_TYPE) || cn.Equals(INT_TYPE) || cn.Equals(LONG_TYPE) ||
+		cn.Equals(FLOAT_TYPE) || cn.Equals(DOUBLE_TYPE) || cn.Equals(VOID_TYPE)
+}
+
+func IsNumberType(cn IClassNode) bool {
 	return cn == BYTE_TYPE || cn == SHORT_TYPE || cn == INT_TYPE ||
 		cn == LONG_TYPE || cn == FLOAT_TYPE || cn == DOUBLE_TYPE
 }
 
-func IsStringType(cn *ClassNode) bool {
+func IsStringType(cn IClassNode) bool {
 	return cn == STRING_TYPE
 }
 
-func IsGStringType(cn *ClassNode) bool {
+func IsGStringType(cn IClassNode) bool {
 	return cn == GSTRING_TYPE
 }
 
@@ -147,10 +237,10 @@ type ClassHelperCache struct {
 var globalCache = &ClassHelperCache{}
 
 // MakeCached creates or retrieves a cached ClassNode for the given reflect.Type
-func MakeCached(t reflect.Type) *ClassNode {
+func MakeCached(t reflect.Type) IClassNode {
 	// Check if the ClassNode is already in the cache
 	if cachedValue, ok := globalCache.classCache.Load(t); ok {
-		if classNode, ok := cachedValue.(*ClassNode); ok {
+		if classNode, ok := cachedValue.(IClassNode); ok {
 			return classNode
 		}
 	}
@@ -164,14 +254,14 @@ func MakeCached(t reflect.Type) *ClassNode {
 	return classNode
 }
 
-func MakeWithoutCaching(name string) *ClassNode {
+func MakeWithoutCaching(name string) IClassNode {
 	cn := NewClassNode(name, ACC_PUBLIC, OBJECT_TYPE)
 	cn.SetPrimaryNode(false)
 	return cn
 }
 
 // New function
-func IsDynamicTyped(cn *ClassNode) bool {
+func IsDynamicTyped(cn IClassNode) bool {
 	if cn == nil {
 		return false
 	}
@@ -179,8 +269,31 @@ func IsDynamicTyped(cn *ClassNode) bool {
 	return metadata != nil && metadata == true
 }
 
+var WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP map[IClassNode]IClassNode
+
+func init() {
+	WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP = make(map[IClassNode]IClassNode)
+	for k, v := range PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP {
+		WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP[v] = k
+	}
+}
+
+func GetUnwrapper(cn IClassNode) IClassNode {
+	cn = cn.Redirect()
+	if IsPrimitiveType(cn) {
+		return cn
+	}
+
+	result, ok := WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP[cn]
+	if ok {
+		return result
+	}
+
+	return cn
+}
+
 // New additions
-var PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP = map[*ClassNode]*ClassNode{
+var PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP = map[IClassNode]IClassNode{
 	BOOLEAN_TYPE: NewClassNode("java.lang.Boolean", ACC_PUBLIC, OBJECT_TYPE),
 	CHAR_TYPE:    NewClassNode("java.lang.Character", ACC_PUBLIC, OBJECT_TYPE),
 	BYTE_TYPE:    NewClassNode("java.lang.Byte", ACC_PUBLIC, OBJECT_TYPE),
@@ -189,9 +302,10 @@ var PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP = map[*ClassNode]*ClassNode{
 	LONG_TYPE:    NewClassNode("java.lang.Long", ACC_PUBLIC, OBJECT_TYPE),
 	FLOAT_TYPE:   NewClassNode("java.lang.Float", ACC_PUBLIC, OBJECT_TYPE),
 	DOUBLE_TYPE:  NewClassNode("java.lang.Double", ACC_PUBLIC, OBJECT_TYPE),
+	VOID_TYPE:    VOID_WRAPPER_TYPE,
 }
 
-func GetWrapper(cn *ClassNode) *ClassNode {
+func GetWrapper(cn IClassNode) IClassNode {
 	cn = cn.Redirect()
 	if !IsPrimitiveType(cn) {
 		return cn
@@ -207,4 +321,9 @@ func GetWrapper(cn *ClassNode) *ClassNode {
 	}
 
 	return cn
+}
+
+func IsSAMType(cn IClassNode) bool {
+	// TODO: Implement this
+	return false
 }

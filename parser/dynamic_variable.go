@@ -19,8 +19,8 @@ func NewDynamicVariable(name string, context bool) *DynamicVariable {
 }
 
 // GetType returns the type of the variable (always dynamic)
-func (d *DynamicVariable) GetType() *ClassNode {
-	return dynamicType()
+func (d *DynamicVariable) GetType() IClassNode {
+	return DynamicType()
 }
 
 // GetName returns the name of the variable
@@ -64,7 +64,7 @@ func (d *DynamicVariable) GetModifiers() int {
 }
 
 // GetOriginType returns the origin type of the variable (same as GetType for DynamicVariable)
-func (d *DynamicVariable) GetOriginType() *ClassNode {
+func (d *DynamicVariable) GetOriginType() IClassNode {
 	return d.GetType()
 }
 

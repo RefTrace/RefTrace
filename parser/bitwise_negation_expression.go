@@ -17,7 +17,7 @@ func (b *BitwiseNegationExpression) GetText() string {
 	return "~(" + b.GetExpression().GetText() + ")"
 }
 
-func (b *BitwiseNegationExpression) GetType() *ClassNode {
+func (b *BitwiseNegationExpression) GetType() IClassNode {
 	exprType := b.GetExpression().GetType()
 	if IsStringType(exprType) || IsGStringType(exprType) {
 		return PATTERN_TYPE // Assuming PATTERN_TYPE is defined elsewhere

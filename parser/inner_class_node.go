@@ -1,20 +1,22 @@
 package parser
 
+var _ IClassNode = (*InnerClassNode)(nil)
+
 // InnerClassNode represents an inner class definition.
 type InnerClassNode struct {
 	*ClassNode
-	outerClass *ClassNode
+	outerClass IClassNode
 	scope      *VariableScope
 	anonymous  bool
 }
 
 // NewInnerClassNode creates a new InnerClassNode with the given parameters.
-func NewInnerClassNode(outerClass *ClassNode, name string, modifiers int, superClass *ClassNode) *InnerClassNode {
-	return NewInnerClassNodeWithInterfaces(outerClass, name, modifiers, superClass, []*ClassNode{}, []*MixinNode{})
+func NewInnerClassNode(outerClass IClassNode, name string, modifiers int, superClass IClassNode) *InnerClassNode {
+	return NewInnerClassNodeWithInterfaces(outerClass, name, modifiers, superClass, []IClassNode{}, []*MixinNode{})
 }
 
 // NewInnerClassNodeWithInterfaces creates a new InnerClassNode with the given parameters, including interfaces and mixins.
-func NewInnerClassNodeWithInterfaces(outerClass *ClassNode, name string, modifiers int, superClass *ClassNode, interfaces []*ClassNode, mixins []*MixinNode) *InnerClassNode {
+func NewInnerClassNodeWithInterfaces(outerClass IClassNode, name string, modifiers int, superClass IClassNode, interfaces []IClassNode, mixins []*MixinNode) *InnerClassNode {
 	icn := &InnerClassNode{
 		ClassNode:  NewClassNodeWithInterfaces(name, modifiers, superClass, interfaces, mixins),
 		outerClass: outerClass,
@@ -34,7 +36,7 @@ func (icn *InnerClassNode) SetEnclosingMethod(m MethodOrConstructorNode) {
 }
 
 // GetOuterClass returns the outer class of this inner class.
-func (icn *InnerClassNode) GetOuterClass() *ClassNode {
+func (icn *InnerClassNode) GetOuterClass() IClassNode {
 	return icn.outerClass
 }
 

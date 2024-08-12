@@ -6,3 +6,4 @@ reft-go
 parser/GroovyParser.interp
 parser/GroovyParser.tokens
 parser/__debug*
+.vscode

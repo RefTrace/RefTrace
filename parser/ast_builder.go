@@ -184,7 +184,7 @@ func createParsingFailedException[T SourcePosition](msg string, source T) *Synta
 type ASTBuilder struct {
 	BaseGroovyParserVisitor
 	moduleNode                                *ModuleNode
-	classNodeList                             []*ClassNode
+	classNodeList                             []IClassNode
 	numberFormatError                         *NumberFormatError
 	sourceUnitName                            string
 	visitingAssertStatementCount              int
@@ -201,8 +201,8 @@ type ASTBuilder struct {
 // NewASTBuilder creates and initializes a new ASTBuilder instance
 func NewASTBuilder(sourceUnitName string) *ASTBuilder {
 	builder := &ASTBuilder{
-		moduleNode:                       NewModuleNode(), // Assuming you have a NewModuleNode function
-		classNodeList:                    make([]*ClassNode, 0),
+		moduleNode:                       NewModuleNode(sourceUnitName),
+		classNodeList:                    make([]IClassNode, 0),
 		numberFormatError:                nil,
 		sourceUnitName:                   sourceUnitName,
 		switchExpressionRuleContextStack: list.New(),
@@ -277,22 +277,22 @@ func (v *ASTBuilder) peekSwitchExpressionRuleContext() antlr.ParserRuleContext {
 	return v.switchExpressionRuleContextStack.Front().Value.(antlr.ParserRuleContext)
 }
 
-func (v *ASTBuilder) pushClassNode(classNode *ClassNode) {
+func (v *ASTBuilder) pushClassNode(classNode IClassNode) {
 	v.classNodeStack.PushFront(classNode)
 }
 
-func (v *ASTBuilder) popClassNode() *ClassNode {
+func (v *ASTBuilder) popClassNode() IClassNode {
 	if v.classNodeStack.Len() == 0 {
 		panic("empty class node stack")
 	}
-	return v.classNodeStack.Remove(v.classNodeStack.Front()).(*ClassNode)
+	return v.classNodeStack.Remove(v.classNodeStack.Front()).(IClassNode)
 }
 
-func (v *ASTBuilder) peekClassNode() *ClassNode {
+func (v *ASTBuilder) peekClassNode() IClassNode {
 	if v.classNodeStack.Len() == 0 {
 		panic("peek empty class node stack")
 	}
-	return v.classNodeStack.Front().Value.(*ClassNode)
+	return v.classNodeStack.Front().Value.(IClassNode)
 }
 
 func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) interface{} {
@@ -326,7 +326,7 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) int
 	}
 
 	// TODO: implement this
-	//builder.configureScriptClassNode()
+	builder.configureScriptClassNode()
 
 	if builder.numberFormatError != nil {
 		panic(createParsingFailedException(builder.numberFormatError.Exception.Error(), parserRuleContextAdapter{builder.numberFormatError.Context}))
@@ -450,7 +450,7 @@ func makeAnnotationNode(annotationType reflect.Type) *AnnotationNode {
 }
 
 // makeClassNode creates a ClassNode for the given class name
-func makeClassNode(name string) *ClassNode {
+func makeClassNode(name string) IClassNode {
 	node := MakeFromString(name)
 	// TODO: shared instances
 	return node
@@ -606,7 +606,7 @@ func (v *ASTBuilder) translateExpressionList(ctx *ExpressionListContext) Express
 }
 
 func (v *ASTBuilder) VisitEnhancedForControl(ctx *EnhancedForControlContext) interface{} {
-	parameter := NewParameter(v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode), v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName())
+	parameter := NewParameter(v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode), v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName())
 	modifierManager := NewModifierManager(v, v.VisitVariableModifiersOpt(ctx.VariableModifiersOpt().(*VariableModifiersOptContext)).([]*ModifierNode))
 	modifierManager.ProcessParameter(parameter)
 	configureAST(parameter, ctx.VariableDeclaratorId())
@@ -776,7 +776,7 @@ func (v *ASTBuilder) VisitResource(ctx *ResourceContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) interface{} {
-	catchTypes := v.VisitCatchType(ctx.CatchType().(*CatchTypeContext)).([]*ClassNode)
+	catchTypes := v.VisitCatchType(ctx.CatchType().(*CatchTypeContext)).([]IClassNode)
 	catchStatements := make([]*CatchStatement, 0, len(catchTypes))
 
 	for _, e := range catchTypes {
@@ -792,12 +792,12 @@ func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) interface{} {
 
 func (v *ASTBuilder) VisitCatchType(ctx *CatchTypeContext) interface{} {
 	if ctx == nil {
-		return []*ClassNode{OBJECT_TYPE}
+		return []IClassNode{OBJECT_TYPE}
 	}
 
-	classNodes := make([]*ClassNode, 0, len(ctx.AllQualifiedClassName()))
+	classNodes := make([]IClassNode, 0, len(ctx.AllQualifiedClassName()))
 	for _, qcn := range ctx.AllQualifiedClassName() {
-		classNodes = append(classNodes, v.VisitQualifiedClassName(qcn.(*QualifiedClassNameContext)).(*ClassNode))
+		classNodes = append(classNodes, v.VisitQualifiedClassName(qcn.(*QualifiedClassNameContext)).(IClassNode))
 	}
 	return classNodes
 }
@@ -1249,7 +1249,7 @@ func (v *ASTBuilder) VisitSwitchExpressionLabel(ctx *SwitchExpressionLabelContex
 func (v *ASTBuilder) VisitTypeDeclaration(ctx *TypeDeclarationContext) interface{} {
 	if ctx.ClassDeclaration() != nil { // e.g. class A {}
 		ctx.ClassDeclaration().(*ClassDeclarationContext).PutNodeMetaData(TYPE_DECLARATION_MODIFIERS, v.VisitClassOrInterfaceModifiersOpt(ctx.ClassOrInterfaceModifiersOpt().(*ClassOrInterfaceModifiersOptContext)))
-		return configureAST(v.VisitClassDeclaration(ctx.ClassDeclaration().(*ClassDeclarationContext)).(*ClassNode), ctx)
+		return configureAST(v.VisitClassDeclaration(ctx.ClassDeclaration().(*ClassDeclarationContext)).(IClassNode), ctx)
 	}
 
 	panic(createParsingFailedException("Unsupported type declaration: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
@@ -1364,7 +1364,7 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 	syntheticPublic := ((modifiers & ACC_SYNTHETIC) != 0)
 	modifiers &= ^ACC_SYNTHETIC
 
-	var classNode *ClassNode
+	var classNode IClassNode
 	outerClass := v.peekClassNode()
 
 	if isEnum {
@@ -1422,7 +1422,7 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 		}
 	*/
 	classNode.AddAnnotations(modifierManager.GetAnnotations())
-	if isRecord && !slices.ContainsFunc(classNode.GetAnnotations(), func(a AnnotationNode) bool {
+	if isRecord && !slices.ContainsFunc(classNode.GetAnnotations(), func(a *AnnotationNode) bool {
 		return a.GetClassNode().GetName() == RECORD_TYPE_NAME
 	}) {
 		classNode.AddAnnotationNode(NewAnnotationNode(MakeWithoutCaching(RECORD_TYPE_NAME))) // TODO: makeAnnotationNode(RecordType)
@@ -1435,23 +1435,23 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 
 	if ctx.CLASS() != nil || ctx.TRAIT() != nil {
 		if ctx.scs != nil {
-			scs := v.VisitTypeList(ctx.scs.(*TypeListContext)).([]*ClassNode)
+			scs := v.VisitTypeList(ctx.scs.(*TypeListContext)).([]IClassNode)
 			if len(scs) > 1 {
 				panic(createParsingFailedException("Cannot extend multiple classes", tokenAdapter{ctx.EXTENDS().GetSymbol()}))
 			}
 			classNode.SetSuperClass(scs[0])
 		}
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]*ClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 
 	} else if isInterface {
 		classNode.SetModifiers(classNode.GetModifiers() | ACC_INTERFACE | ACC_ABSTRACT)
-		classNode.SetInterfaces(v.VisitTypeList(ctx.scs.(*TypeListContext)).([]*ClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.scs.(*TypeListContext)).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 		v.hackMixins(classNode)
 
 	} else if isEnum || isRecord {
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]*ClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 		if isRecord {
 			v.transformRecordHeaderToProperties(ctx, classNode)
@@ -1459,7 +1459,7 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 
 	} else if isAnnotation {
 		classNode.SetModifiers(classNode.GetModifiers() | ACC_INTERFACE | ACC_ABSTRACT | ACC_ANNOTATION)
-		classNode.AddInterface(ANNOTATION_NODE_TYPE)
+		classNode.AddInterface(ANNOTATION_TYPE)
 		v.hackMixins(classNode)
 
 	} else {
@@ -1488,14 +1488,14 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 	return classNode
 }
 
-func (v *ASTBuilder) addToClassNodeList(classNode *ClassNode) {
+func (v *ASTBuilder) addToClassNodeList(classNode IClassNode) {
 	v.classNodeList = append(v.classNodeList, classNode) // GROOVY-11117: outer class first
-	for _, innerClass := range classNode.innerClasses {
+	for _, innerClass := range classNode.GetInnerClasses() {
 		v.addToClassNodeList(innerClass.ClassNode)
 	}
 }
 
-func (v *ASTBuilder) checkUsingGenerics(classNode *ClassNode) {
+func (v *ASTBuilder) checkUsingGenerics(classNode IClassNode) {
 	if !classNode.IsUsingGenerics() {
 		if !classNode.IsEnum() && classNode.GetSuperClass().IsUsingGenerics() {
 			classNode.SetUsingGenerics(true)
@@ -1510,7 +1510,7 @@ func (v *ASTBuilder) checkUsingGenerics(classNode *ClassNode) {
 	}
 }
 
-func (v *ASTBuilder) transformRecordHeaderToProperties(ctx *ClassDeclarationContext, classNode *ClassNode) {
+func (v *ASTBuilder) transformRecordHeaderToProperties(ctx *ClassDeclarationContext, classNode IClassNode) {
 	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
 	classNode.PutNodeMetaData(RECORD_HEADER, parameters)
 
@@ -1547,7 +1547,7 @@ func (v *ASTBuilder) containsDefaultOrPrivateMethods(ctx *ClassDeclarationContex
 }
 
 func (v *ASTBuilder) VisitClassBody(ctx *ClassBodyContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
 	}
@@ -1568,7 +1568,7 @@ func (v *ASTBuilder) VisitClassBody(ctx *ClassBodyContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitEnumConstants(ctx *EnumConstantsContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
 	}
@@ -1583,7 +1583,7 @@ func (v *ASTBuilder) VisitEnumConstants(ctx *EnumConstantsContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitEnumConstant(ctx *EnumConstantContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
 	}
@@ -1693,7 +1693,7 @@ func (v *ASTBuilder) createEnumConstantInitExpression(ctx *ArgumentsContext, ano
 }
 
 func (v *ASTBuilder) VisitClassBodyDeclaration(ctx *ClassBodyDeclarationContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if ctx.MemberDeclaration() != nil {
 		methodDecl := ctx.MemberDeclaration().(*MemberDeclarationContext)
 		methodDecl.PutNodeMetaData(CLASS_DECLARATION_CLASS_NODE, classNode)
@@ -1710,7 +1710,7 @@ func (v *ASTBuilder) VisitClassBodyDeclaration(ctx *ClassBodyDeclarationContext)
 }
 
 func (v *ASTBuilder) VisitMemberDeclaration(ctx *MemberDeclarationContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
 	}
@@ -1752,7 +1752,7 @@ func (v *ASTBuilder) VisitTypeParameters(ctx *TypeParametersContext) interface{}
 func (v *ASTBuilder) VisitTypeParameter(ctx *TypeParameterContext) interface{} {
 	baseType := configureAST(MakeWithoutCaching(v.VisitClassName(ctx.ClassName().(*ClassNameContext)).(string)), ctx)
 	baseType.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
-	genericsType := NewGenericsType(baseType, v.VisitTypeBound(ctx.TypeBound().(*TypeBoundContext)).([]*ClassNode), nil)
+	genericsType := NewGenericsType(baseType, v.VisitTypeBound(ctx.TypeBound().(*TypeBoundContext)).([]IClassNode), nil)
 	return configureAST(genericsType, ctx)
 }
 
@@ -1761,15 +1761,15 @@ func (v *ASTBuilder) VisitTypeBound(ctx *TypeBoundContext) interface{} {
 		return nil
 	}
 
-	typeBounds := make([]*ClassNode, len(ctx.AllType_()))
+	typeBounds := make([]IClassNode, len(ctx.AllType_()))
 	for i, t := range ctx.AllType_() {
-		typeBounds[i] = v.VisitType(t.(*TypeContext)).(*ClassNode)
+		typeBounds[i] = v.VisitType(t.(*TypeContext)).(IClassNode)
 	}
 	return typeBounds
 }
 
 func (v *ASTBuilder) VisitFieldDeclaration(ctx *FieldDeclarationContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 	if classNode == nil {
 		panic("classNode should not be nil")
 	}
@@ -1810,7 +1810,7 @@ func (v *ASTBuilder) createModifierManager(ctx *MethodDeclarationContext) *Modif
 	return NewModifierManager(v, modifierNodeList)
 }
 
-func (v *ASTBuilder) validateParametersOfMethodDeclaration(parameters []*Parameter, classNode *ClassNode) {
+func (v *ASTBuilder) validateParametersOfMethodDeclaration(parameters []*Parameter, classNode IClassNode) {
 	if !classNode.IsInterface() {
 		return
 	}
@@ -1823,9 +1823,9 @@ func (v *ASTBuilder) validateParametersOfMethodDeclaration(parameters []*Paramet
 }
 
 func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorDeclarationContext) interface{} {
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 
-	if !slices.ContainsFunc(classNode.GetAnnotations(), func(a AnnotationNode) bool {
+	if !slices.ContainsFunc(classNode.GetAnnotations(), func(a *AnnotationNode) bool {
 		return a.GetClassNode().GetName() == RECORD_TYPE_NAME
 	}) {
 		panic(createParsingFailedException("Only record can have compact constructor", parserRuleContextAdapter{ctx}))
@@ -1861,7 +1861,7 @@ func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorD
 	if len(annos) == 0 {
 		tupleConstructor = makeAnnotationNode(reflect.TypeOf("tupletype"))
 	} else {
-		tupleConstructor = &annos[0]
+		tupleConstructor = annos[0]
 	}
 	tupleConstructor.SetMember("pre", NewClosureExpression(nil, code))
 	if len(annos) == 0 {
@@ -1869,21 +1869,6 @@ func (v *ASTBuilder) VisitCompactConstructorDeclaration(ctx *CompactConstructorD
 	}
 
 	return nil
-}
-
-type MethodOrConstructorNode interface {
-	NodeMetaDataHandler
-	ASTNode
-	GetName() string
-	GetModifiers() int
-	IsAbstract() bool
-	IsConstructor() bool
-	SetGenericsTypes(genericsTypes []*GenericsType)
-	SetSyntheticPublic(syntheticPublic bool)
-	GetParameters() []*Parameter
-	GetVariableScope() *VariableScope
-	Code() Statement
-	Name() string
 }
 
 func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) interface{} {
@@ -1898,13 +1883,13 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 	if ctx.ReturnType() != nil {
 		returnTypeCtxPtr = ctx.ReturnType().(*ReturnTypeContext)
 	}
-	returnType := v.VisitReturnType(returnTypeCtxPtr).(*ClassNode)
+	returnType := v.VisitReturnType(returnTypeCtxPtr).(IClassNode)
 	parameters := v.VisitFormalParameters(ctx.FormalParameters().(*FormalParametersContext)).([]*Parameter)
 	var qualifiedClassNameListCtxPtr *QualifiedClassNameListContext
 	if ctx.QualifiedClassNameList() != nil {
 		qualifiedClassNameListCtxPtr = ctx.QualifiedClassNameList().(*QualifiedClassNameListContext)
 	}
-	exceptions := v.VisitQualifiedClassNameList(qualifiedClassNameListCtxPtr).([]*ClassNode)
+	exceptions := v.VisitQualifiedClassNameList(qualifiedClassNameListCtxPtr).([]IClassNode)
 
 	v.pushAnonymousInnerClass(list.New())
 	code := v.VisitMethodBody(ctx.MethodBody().(*MethodBodyContext)).(Statement)
@@ -1912,11 +1897,11 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 
 	var methodNode MethodOrConstructorNode
 
-	var classNode *ClassNode
+	var classNode IClassNode
 	// if classNode is not null, the method declaration is for class declaration
 	maybeClassNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE)
 	if maybeClassNode != nil {
-		classNode = maybeClassNode.(*ClassNode)
+		classNode = maybeClassNode.(IClassNode)
 	}
 	if classNode != nil {
 		v.validateParametersOfMethodDeclaration(parameters, classNode)
@@ -1960,7 +1945,7 @@ func (v *ASTBuilder) VisitMethodDeclaration(ctx *MethodDeclarationContext) inter
 	return methodNode
 }
 
-func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, methodNode MethodOrConstructorNode, modifierManager *ModifierManager, classNode *ClassNode) {
+func (v *ASTBuilder) validateMethodDeclaration(ctx *MethodDeclarationContext, methodNode MethodOrConstructorNode, modifierManager *ModifierManager, classNode IClassNode) {
 	if ctx.t == 1 || ctx.t == 2 || ctx.t == 3 { // 1: normal method declaration; 2: abstract method declaration; 3: normal method declaration OR abstract method declaration
 		if !(ctx.ModifiersOpt().Modifiers() != nil || ctx.ReturnType() != nil) {
 			panic(createParsingFailedException("Modifiers or return type is required", parserRuleContextAdapter{ctx}))
@@ -2048,7 +2033,7 @@ func ternary(condition bool, trueVal, falseVal string) string {
 	return falseVal
 }
 
-func (v *ASTBuilder) createScriptMethodNode(modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement) *MethodNode {
+func (v *ASTBuilder) createScriptMethodNode(modifierManager *ModifierManager, methodName string, returnType IClassNode, parameters []*Parameter, exceptions []IClassNode, code Statement) *MethodNode {
 	var modifiers int
 	if modifierManager.ContainsAny(GroovyParserPRIVATE) {
 		modifiers = ACC_PRIVATE
@@ -2068,7 +2053,7 @@ func (v *ASTBuilder) createScriptMethodNode(modifierManager *ModifierManager, me
 	return methodNode
 }
 
-func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode) MethodOrConstructorNode {
+func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType IClassNode, parameters []*Parameter, exceptions []IClassNode, code Statement, classNode IClassNode) MethodOrConstructorNode {
 	className := classNode.GetNodeMetaData(CLASS_NAME).(string)
 	modifiers := modifierManager.GetClassMemberModifiersOpValue()
 
@@ -2085,7 +2070,7 @@ func (v *ASTBuilder) createConstructorOrMethodNodeForClass(ctx *MethodDeclaratio
 	}
 }
 
-func (v *ASTBuilder) createMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode, modifiers int) *MethodNode {
+func (v *ASTBuilder) createMethodNodeForClass(ctx *MethodDeclarationContext, modifierManager *ModifierManager, methodName string, returnType IClassNode, parameters []*Parameter, exceptions []IClassNode, code Statement, classNode IClassNode, modifiers int) *MethodNode {
 	if ctx.ElementValue() != nil { // the code of annotation method
 		exprStmt, err := NewExpressionStatement(v.VisitElementValue(ctx.ElementValue().(*ElementValueContext)).(Expression))
 		if err != nil {
@@ -2104,7 +2089,7 @@ func (v *ASTBuilder) createMethodNodeForClass(ctx *MethodDeclarationContext, mod
 	return methodNode
 }
 
-func (v *ASTBuilder) createConstructorNodeForClass(methodName string, parameters []*Parameter, exceptions []*ClassNode, code Statement, classNode *ClassNode, modifiers int) *ConstructorNode {
+func (v *ASTBuilder) createConstructorNodeForClass(methodName string, parameters []*Parameter, exceptions []IClassNode, code Statement, classNode IClassNode, modifiers int) *ConstructorNode {
 	thisOrSuperConstructorCallExpression := v.checkThisAndSuperConstructorCall(code)
 	if thisOrSuperConstructorCallExpression != nil {
 		panic(createParsingFailedException(thisOrSuperConstructorCallExpression.GetText()+" should be the first statement in the constructor["+methodName+"]", astNodeAdapter{thisOrSuperConstructorCallExpression}))
@@ -2132,7 +2117,7 @@ func (v *ASTBuilder) VisitMethodName(ctx *MethodNameContext) interface{} {
 
 func (v *ASTBuilder) VisitReturnType(ctx *ReturnTypeContext) interface{} {
 	if ctx == nil {
-		return dynamicType()
+		return DynamicType()
 	}
 
 	// TODO: handle this
@@ -2193,13 +2178,13 @@ func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) i
 		return v.createMultiAssignmentDeclarationListStatement(ctx, modifierManager)
 	}
 
-	variableType := v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode)
+	variableType := v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode)
 	declarators := ctx.VariableDeclarators().(*VariableDeclaratorsContext)
 	declarators.PutNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE, variableType)
 	declarationExpressionList := v.VisitVariableDeclarators(ctx.VariableDeclarators().(*VariableDeclaratorsContext)).([]*DeclarationExpression)
 
 	// if classNode is not nil, the variable declaration is for class declaration. In other words, it is a field declaration
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(*ClassNode)
+	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
 
 	if classNode != nil {
 		return v.createFieldDeclarationListStatement(ctx, modifierManager, variableType, declarationExpressionList, classNode)
@@ -2224,7 +2209,7 @@ func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) i
 	return configureAST(NewDeclarationListStatement(declarationExpressionList...), ctx)
 }
 
-func (v *ASTBuilder) createFieldDeclarationListStatement(ctx *VariableDeclarationContext, modifierManager *ModifierManager, variableType *ClassNode, declarationExpressionList []*DeclarationExpression, classNode *ClassNode) *DeclarationListStatement {
+func (v *ASTBuilder) createFieldDeclarationListStatement(ctx *VariableDeclarationContext, modifierManager *ModifierManager, variableType IClassNode, declarationExpressionList []*DeclarationExpression, classNode IClassNode) *DeclarationListStatement {
 	for i, declarationExpression := range declarationExpressionList {
 		variableExpression := declarationExpression.GetLeftExpression().(*VariableExpression)
 
@@ -2266,7 +2251,7 @@ type PropertyExpander struct {
 	*Verifier
 }
 
-func NewPropertyExpander(cNode *ClassNode) *PropertyExpander {
+func NewPropertyExpander(cNode IClassNode) *PropertyExpander {
 	pe := &PropertyExpander{
 		Verifier: NewVerifier(),
 	}
@@ -2290,7 +2275,7 @@ func (pe *PropertyExpander) CreateGetterBlock(propertyNode *PropertyNode, field 
 
 */
 
-func (v *ASTBuilder) declareProperty(ctx *GroovyParserRuleContext, modifierManager *ModifierManager, variableType *ClassNode, classNode *ClassNode, i int, startNode ASTNode, fieldName string, modifiers int, initialValue Expression) *PropertyNode {
+func (v *ASTBuilder) declareProperty(ctx *GroovyParserRuleContext, modifierManager *ModifierManager, variableType IClassNode, classNode IClassNode, i int, startNode ASTNode, fieldName string, modifiers int, initialValue Expression) *PropertyNode {
 	var propertyNode *PropertyNode
 	fieldNode := classNode.GetDeclaredField(fieldName)
 
@@ -2343,7 +2328,7 @@ func (v *ASTBuilder) declareProperty(ctx *GroovyParserRuleContext, modifierManag
 	return propertyNode
 }
 
-func (v *ASTBuilder) declareField(ctx *VariableDeclarationContext, modifierManager *ModifierManager, variableType *ClassNode, classNode *ClassNode, i int, variableExpression *VariableExpression, fieldName string, modifiers int, initialValue Expression) {
+func (v *ASTBuilder) declareField(ctx *VariableDeclarationContext, modifierManager *ModifierManager, variableType IClassNode, classNode IClassNode, i int, variableExpression *VariableExpression, fieldName string, modifiers int, initialValue Expression) {
 	var fieldNode *FieldNode
 	propertyNode := classNode.GetProperty(fieldName)
 
@@ -2385,7 +2370,7 @@ func (v *ASTBuilder) declareField(ctx *VariableDeclarationContext, modifierManag
 	}
 }
 
-func (v *ASTBuilder) isFieldDeclaration(modifierManager *ModifierManager, classNode *ClassNode) bool {
+func (v *ASTBuilder) isFieldDeclaration(modifierManager *ModifierManager, classNode IClassNode) bool {
 	return classNode.IsInterface() || modifierManager.ContainsVisibilityModifier()
 }
 
@@ -2401,14 +2386,14 @@ func (v *ASTBuilder) VisitTypeNamePair(ctx *TypeNamePairContext) interface{} {
 	return configureAST(
 		NewVariableExpression(
 			v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName(),
-			v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode),
+			v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode),
 		),
 		ctx,
 	)
 }
 
 func (v *ASTBuilder) VisitVariableDeclarators(ctx *VariableDeclaratorsContext) interface{} {
-	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(*ClassNode)
+	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(IClassNode)
 	if variableType == nil {
 		panic("variableType should not be nil")
 	}
@@ -2423,7 +2408,7 @@ func (v *ASTBuilder) VisitVariableDeclarators(ctx *VariableDeclaratorsContext) i
 }
 
 func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) interface{} {
-	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(*ClassNode)
+	variableType := ctx.GetNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE).(IClassNode)
 	if variableType == nil {
 		panic("variableType should not be nil")
 	}
@@ -2857,7 +2842,7 @@ func (v *ASTBuilder) VisitPathElement(ctx *PathElementContext) interface{} {
 				)
 			}
 
-			var classNode *ClassNode
+			var classNode IClassNode
 			if baseExprText == SUPER_STR {
 				classNode = SUPER
 			} else {
@@ -2986,7 +2971,7 @@ func (v *ASTBuilder) VisitNonWildcardTypeArguments(ctx *NonWildcardTypeArguments
 		return []*GenericsType{}
 	}
 
-	typeList := v.VisitTypeList(ctx.TypeList().(*TypeListContext)).([]*ClassNode)
+	typeList := v.VisitTypeList(ctx.TypeList().(*TypeListContext)).([]IClassNode)
 	genericsTypes := make([]*GenericsType, len(typeList))
 	for i, t := range typeList {
 		genericsTypes[i] = v.createGenericsType(t)
@@ -2996,13 +2981,13 @@ func (v *ASTBuilder) VisitNonWildcardTypeArguments(ctx *NonWildcardTypeArguments
 
 func (v *ASTBuilder) VisitTypeList(ctx *TypeListContext) interface{} {
 	if ctx == nil {
-		return []*ClassNode{}
+		return []IClassNode{}
 	}
 
 	typeContexts := ctx.AllType_()
-	classNodes := make([]*ClassNode, len(typeContexts))
+	classNodes := make([]IClassNode, len(typeContexts))
 	for i, typeCtx := range typeContexts {
-		classNodes[i] = v.VisitType(typeCtx.(*TypeContext)).(*ClassNode)
+		classNodes[i] = v.VisitType(typeCtx.(*TypeContext)).(IClassNode)
 	}
 	return classNodes
 }
@@ -3348,7 +3333,7 @@ func (v *ASTBuilder) VisitCastExprAlt(ctx *CastExprAltContext) interface{} {
 	if varExpr, ok := expr.(*VariableExpression); ok && varExpr.IsSuperExpression() {
 		createParsingFailedException("Cannot cast or coerce `super`", parserRuleContextAdapter{ctx}) // GROOVY-9391
 	}
-	cast := NewCastExpression(v.VisitCastParExpression(ctx.CastParExpression().(*CastParExpressionContext)).(*ClassNode), expr)
+	cast := NewCastExpression(v.VisitCastParExpression(ctx.CastParExpression().(*CastParExpressionContext)).(IClassNode), expr)
 	return configureAST(cast, ctx)
 }
 
@@ -3459,7 +3444,7 @@ func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) inter
 		if varExpr, ok := expr.(*VariableExpression); ok && varExpr.IsSuperExpression() {
 			createParsingFailedException("Cannot cast or coerce `super`", parserRuleContextAdapter{ctx}) // GROOVY-9391
 		}
-		cast := NewCastExpression(v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode), expr)
+		cast := NewCastExpression(v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode), expr)
 		return configureAST(cast, ctx)
 
 	case GroovyParserINSTANCEOF, GroovyParserNOT_INSTANCEOF:
@@ -3468,7 +3453,7 @@ func (v *ASTBuilder) VisitRelationalExprAlt(ctx *RelationalExprAltContext) inter
 			NewBinaryExpression(
 				v.Visit(ctx.left).(Expression),
 				v.createGroovyToken(ctx.op),
-				configureAST(NewClassExpression(v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode)), ctx.Type_()),
+				configureAST(NewClassExpression(v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode)), ctx.Type_()),
 			),
 			ctx,
 		)
@@ -3655,7 +3640,7 @@ func (v *ASTBuilder) VisitSuperPrmrAlt(ctx *SuperPrmrAltContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) interface{} {
-	classNode := v.VisitCreatedName(ctx.CreatedName().(*CreatedNameContext)).(*ClassNode)
+	classNode := v.VisitCreatedName(ctx.CreatedName().(*CreatedNameContext)).(IClassNode)
 
 	if ctx.Arguments() != nil { // create instance of class
 		arguments := v.VisitArguments(ctx.Arguments().(*ArgumentsContext)).(Expression)
@@ -3801,9 +3786,9 @@ func (v *ASTBuilder) VisitDim(ctx *DimContext) interface{} {
 	)
 }
 
-func nextAnonymousClassName(outerClass *ClassNode) string {
+func nextAnonymousClassName(outerClass IClassNode) string {
 	anonymousClassCount := 0
-	for _, innerClass := range outerClass.innerClasses {
+	for _, innerClass := range outerClass.GetInnerClasses() {
 		if innerClass.IsAnonymous() {
 			anonymousClassCount++
 		}
@@ -3813,12 +3798,12 @@ func nextAnonymousClassName(outerClass *ClassNode) string {
 }
 
 func (v *ASTBuilder) VisitAnonymousInnerClassDeclaration(ctx *AnonymousInnerClassDeclarationContext) interface{} {
-	superClass := ctx.GetNodeMetaData(ANONYMOUS_INNER_CLASS_SUPER_CLASS).(*ClassNode)
+	superClass := ctx.GetNodeMetaData(ANONYMOUS_INNER_CLASS_SUPER_CLASS).(IClassNode)
 	if superClass == nil {
 		panic("superClass should not be nil")
 	}
 
-	var outerClass *ClassNode
+	var outerClass IClassNode
 	if v.classNodeStack.Len() > 0 {
 		outerClass = v.peekClassNode()
 	} else {
@@ -3854,17 +3839,17 @@ func (v *ASTBuilder) VisitAnonymousInnerClassDeclaration(ctx *AnonymousInnerClas
 }
 
 func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) interface{} {
-	var classNode *ClassNode
+	var classNode IClassNode
 
 	if ctx.QualifiedClassName() != nil {
-		classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(*ClassNode)
+		classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode)
 		if ctx.TypeArgumentsOrDiamond() != nil {
 			classNode.SetGenericsTypes(
 				v.VisitTypeArgumentsOrDiamond(ctx.TypeArgumentsOrDiamond().(*TypeArgumentsOrDiamondContext)).([]*GenericsType))
 			configureAST(classNode, ctx)
 		}
 	} else if ctx.PrimitiveType() != nil {
-		classNode = configureAST(v.VisitPrimitiveType(ctx.PrimitiveType().(*PrimitiveTypeContext)).(*ClassNode), ctx)
+		classNode = configureAST(v.VisitPrimitiveType(ctx.PrimitiveType().(*PrimitiveTypeContext)).(IClassNode), ctx)
 	}
 
 	if classNode == nil {
@@ -4261,7 +4246,7 @@ func (v *ASTBuilder) createLambda(standardLambdaParametersContext IStandardLambd
 func (v *ASTBuilder) VisitStandardLambdaParameters(ctx *StandardLambdaParametersContext) interface{} {
 	if ctx.VariableDeclaratorId() != nil {
 		variable := v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression)
-		parameter := NewParameter(dynamicType(), variable.GetName())
+		parameter := NewParameter(DynamicType(), variable.GetName())
 		configureASTFromSource(parameter, variable)
 		return []*Parameter{parameter}
 	}
@@ -4378,7 +4363,7 @@ func (v *ASTBuilder) VisitFormalParameter(ctx *FormalParameterContext) interface
 }
 
 func (v *ASTBuilder) VisitThisFormalParameter(ctx *ThisFormalParameterContext) interface{} {
-	return configureAST(NewParameter(v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode), THIS_STR), ctx)
+	return configureAST(NewParameter(v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode), THIS_STR), ctx)
 }
 
 func (v *ASTBuilder) VisitClassOrInterfaceModifiersOpt(ctx *ClassOrInterfaceModifiersOptContext) interface{} {
@@ -4489,18 +4474,18 @@ func (v *ASTBuilder) VisitEmptyDimsOpt(ctx *EmptyDimsOptContext) interface{} {
 
 func (v *ASTBuilder) VisitType(ctx *TypeContext) interface{} {
 	if ctx == nil {
-		return dynamicType()
+		return DynamicType()
 	}
 
-	var classNode *ClassNode
+	var classNode IClassNode
 
 	if ctx.GeneralClassOrInterfaceType() != nil {
 		if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
 			ctx.GeneralClassOrInterfaceType().(*GeneralClassOrInterfaceTypeContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
 		}
-		classNode = v.VisitClassOrInterfaceType(ctx.GeneralClassOrInterfaceType().(*GeneralClassOrInterfaceTypeContext)).(*ClassNode)
+		classNode = v.VisitClassOrInterfaceType(ctx.GeneralClassOrInterfaceType().(*GeneralClassOrInterfaceTypeContext)).(IClassNode)
 	} else if ctx.PrimitiveType() != nil {
-		classNode = v.VisitPrimitiveType(ctx.PrimitiveType().(*PrimitiveTypeContext)).(*ClassNode)
+		classNode = v.VisitPrimitiveType(ctx.PrimitiveType().(*PrimitiveTypeContext)).(IClassNode)
 	}
 
 	if classNode == nil {
@@ -4521,12 +4506,12 @@ func (v *ASTBuilder) VisitType(ctx *TypeContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitClassOrInterfaceType(ctx *GeneralClassOrInterfaceTypeContext) interface{} {
-	var classNode *ClassNode
+	var classNode IClassNode
 	if ctx.QualifiedClassName() != nil {
 		if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
 			ctx.QualifiedClassName().(*QualifiedClassNameContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
 		}
-		classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(*ClassNode)
+		classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode)
 	} else {
 		// TODO: implement this
 		/*
@@ -4575,12 +4560,12 @@ func (v *ASTBuilder) VisitTypeArgument(ctx *TypeArgumentContext) interface{} {
 			return configureAST(genericsType, ctx)
 		}
 
-		var upperBounds []*ClassNode
-		var lowerBound *ClassNode
+		var upperBounds []IClassNode
+		var lowerBound IClassNode
 
-		classNode := v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode)
+		classNode := v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode)
 		if ctx.EXTENDS() != nil {
-			upperBounds = []*ClassNode{classNode}
+			upperBounds = []IClassNode{classNode}
 		} else if ctx.SUPER() != nil {
 			lowerBound = classNode
 		}
@@ -4590,7 +4575,7 @@ func (v *ASTBuilder) VisitTypeArgument(ctx *TypeArgumentContext) interface{} {
 
 		return configureAST(genericsType, ctx)
 	} else if ctx.Type_() != nil {
-		baseType := v.VisitType(ctx.Type_().(*TypeContext)).(*ClassNode)
+		baseType := v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode)
 		return configureAST(v.createGenericsType(baseType), ctx)
 	}
 
@@ -4713,7 +4698,7 @@ func (v *ASTBuilder) VisitElementValues(ctx *ElementValuesContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitAnnotationName(ctx *AnnotationNameContext) interface{} {
-	return v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(*ClassNode).GetName()
+	return v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode).GetName()
 }
 
 func (v *ASTBuilder) VisitElementValuePairs(ctx *ElementValuePairsContext) interface{} {
@@ -4770,7 +4755,7 @@ func (v *ASTBuilder) VisitQualifiedName(ctx *QualifiedNameContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitAnnotatedQualifiedClassName(ctx *AnnotatedQualifiedClassNameContext) interface{} {
-	classNode := v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(*ClassNode)
+	classNode := v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode)
 
 	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
 
@@ -4779,12 +4764,12 @@ func (v *ASTBuilder) VisitAnnotatedQualifiedClassName(ctx *AnnotatedQualifiedCla
 
 func (v *ASTBuilder) VisitQualifiedClassNameList(ctx *QualifiedClassNameListContext) interface{} {
 	if ctx == nil {
-		return []*ClassNode{}
+		return []IClassNode{}
 	}
 
-	var classNodes []*ClassNode
+	var classNodes []IClassNode
 	for _, annotatedQualifiedClassName := range ctx.AllAnnotatedQualifiedClassName() {
-		classNodes = append(classNodes, v.VisitAnnotatedQualifiedClassName(annotatedQualifiedClassName.(*AnnotatedQualifiedClassNameContext)).(*ClassNode))
+		classNodes = append(classNodes, v.VisitAnnotatedQualifiedClassName(annotatedQualifiedClassName.(*AnnotatedQualifiedClassNameContext)).(IClassNode))
 	}
 	return classNodes
 }
@@ -4797,7 +4782,7 @@ func (v *ASTBuilder) VisitQualifiedStandardClassName(ctx *QualifiedStandardClass
 	return v.createClassNode(ctx.GroovyParserRuleContext)
 }
 
-func (v *ASTBuilder) createArrayTypeWithAnnotations(elementType *ClassNode, dimAnnotationsList [][]*AnnotationNode) *ClassNode {
+func (v *ASTBuilder) createArrayTypeWithAnnotations(elementType IClassNode, dimAnnotationsList [][]*AnnotationNode) IClassNode {
 	arrayType := elementType
 	for i := len(dimAnnotationsList) - 1; i >= 0; i-- {
 		arrayType = v.createArrayType(arrayType)
@@ -4806,14 +4791,14 @@ func (v *ASTBuilder) createArrayTypeWithAnnotations(elementType *ClassNode, dimA
 	return arrayType
 }
 
-func (v *ASTBuilder) createArrayType(elementType *ClassNode) *ClassNode {
+func (v *ASTBuilder) createArrayType(elementType IClassNode) IClassNode {
 	if IsPrimitiveVoid(elementType) {
 		panic(createParsingFailedException("void[] is an invalid type", astNodeAdapter{elementType}))
 	}
 	return elementType.MakeArray()
 }
 
-func (v *ASTBuilder) createClassNode(ctx *GroovyParserRuleContext) *ClassNode {
+func (v *ASTBuilder) createClassNode(ctx *GroovyParserRuleContext) IClassNode {
 	result := MakeFromString(ctx.GetText())
 	if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
 		// type in the "instanceof" expression shouldn't have redirect
@@ -4823,7 +4808,7 @@ func (v *ASTBuilder) createClassNode(ctx *GroovyParserRuleContext) *ClassNode {
 	return configureAST(result, ctx)
 }
 
-func (v *ASTBuilder) proxyClassNode(classNode *ClassNode) *ClassNode {
+func (v *ASTBuilder) proxyClassNode(classNode IClassNode) IClassNode {
 	if !classNode.IsUsingGenerics() {
 		return classNode
 	}
@@ -4879,7 +4864,7 @@ func (v *ASTBuilder) createMethodCallExpression(baseExpr Expression, arguments E
 }
 
 func (v *ASTBuilder) processFormalParameter(ctx *FormalParameterContext, variableModifiersOptContext *VariableModifiersOptContext, typeContext *TypeContext, ellipsis antlr.TerminalNode, variableDeclaratorIdContext *VariableDeclaratorIdContext, expressionContext IExpressionContext) *Parameter {
-	classNode := v.VisitType(typeContext).(*ClassNode)
+	classNode := v.VisitType(typeContext).(IClassNode)
 
 	if ellipsis != nil {
 		classNode = v.createArrayType(classNode)
@@ -4929,7 +4914,7 @@ func (v *ASTBuilder) createPathExpression(primaryExpr Expression, pathElementCon
 	return result
 }
 
-func (v *ASTBuilder) createGenericsType(classNode *ClassNode) *GenericsType {
+func (v *ASTBuilder) createGenericsType(classNode IClassNode) *GenericsType {
 	genericsType := NewGenericsTypeWithBasicType(classNode)
 	return configureASTFromSource(genericsType, classNode)
 }
@@ -5007,7 +4992,7 @@ func (v *ASTBuilder) appendStatementsToBlockStatementFromList(bs *BlockStatement
 	return bs
 }
 
-func (v *ASTBuilder) isAnnotationDeclaration(classNode *ClassNode) bool {
+func (v *ASTBuilder) isAnnotationDeclaration(classNode IClassNode) bool {
 	return classNode != nil && classNode.IsAnnotationDefinition()
 }
 
@@ -5032,11 +5017,11 @@ func (v *ASTBuilder) isSyntheticPublic(isAnnotationDeclaration, isAnonymousInner
 }
 
 // the mixins of interface and annotation should be nil
-func (v *ASTBuilder) hackMixins(classNode *ClassNode) {
+func (v *ASTBuilder) hackMixins(classNode IClassNode) {
 	classNode.SetMixins(nil)
 }
 
-var TYPE_DEFAULT_VALUE_MAP = map[*ClassNode]interface{}{
+var TYPE_DEFAULT_VALUE_MAP = map[IClassNode]interface{}{
 	INT_TYPE:     0,
 	LONG_TYPE:    int64(0),
 	DOUBLE_TYPE:  0.0,
@@ -5047,7 +5032,7 @@ var TYPE_DEFAULT_VALUE_MAP = map[*ClassNode]interface{}{
 	BOOLEAN_TYPE: false,
 }
 
-func (v *ASTBuilder) findDefaultValueByType(t *ClassNode) interface{} {
+func (v *ASTBuilder) findDefaultValueByType(t IClassNode) interface{} {
 	return TYPE_DEFAULT_VALUE_MAP[t]
 }
 
@@ -5185,12 +5170,12 @@ func isPrimitiveType(name string) bool {
 }
 
 // Helper function to check if a ClassNode represents void
-func isPrimitiveVoid(classNode *ClassNode) bool {
+func isPrimitiveVoid(classNode IClassNode) bool {
 	// Assuming ClassHelper.isPrimitiveVoid is implemented similarly in Go
 	return classNode == VOID_TYPE
 }
 
-func (v *ASTBuilder) createArrayTypeAnnotations(elementType *ClassNode, dimAnnotationsList [][]*AnnotationNode, ctx antlr.ParserRuleContext) *ClassNode {
+func (v *ASTBuilder) createArrayTypeAnnotations(elementType IClassNode, dimAnnotationsList [][]*AnnotationNode, ctx antlr.ParserRuleContext) IClassNode {
 	arrayType := elementType
 
 	for i := len(dimAnnotationsList) - 1; i >= 0; i-- {

@@ -9,10 +9,10 @@ type Variable interface {
 	GetName() string
 
 	// GetType returns the type of the variable.
-	GetType() *ClassNode
+	GetType() IClassNode
 
 	// GetOriginType returns the type before wrapping primitives type of the variable.
-	GetOriginType() *ClassNode
+	GetOriginType() IClassNode
 
 	// GetInitialExpression returns the expression used to initialize the variable or nil if there
 	// is no initialization.

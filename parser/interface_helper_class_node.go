@@ -9,7 +9,7 @@ type InterfaceHelperClassNode struct {
 // NewInterfaceHelperClassNode creates a new InterfaceHelperClassNode with the given parameters.
 func NewInterfaceHelperClassNode(outerClass *ClassNode, name string, modifiers int, superClass *ClassNode, callSites []string) *InterfaceHelperClassNode {
 	icn := &InterfaceHelperClassNode{
-		InnerClassNode: NewInnerClassNodeWithInterfaces(nil, name, modifiers, superClass, []*ClassNode{}, []*MixinNode{}),
+		InnerClassNode: NewInnerClassNodeWithInterfaces(nil, name, modifiers, superClass, []IClassNode{}, []*MixinNode{}),
 		callSites:      make([]string, 0),
 	}
 	icn.SetCallSites(callSites)

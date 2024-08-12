@@ -36,7 +36,7 @@ func (p *PostfixExpression) GetText() string {
 	return fmt.Sprintf("(%s%s)", p.GetExpression().GetText(), p.GetOperation().GetText())
 }
 
-func (p *PostfixExpression) GetType() *ClassNode {
+func (p *PostfixExpression) GetType() IClassNode {
 	return p.GetExpression().GetType()
 }
 

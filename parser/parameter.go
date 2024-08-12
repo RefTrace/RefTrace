@@ -8,9 +8,9 @@ var _ Variable = (*Parameter)(nil)
 
 type Parameter struct {
 	*AnnotatedNode
-	paramType       *ClassNode
+	paramType       IClassNode
 	name            string
-	originType      *ClassNode
+	originType      IClassNode
 	dynamicTyped    bool
 	closureShare    bool
 	defaultValue    Expression
@@ -19,7 +19,7 @@ type Parameter struct {
 	modifiers       int
 }
 
-func NewParameter(paramType *ClassNode, name string) *Parameter {
+func NewParameter(paramType IClassNode, name string) *Parameter {
 	p := &Parameter{
 		AnnotatedNode: NewAnnotatedNode(),
 		name:          name,
@@ -30,7 +30,7 @@ func NewParameter(paramType *ClassNode, name string) *Parameter {
 	return p
 }
 
-func NewParameterWithDefault(paramType *ClassNode, name string, defaultValue Expression) *Parameter {
+func NewParameterWithDefault(paramType IClassNode, name string, defaultValue Expression) *Parameter {
 	p := NewParameter(paramType, name)
 	p.SetInitialExpression(defaultValue)
 	return p
@@ -48,7 +48,7 @@ func (p Parameter) GetName() string {
 	return p.name
 }
 
-func (p Parameter) GetType() *ClassNode {
+func (p Parameter) GetType() IClassNode {
 	return p.paramType
 }
 
@@ -56,7 +56,7 @@ func (p Parameter) Modifiers() int {
 	return p.modifiers
 }
 
-func (p *Parameter) setType(paramType *ClassNode) {
+func (p *Parameter) setType(paramType IClassNode) {
 	p.paramType = paramType
 	p.dynamicTyped = p.dynamicTyped || isDynamicTyped(paramType)
 }
@@ -106,11 +106,11 @@ func (p *Parameter) SetModifiers(modifiers int) {
 	p.modifiers = modifiers
 }
 
-func (p Parameter) GetOriginType() *ClassNode {
+func (p Parameter) GetOriginType() IClassNode {
 	return p.originType
 }
 
-func (p *Parameter) SetOriginType(cn *ClassNode) {
+func (p *Parameter) SetOriginType(cn IClassNode) {
 	p.originType = cn
 }
 
@@ -124,7 +124,7 @@ func (p Parameter) IsReceiver() bool {
 
 // Helper functions
 
-func isDynamicTyped(cn *ClassNode) bool {
+func isDynamicTyped(cn IClassNode) bool {
 	// Implement this function based on your ClassHelper.isDynamicTyped logic
 	// TODO: implement this
 	return true

@@ -41,6 +41,14 @@ func (p *PropertyNode) GetModifiers() int {
 	return p.modifiers
 }
 
+func (p *PropertyNode) IsFinal() bool {
+	return p.modifiers&ACC_FINAL != 0
+}
+
+func (p *PropertyNode) IsStatic() bool {
+	return p.modifiers&ACC_STATIC != 0
+}
+
 // SetModifiers sets the modifiers of the property
 func (p *PropertyNode) SetModifiers(modifiers int) {
 	p.modifiers = modifiers
@@ -116,12 +124,12 @@ func (p *PropertyNode) GetName() string {
 }
 
 // GetType returns the type of the property
-func (p *PropertyNode) GetType() *ClassNode {
+func (p *PropertyNode) GetType() IClassNode {
 	return p.field.GetType()
 }
 
 // GetOriginType returns the origin type of the property
-func (p *PropertyNode) GetOriginType() *ClassNode {
+func (p *PropertyNode) GetOriginType() IClassNode {
 	return p.field.GetOriginType()
 }
 

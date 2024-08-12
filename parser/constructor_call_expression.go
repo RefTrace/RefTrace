@@ -12,7 +12,7 @@ type ConstructorCallExpression struct {
 }
 
 // NewConstructorCallExpression creates a new ConstructorCallExpression.
-func NewConstructorCallExpression(typ *ClassNode, arguments Expression) *ConstructorCallExpression {
+func NewConstructorCallExpression(typ IClassNode, arguments Expression) *ConstructorCallExpression {
 	cce := &ConstructorCallExpression{BaseExpression: NewBaseExpression()}
 	cce.SetType(typ)
 

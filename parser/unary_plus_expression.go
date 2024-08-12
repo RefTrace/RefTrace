@@ -17,7 +17,7 @@ func (u *UnaryPlusExpression) GetText() string {
 	return "+(" + u.GetExpression().GetText() + ")"
 }
 
-func (u *UnaryPlusExpression) GetType() *ClassNode {
+func (u *UnaryPlusExpression) GetType() IClassNode {
 	return u.GetExpression().GetType() // TODO: promote byte, char and short to int
 }
 

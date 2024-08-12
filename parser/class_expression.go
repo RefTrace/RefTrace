@@ -6,7 +6,7 @@ type ClassExpression struct {
 	*BaseExpression
 }
 
-func NewClassExpression(typ *ClassNode) *ClassExpression {
+func NewClassExpression(typ IClassNode) *ClassExpression {
 	ce := &ClassExpression{BaseExpression: NewBaseExpression()}
 	ce.SetType(typ)
 	return ce

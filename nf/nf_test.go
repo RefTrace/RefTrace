@@ -29,6 +29,7 @@ func TestSarekEntireMain(t *testing.T) {
 	tree := groovyParser.CompilationUnit()
 	builder := parser.NewASTBuilder(filePath)
 	ast := builder.Visit(tree).(*parser.ModuleNode)
+	cls := ast.GetClasses()[0]
 	paramVisitor := NewParamVisitor()
 	paramVisitor.VisitBlockStatement(ast.StatementBlock)
 	params := paramVisitor.GetSortedParams()
@@ -41,4 +42,6 @@ func TestSarekEntireMain(t *testing.T) {
 	if len(includes) != 8 {
 		t.Fatalf("Expected 8 includes, got %d", len(includes))
 	}
+	stcVisitor := NewStcVisitor(cls)
+	stcVisitor.VisitBlockStatement(ast.StatementBlock)
 }

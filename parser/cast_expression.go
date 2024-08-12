@@ -21,12 +21,12 @@ func AsExpression(typ *ClassNode, expression Expression) *CastExpression {
 }
 
 // NewCastExpression creates a new CastExpression.
-func NewCastExpression(typ *ClassNode, expression Expression) *CastExpression {
+func NewCastExpression(typ IClassNode, expression Expression) *CastExpression {
 	return NewCastExpressionWithAutoboxing(typ, expression, false)
 }
 
 // NewCastExpressionWithAutoboxing creates a new CastExpression with autoboxing option.
-func NewCastExpressionWithAutoboxing(typ *ClassNode, expression Expression, ignoreAutoboxing bool) *CastExpression {
+func NewCastExpressionWithAutoboxing(typ IClassNode, expression Expression, ignoreAutoboxing bool) *CastExpression {
 	ce := &CastExpression{
 		BaseExpression:   NewBaseExpression(),
 		expression:       expression,
@@ -100,6 +100,6 @@ func (ce *CastExpression) GetText() string {
 }
 
 // SetType is not supported for CastExpression.
-func (ce *CastExpression) SetType(typ *ClassNode) {
+func (ce *CastExpression) SetType(typ IClassNode) {
 	panic("SetType is not supported for CastExpression")
 }

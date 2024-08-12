@@ -11,12 +11,12 @@ type FieldNode struct {
 	Variable
 	name                   string
 	modifiers              int
-	fieldType              *ClassNode
-	owner                  *ClassNode
+	fieldType              IClassNode
+	owner                  IClassNode
 	initialValueExpression Expression
 	dynamicTyped           bool
 	holder                 bool
-	originType             *ClassNode
+	originType             IClassNode
 }
 
 func NewStatic(theClass reflect.Type, name string) (*FieldNode, error) {
@@ -26,14 +26,15 @@ func NewStatic(theClass reflect.Type, name string) (*FieldNode, error) {
 	}
 	fldType := Make(field.Type)
 	return &FieldNode{
-		name:      name,
-		modifiers: ACC_PUBLIC | ACC_STATIC,
-		fieldType: fldType,
-		owner:     Make(theClass),
+		AnnotatedNode: NewAnnotatedNode(),
+		name:          name,
+		modifiers:     ACC_PUBLIC | ACC_STATIC,
+		fieldType:     fldType,
+		owner:         Make(theClass),
 	}, nil
 }
 
-func NewFieldNode(name string, modifiers int, fieldType, owner *ClassNode, initialValueExpression Expression) *FieldNode {
+func NewFieldNode(name string, modifiers int, fieldType, owner IClassNode, initialValueExpression Expression) *FieldNode {
 	f := &FieldNode{
 		name:                   name,
 		modifiers:              modifiers,
@@ -52,17 +53,17 @@ func (f *FieldNode) GetName() string {
 	return f.name
 }
 
-func (f *FieldNode) GetType() *ClassNode {
+func (f *FieldNode) GetType() IClassNode {
 	return f.fieldType
 }
 
-func (f *FieldNode) SetType(fieldType *ClassNode) {
+func (f *FieldNode) SetType(fieldType IClassNode) {
 	f.fieldType = fieldType
 	f.originType = fieldType
 	f.dynamicTyped = f.dynamicTyped || IsDynamicTyped(fieldType)
 }
 
-func (f *FieldNode) GetOwner() *ClassNode {
+func (f *FieldNode) GetOwner() IClassNode {
 	return f.owner
 }
 
@@ -110,14 +111,12 @@ func (f *FieldNode) SetInitialValueExpression(initialValueExpression Expression)
 	f.initialValueExpression = initialValueExpression
 }
 
-func (f *FieldNode) Equals(obj interface{}) bool {
-	if obj != nil && reflect.TypeOf(obj).String() == "org.codehaus.groovy.ast.decompiled.LazyFieldNode" {
-		return obj.(interface{ Equals(*FieldNode) bool }).Equals(f)
-	}
+func (f *FieldNode) Equals(obj IClassNode) bool {
+	// TODO: implement LazyFieldNode
 	return f.AnnotatedNode.declaringClass.Equals(obj)
 }
 
-func (f *FieldNode) GetOriginType() *ClassNode {
+func (f *FieldNode) GetOriginType() IClassNode {
 	return f.originType
 }
 

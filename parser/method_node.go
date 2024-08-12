@@ -5,23 +5,58 @@ import (
 	"strings"
 )
 
+var _ MethodOrConstructorNode = (*MethodNode)(nil)
+
+type MethodOrConstructorNode interface {
+	NodeMetaDataHandler
+	ASTNode
+	GetName() string
+	GetModifiers() int
+	IsAbstract() bool
+	IsConstructor() bool
+	GetGenericsTypes() []*GenericsType
+	SetGenericsTypes(genericsTypes []*GenericsType)
+	SetSyntheticPublic(syntheticPublic bool)
+	GetParameters() []*Parameter
+	GetVariableScope() *VariableScope
+	GetDeclaringClass() IClassNode
+	IsStatic() bool
+	Code() Statement
+	Name() string
+	SetSynthetic(synthetic bool)
+	SetDeclaringClass(declaringClass IClassNode)
+	IsDefault() bool
+	GetTypeDescriptor() string
+	GetReturnType() IClassNode
+	GetExceptions() []IClassNode
+	GetCode() Statement
+	IsVoidMethod() bool
+	HasDefaultValue() bool
+	GetAnnotations() []*AnnotationNode
+	AddAnnotations(annotations []*AnnotationNode)
+	IsPublic() bool
+	IsProtected() bool
+	IsPrivate() bool
+	IsPackageScope() bool
+}
+
 type MethodNode struct {
 	*AnnotatedNode
 	name              string
 	modifiers         int
 	syntheticPublic   bool
-	returnType        *ClassNode
+	returnType        IClassNode
 	parameters        []*Parameter
 	hasDefaultValue   bool
 	code              Statement
 	dynamicReturnType bool
 	variableScope     *VariableScope
-	exceptions        []*ClassNode
+	exceptions        []IClassNode
 	genericsTypes     []*GenericsType
 	typeDescriptor    string
 }
 
-func NewMethodNode(name string, modifiers int, returnType *ClassNode, parameters []*Parameter, exceptions []*ClassNode, code Statement) *MethodNode {
+func NewMethodNode(name string, modifiers int, returnType IClassNode, parameters []*Parameter, exceptions []IClassNode, code Statement) *MethodNode {
 	mn := &MethodNode{
 		AnnotatedNode: NewAnnotatedNode(),
 		name:          name,
@@ -32,6 +67,30 @@ func NewMethodNode(name string, modifiers int, returnType *ClassNode, parameters
 	mn.SetReturnType(returnType)
 	mn.SetParameters(parameters)
 	return mn
+}
+
+func (mn *MethodNode) HasDefaultValue() bool {
+	return mn.hasDefaultValue
+}
+
+func (mn *MethodNode) IsVoidMethod() bool {
+	return IsPrimitiveVoid(mn.returnType)
+}
+
+func (mn *MethodNode) GetCode() Statement {
+	return mn.code
+}
+
+func (mn *MethodNode) GetExceptions() []IClassNode {
+	return mn.exceptions
+}
+
+func (mn *MethodNode) GetReturnType() IClassNode {
+	return mn.returnType
+}
+
+func (mn *MethodNode) GetGenericsTypes() []*GenericsType {
+	return mn.genericsTypes
 }
 
 func (mn *MethodNode) SetModifiers(modifiers int) {
@@ -86,7 +145,7 @@ func (mn *MethodNode) invalidateCachedData() {
 
 // Getter and setter methods...
 
-func (mn *MethodNode) SetReturnType(returnType *ClassNode) {
+func (mn *MethodNode) SetReturnType(returnType IClassNode) {
 	mn.invalidateCachedData()
 	mn.dynamicReturnType = mn.dynamicReturnType || IsDynamicTyped(returnType)
 	if returnType != nil {

@@ -45,12 +45,12 @@ func (f *FieldExpression) GetText() string {
 }
 
 // GetType returns the type of the field
-func (f *FieldExpression) GetType() *ClassNode {
+func (f *FieldExpression) GetType() IClassNode {
 	return f.field.GetType()
 }
 
 // SetType sets the type of the field
-func (f *FieldExpression) SetType(t *ClassNode) {
+func (f *FieldExpression) SetType(t IClassNode) {
 	f.field.SetType(t)
 }
 

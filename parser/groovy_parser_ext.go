@@ -2,10 +2,23 @@ package parser
 
 import (
 	"errors"
+	"sort"
 	"unicode"
 
 	"github.com/antlr4-go/antlr/v4"
 )
+
+var MODIFIER_ARRAY []int
+
+func init() {
+	// Initialize MODIFIER_ARRAY based on ModifierOpcodeMap keys
+	for k := range ModifierOpcodeMap {
+		MODIFIER_ARRAY = append(MODIFIER_ARRAY, k)
+	}
+
+	// Sort the array
+	sort.Ints(MODIFIER_ARRAY)
+}
 
 type GroovyParserRuleContext struct {
 	antlr.BaseParserRuleContext
@@ -148,28 +161,6 @@ func isInvalidMethodDeclaration(ts antlr.TokenStream) bool {
 
 	return (tokenType == GroovyParserIdentifier || tokenType == GroovyParserCapitalizedIdentifier || tokenType == GroovyParserStringLiteral || tokenType == GroovyParserYIELD) &&
 		ts.LT(2).GetTokenType() == GroovyParserLPAREN
-}
-
-const ANNOTATION_TYPE = -999
-
-var MODIFIER_ARRAY = []int{
-	ANNOTATION_TYPE,
-	GroovyParserDEF,
-	GroovyParserVAR,
-	GroovyParserNATIVE,
-	GroovyParserSYNCHRONIZED,
-	GroovyParserTRANSIENT,
-	GroovyParserVOLATILE,
-	GroovyParserPUBLIC,
-	GroovyParserPROTECTED,
-	GroovyParserPRIVATE,
-	GroovyParserSTATIC,
-	GroovyParserABSTRACT,
-	GroovyParserSEALED,
-	GroovyParserNON_SEALED,
-	GroovyParserFINAL,
-	GroovyParserSTRICTFP,
-	GroovyParserDEFAULT,
 }
 
 func contains(arr []int, item int) bool {

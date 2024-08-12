@@ -8,7 +8,7 @@ import (
 // AnnotationNode represents an annotation which can be attached to interfaces, classes, methods, fields, parameters, and other places.
 type AnnotationNode struct {
 	*BaseASTNode
-	classNode        *ClassNode
+	classNode        IClassNode
 	members          map[string]Expression
 	runtimeRetention bool
 	sourceRetention  bool
@@ -35,7 +35,7 @@ const AllTargets = TypeTarget | ConstructorTarget | MethodTarget |
 	PackageTarget | TypeParameterTarget | TypeUseTarget | RecordComponentTarget
 
 // NewAnnotationNode creates a new AnnotationNode
-func NewAnnotationNode(classNode *ClassNode) *AnnotationNode {
+func NewAnnotationNode(classNode IClassNode) *AnnotationNode {
 	return &AnnotationNode{
 		BaseASTNode:    &BaseASTNode{},
 		classNode:      classNode,
@@ -44,7 +44,7 @@ func NewAnnotationNode(classNode *ClassNode) *AnnotationNode {
 }
 
 // GetClassNode returns the ClassNode of this annotation
-func (an *AnnotationNode) GetClassNode() *ClassNode {
+func (an *AnnotationNode) GetClassNode() IClassNode {
 	return an.classNode
 }
 

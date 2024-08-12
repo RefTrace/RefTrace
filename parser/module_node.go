@@ -10,7 +10,7 @@ import (
 
 type ModuleNode struct {
 	*BaseASTNode
-	Classes           []*ClassNode
+	Classes           []IClassNode
 	Methods           []*MethodNode
 	Imports           []*ImportNode
 	StarImports       []*ImportNode
@@ -21,14 +21,16 @@ type ModuleNode struct {
 	Description       string
 	MainClassName     string
 	StatementBlock    *BlockStatement
-	ScriptDummy       *ClassNode
+	ScriptDummy       IClassNode
 	ImportsResolved   bool
 }
 
-func NewModuleNode() *ModuleNode {
+func NewModuleNode(description string) *ModuleNode {
 	// TODO: initialize the base AST node
 	return &ModuleNode{
-		Classes:           []*ClassNode{},
+		BaseASTNode:       NewBaseASTNode(),
+		Description:       description,
+		Classes:           []IClassNode{},
 		Methods:           []*MethodNode{},
 		Imports:           []*ImportNode{},
 		StarImports:       []*ImportNode{},
@@ -38,7 +40,90 @@ func NewModuleNode() *ModuleNode {
 	}
 }
 
-func (m *ModuleNode) setScriptBaseClassFromConfig(cn *ClassNode) {
+func (m *ModuleNode) GetClasses() []IClassNode {
+	mainClass := m.createStatementsClass()
+	m.MainClassName = mainClass.GetName()
+	m.Classes = append([]IClassNode{mainClass}, m.Classes...)
+	//mainClass.SetModule(m)
+	//m.AddToCompileUnit(mainClass)
+	return m.Classes // Note: Go doesn't have built-in immutable collections
+}
+
+func (m *ModuleNode) createStatementsClass() IClassNode {
+	classNode := m.GetScriptClassDummy()
+	if strings.HasSuffix(classNode.GetName(), "package-info") {
+		return classNode
+	}
+
+	//hasUncontainedStatements := false
+	var fields []*FieldNode
+
+	// Check for uncontained statements (excluding decl statements)
+	for _, statement := range m.StatementBlock.GetStatements() {
+		if _, ok := statement.(*ExpressionStatement); !ok {
+			//hasUncontainedStatements = true
+			break
+		}
+		es := statement.(*ExpressionStatement)
+		expression := es.GetExpression()
+		if _, ok := expression.(*DeclarationExpression); !ok {
+			//hasUncontainedStatements = true
+			break
+		}
+		de := expression.(*DeclarationExpression)
+		if de.IsMultipleAssignmentDeclaration() {
+			variables := de.GetTupleExpression().GetExpressions()
+			rightExpr, ok := de.GetRightExpression().(*ListExpression)
+			if !ok {
+				break
+			}
+			values := rightExpr.GetExpressions()
+			for i, v := range variables {
+				varExpr := v.(*VariableExpression)
+				var val Expression
+				if i < len(values) {
+					val = values[i]
+				}
+				fields = append(fields, NewFieldNode(varExpr.GetName(), varExpr.GetModifiers(), varExpr.GetType(), nil, val))
+			}
+		} else {
+			ve := de.GetVariableExpression()
+			fields = append(fields, NewFieldNode(ve.GetName(), ve.GetModifiers(), ve.GetType(), nil, de.GetRightExpression()))
+		}
+	}
+
+	methodNode := NewMethodNode("run", ACC_PUBLIC, OBJECT_TYPE, []*Parameter{}, []IClassNode{}, m.StatementBlock)
+	methodNode.SetIsScriptBody()
+	AddGeneratedMethod(classNode, methodNode, true)
+
+	classNode.AddConstructorWithDetails(ACC_PUBLIC, []*Parameter{}, []IClassNode{}, NewBlockStatement())
+
+	var stmt Statement
+
+	stmt, _ = NewExpressionStatement(NewConstructorCallExpression(
+		SUPER_EXPRESSION.GetType(),
+		NewArgumentListExpressionFromSlice(NewVariableExpressionWithString("context")),
+	))
+
+	classNode.AddConstructorWithDetails(ACC_PUBLIC, []*Parameter{NewParameter(BINDING_TYPE, "context")}, []IClassNode{}, stmt)
+
+	for _, method := range m.Methods {
+		if method.IsAbstract() {
+			panic(fmt.Sprintf("Cannot use abstract methods in a script, they are only available inside classes. Method: %s", method.GetName()))
+		}
+		classNode.AddMethod(method)
+	}
+
+	return classNode
+}
+
+func AddGeneratedMethod(cNode IClassNode, mNode *MethodNode, skipChecks bool) {
+	cNode.AddMethod(mNode)
+	// TODO: implement MarkAsGenerated
+	// AnnotatedNodeUtils.MarkAsGenerated(cNode, mNode, skipChecks)
+}
+
+func (m *ModuleNode) setScriptBaseClassFromConfig(cn IClassNode) {
 	/*
 		var baseClassName string = ""
 		//var bcLoader ClassLoader
@@ -55,7 +140,7 @@ func (m *ModuleNode) setScriptBaseClassFromConfig(cn *ClassNode) {
 		if baseClassName != "" && cn.GetSuperClass().GetName() != baseClassName {
 			cn.AddAnnotation(NewAnnotationNode(BaseScriptASTTransformation.MY_TYPE))
 
-			var superClass *ClassNode
+			var superClass IClassNode
 			loadedClass, err := bcLoader.LoadClass(baseClassName)
 			if err == nil {
 				superClass = Make(loadedClass)
@@ -114,7 +199,7 @@ func max(a, b int) int {
 	return b
 }
 
-func (m *ModuleNode) GetScriptClassDummy() *ClassNode {
+func (m *ModuleNode) GetScriptClassDummy() IClassNode {
 	if m.ScriptDummy != nil {
 		m.setScriptBaseClassFromConfig(m.ScriptDummy)
 		return m.ScriptDummy
@@ -130,7 +215,7 @@ func (m *ModuleNode) GetScriptClassDummy() *ClassNode {
 	}
 	name += EncodeAsValidClassName(m.extractClassFromFileDescription())
 
-	var classNode *ClassNode
+	var classNode IClassNode
 
 	classNode = NewClassNode(name, ACC_PUBLIC, SCRIPT_TYPE)
 	m.setScriptBaseClassFromConfig(classNode)
@@ -141,7 +226,7 @@ func (m *ModuleNode) GetScriptClassDummy() *ClassNode {
 	return classNode
 }
 
-func (mn *ModuleNode) Contains(class *ClassNode) bool {
+func (mn *ModuleNode) Contains(class IClassNode) bool {
 	for _, c := range mn.Classes {
 		if c.Equals(class) {
 			return true
@@ -150,17 +235,17 @@ func (mn *ModuleNode) Contains(class *ClassNode) bool {
 	return false
 }
 
-func (m *ModuleNode) AddClass(node *ClassNode) {
+func (m *ModuleNode) AddClass(node IClassNode) {
 	if len(m.Classes) == 0 {
-		m.MainClassName = node.name
+		m.MainClassName = node.GetName()
 	}
 	m.Classes = append(m.Classes, node)
 	// TODO: check this
 	//node.Module = m
-	m.AddToCompileUnit(node)
+	//m.AddToCompileUnit(node)
 }
 
-func (m *ModuleNode) AddToCompileUnit(node *ClassNode) {
+func (m *ModuleNode) AddToCompileUnit(node IClassNode) {
 	if node != nil {
 		m.Unit.AddClass(node)
 	}
@@ -170,7 +255,7 @@ func (m *ModuleNode) AddMethod(node *MethodNode) {
 	m.Methods = append(m.Methods, node)
 }
 
-func (m *ModuleNode) AddImportWithAnnotations(name string, classNode *ClassNode, annotations []*AnnotationNode) {
+func (m *ModuleNode) AddImportWithAnnotations(name string, classNode IClassNode, annotations []*AnnotationNode) {
 	importNode := NewImportNodeType(classNode, name)
 	importNode.AddAnnotations(annotations)
 	m.Imports = append(m.Imports, importNode)
@@ -184,7 +269,7 @@ func (m *ModuleNode) AddStarImportWithAnnotations(packageName string, annotation
 	m.storeLastAddedImportNode(importNode)
 }
 
-func (m *ModuleNode) AddImport(name string, classNode *ClassNode) {
+func (m *ModuleNode) AddImport(name string, classNode IClassNode) {
 	importNode := NewImportNodeType(classNode, name)
 	m.Imports = append(m.Imports, importNode)
 }
@@ -194,7 +279,7 @@ func (m *ModuleNode) AddStarImport(packageName string) {
 	m.StarImports = append(m.StarImports, importNode)
 }
 
-func (m *ModuleNode) AddStaticImport(classNode *ClassNode, memberName, simpleName string, annotations []*AnnotationNode) {
+func (m *ModuleNode) AddStaticImport(classNode IClassNode, memberName, simpleName string, annotations []*AnnotationNode) {
 	// Create a new ClassNode for the member
 	memberType := NewClassNode(classNode.GetName()+"."+memberName, 0, nil)
 	memberType.SetRedirect(classNode)
@@ -225,11 +310,11 @@ func (m *ModuleNode) storeLastAddedImportNode(node *ImportNode) {
 	}
 }
 
-func (m *ModuleNode) AddStaticStarImport(name string, classNode *ClassNode) {
+func (m *ModuleNode) AddStaticStarImport(name string, classNode IClassNode) {
 	m.AddStaticStarImportWithAnnotations(name, classNode, nil)
 }
 
-func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode *ClassNode, annotations []*AnnotationNode) {
+func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode IClassNode, annotations []*AnnotationNode) {
 	importNode := NewImportNodeStatic(classNode)
 	importNode.AddAnnotations(annotations)
 	m.StaticStarImports[name] = importNode
@@ -239,10 +324,6 @@ func (m *ModuleNode) AddStaticStarImportWithAnnotations(name string, classNode *
 
 func (m *ModuleNode) AddStatement(statement Statement) {
 	m.StatementBlock.AddStatement(statement)
-}
-
-func (m *ModuleNode) GetClasses() []*ClassNode {
-	return m.Classes
 }
 
 func (m *ModuleNode) GetMethods() []*MethodNode {
@@ -284,7 +365,7 @@ func (m *ModuleNode) SetPackageName(packageName string) {
 	m.PackageNode = NewPackageNode(packageName)
 }
 
-func (m *ModuleNode) checkUsage(name string, typ *ClassNode) {
+func (m *ModuleNode) checkUsage(name string, typ IClassNode) {
 	// Check classes
 	for _, node := range m.Classes {
 		if node.GetNameWithoutPackage() == name && !node.Equals(typ) {

@@ -16,15 +16,15 @@ type VariableExpression struct {
 	accessedVariable Variable
 	closureShare     bool
 	useRef           bool
-	originType       *ClassNode
+	originType       IClassNode
 }
 
 var (
-	THIS_EXPRESSION  = NewVariableExpression("this", dynamicType())
-	SUPER_EXPRESSION = NewVariableExpression("super", dynamicType())
+	THIS_EXPRESSION  = NewVariableExpression("this", DynamicType())
+	SUPER_EXPRESSION = NewVariableExpression("super", DynamicType())
 )
 
-func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
+func NewVariableExpression(name string, typ IClassNode) *VariableExpression {
 	ve := &VariableExpression{
 		BaseExpression: NewBaseExpression(),
 		variable:       name,
@@ -39,7 +39,7 @@ func NewVariableExpression(name string, typ *ClassNode) *VariableExpression {
 }
 
 func NewVariableExpressionWithString(name string) *VariableExpression {
-	return NewVariableExpression(name, dynamicType())
+	return NewVariableExpression(name, DynamicType())
 }
 
 func NewVariableExpressionWithVariable(variable Variable) *VariableExpression {
@@ -92,7 +92,7 @@ func (ve *VariableExpression) SetInStaticContext(inStaticContext bool) {
 	ve.inStaticContext = inStaticContext
 }
 
-func (ve *VariableExpression) SetType(cn *ClassNode) {
+func (ve *VariableExpression) SetType(cn IClassNode) {
 	ve.BaseExpression.SetType(cn)
 	ve.isDynamicTyped = ve.isDynamicTyped || IsDynamicTyped(cn)
 }
@@ -127,14 +127,14 @@ func (ve *VariableExpression) IsUseReferenceDirectly() bool {
 	return ve.useRef
 }
 
-func (ve *VariableExpression) GetType() *ClassNode {
+func (ve *VariableExpression) GetType() IClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
 		return ve.accessedVariable.GetType()
 	}
 	return ve.BaseExpression.GetType()
 }
 
-func (ve *VariableExpression) GetOriginType() *ClassNode {
+func (ve *VariableExpression) GetOriginType() IClassNode {
 	if ve.accessedVariable != nil && ve.accessedVariable != ve {
 		return ve.accessedVariable.GetOriginType()
 	}

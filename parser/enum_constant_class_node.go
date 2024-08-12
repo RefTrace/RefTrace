@@ -6,7 +6,7 @@ type EnumConstantClassNode struct {
 }
 
 // NewEnumConstantClassNode creates a new EnumConstantClassNode with the given parameters.
-func NewEnumConstantClassNode(outerClass *ClassNode, name string, superClass *ClassNode) *EnumConstantClassNode {
+func NewEnumConstantClassNode(outerClass IClassNode, name string, superClass IClassNode) *EnumConstantClassNode {
 	return &EnumConstantClassNode{
 		InnerClassNode: NewInnerClassNode(outerClass, name, ACC_ENUM|ACC_FINAL, superClass),
 	}

@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+func IsAssignment(tokenType int) bool {
+	return OfType(tokenType, ASSIGNMENT_OPERATOR)
+}
+
 // Constants for token types
 const (
 	EOF     = -1
@@ -462,8 +466,180 @@ func OfType(specific, general int) bool {
 			return true
 		}
 
-		// ... (continue with the rest of the cases)
+	case KEYWORD:
+		return specific >= KEYWORD_PRIVATE && specific <= KEYWORD_GOTO
 
+	case SYMBOL:
+		return specific >= NEWLINE && specific <= PIPE
+
+	case LITERAL, LITERAL_EXPRESSION:
+		return specific >= STRING && specific <= DECIMAL_NUMBER
+
+	case NUMBER:
+		return specific == INTEGER_NUMBER || specific == DECIMAL_NUMBER
+
+	case SIGN:
+		return specific == PLUS || specific == MINUS
+
+	case NAMED_VALUE:
+		return specific >= KEYWORD_TRUE && specific <= KEYWORD_NULL
+
+	case TRUTH_VALUE:
+		return specific == KEYWORD_TRUE || specific == KEYWORD_FALSE
+
+	case TYPE_NAME, CREATABLE_TYPE_NAME:
+		if specific == IDENTIFIER {
+			return true
+		}
+		fallthrough
+
+	case PRIMITIVE_TYPE:
+		return specific >= KEYWORD_VOID && specific <= KEYWORD_CHAR
+
+	case CREATABLE_PRIMITIVE_TYPE:
+		return specific >= KEYWORD_BOOLEAN && specific <= KEYWORD_CHAR
+
+	case LOOP:
+		return specific == KEYWORD_DO || specific == KEYWORD_WHILE || specific == KEYWORD_FOR
+
+	case RESERVED_KEYWORD:
+		return specific >= KEYWORD_CONST && specific <= KEYWORD_GOTO
+
+	case KEYWORD_IDENTIFIER:
+		switch specific {
+		case KEYWORD_CLASS, KEYWORD_INTERFACE, KEYWORD_MIXIN, KEYWORD_DEF, KEYWORD_DEFMACRO, KEYWORD_IN, KEYWORD_PROPERTY:
+			return true
+		}
+
+	case SYNTHETIC:
+		return specific >= SYNTH_COMPILATION_UNIT && specific <= SYNTH_VARIABLE_DECLARATION
+
+	case TYPE_DECLARATION:
+		return specific >= KEYWORD_CLASS && specific <= KEYWORD_MIXIN
+
+	case DECLARATION_MODIFIER:
+		return specific >= KEYWORD_PRIVATE && specific <= KEYWORD_STATIC
+
+	case MATCHED_CONTAINER:
+		switch specific {
+		case LEFT_CURLY_BRACE, RIGHT_CURLY_BRACE, LEFT_SQUARE_BRACKET, RIGHT_SQUARE_BRACKET, LEFT_PARENTHESIS, RIGHT_PARENTHESIS:
+			return true
+		}
+
+	case LEFT_OF_MATCHED_CONTAINER:
+		switch specific {
+		case LEFT_CURLY_BRACE, LEFT_SQUARE_BRACKET, LEFT_PARENTHESIS:
+			return true
+		}
+
+	case RIGHT_OF_MATCHED_CONTAINER:
+		switch specific {
+		case RIGHT_CURLY_BRACE, RIGHT_SQUARE_BRACKET, RIGHT_PARENTHESIS:
+			return true
+		}
+
+	case PARAMETER_TERMINATORS:
+		return specific == RIGHT_PARENTHESIS || specific == COMMA
+
+	case ARRAY_ITEM_TERMINATORS:
+		return specific == RIGHT_SQUARE_BRACKET || specific == COMMA
+
+	case TYPE_LIST_TERMINATORS:
+		switch specific {
+		case KEYWORD_IMPLEMENTS, KEYWORD_THROWS, LEFT_CURLY_BRACE, COMMA:
+			return true
+		}
+
+	case OPTIONAL_DATATYPE_FOLLOWERS:
+		switch specific {
+		case IDENTIFIER, LEFT_SQUARE_BRACKET, DOT:
+			return true
+		}
+
+	case SWITCH_BLOCK_TERMINATORS:
+		if specific == RIGHT_CURLY_BRACE {
+			return true
+		}
+		fallthrough
+
+	case SWITCH_ENTRIES:
+		return specific == KEYWORD_CASE || specific == KEYWORD_DEFAULT
+
+	case METHOD_CALL_STARTERS:
+		if specific >= STRING && specific <= DECIMAL_NUMBER {
+			return true
+		}
+		switch specific {
+		case LEFT_PARENTHESIS, GSTRING_START, SYNTH_GSTRING, KEYWORD_NEW:
+			return true
+		}
+
+	case UNSAFE_OVER_NEWLINES:
+		if OfType(specific, SYMBOL) {
+			switch specific {
+			case LEFT_CURLY_BRACE, LEFT_PARENTHESIS, LEFT_SQUARE_BRACKET, PLUS, PLUS_PLUS, MINUS, MINUS_MINUS, REGEX_PATTERN, NOT:
+				return true
+			}
+			return false
+		}
+		switch specific {
+		case KEYWORD_INSTANCEOF, GSTRING_EXPRESSION_START, GSTRING_EXPRESSION_END, GSTRING_END:
+			return false
+		}
+		return true
+
+	case PRECLUDES_CAST_OPERATOR:
+		switch specific {
+		case PLUS, MINUS, PREFIX_MINUS, PREFIX_MINUS_MINUS, PREFIX_PLUS, PREFIX_PLUS_PLUS, LEFT_PARENTHESIS:
+			return false
+		}
+		return !OfType(specific, COMPLEX_EXPRESSION)
+
+	case OPERATOR_EXPRESSION:
+		return specific >= DOT && specific <= RIGHT_SHIFT_UNSIGNED
+
+	case SYNTH_EXPRESSION:
+		switch specific {
+		case SYNTH_CAST, SYNTH_CLOSURE, SYNTH_TERNARY:
+			return true
+		}
+
+	case KEYWORD_EXPRESSION:
+		switch specific {
+		case KEYWORD_NEW, KEYWORD_THIS, KEYWORD_SUPER, KEYWORD_INSTANCEOF, KEYWORD_TRUE, KEYWORD_FALSE, KEYWORD_NULL:
+			return true
+		}
+
+	case ARRAY_EXPRESSION:
+		return specific == LEFT_SQUARE_BRACKET
+
+	case EXPRESSION:
+		if specific >= DOT && specific <= RIGHT_SHIFT_UNSIGNED {
+			return true
+		}
+		if specific >= STRING && specific <= DECIMAL_NUMBER {
+			return true
+		}
+		switch specific {
+		case SYNTH_CAST, SYNTH_CLOSURE, SYNTH_TERNARY, SYNTH_GSTRING, KEYWORD_NEW, KEYWORD_THIS, KEYWORD_SUPER, KEYWORD_INSTANCEOF, KEYWORD_TRUE, KEYWORD_FALSE, KEYWORD_NULL, LEFT_SQUARE_BRACKET:
+			return true
+		}
+
+	case COMPLEX_EXPRESSION:
+		switch specific {
+		case KEYWORD_NEW, SYNTH_METHOD_CALL, SYNTH_GSTRING, SYNTH_LIST, SYNTH_MAP, SYNTH_CLOSURE, SYNTH_TERNARY, SYNTH_VARIABLE_DECLARATION:
+			return true
+		}
+		fallthrough
+
+	case SIMPLE_EXPRESSION:
+		if specific >= STRING && specific <= DECIMAL_NUMBER {
+			return true
+		}
+		switch specific {
+		case KEYWORD_SUPER, KEYWORD_THIS, KEYWORD_TRUE, KEYWORD_FALSE, KEYWORD_NULL:
+			return true
+		}
 	}
 
 	return false

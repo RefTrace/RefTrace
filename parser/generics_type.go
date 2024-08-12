@@ -8,9 +8,9 @@ import (
 type GenericsType struct {
 	*BaseASTNode
 	name        string
-	typ         *ClassNode
-	lowerBound  *ClassNode
-	upperBounds []*ClassNode
+	typ         IClassNode
+	lowerBound  IClassNode
+	upperBounds []IClassNode
 	placeholder bool
 	resolved    bool
 	wildcard    bool
@@ -18,7 +18,7 @@ type GenericsType struct {
 
 var EmptyGenericsTypeArray = []*GenericsType{}
 
-func NewGenericsType(typ *ClassNode, upperBounds []*ClassNode, lowerBound *ClassNode) *GenericsType {
+func NewGenericsType(typ IClassNode, upperBounds []IClassNode, lowerBound IClassNode) *GenericsType {
 	gt := &GenericsType{
 		BaseASTNode: NewBaseASTNode(),
 		typ:         typ,
@@ -34,11 +34,11 @@ func NewGenericsType(typ *ClassNode, upperBounds []*ClassNode, lowerBound *Class
 	return gt
 }
 
-func NewGenericsTypeWithBasicType(basicType *ClassNode) *GenericsType {
+func NewGenericsTypeWithBasicType(basicType IClassNode) *GenericsType {
 	return NewGenericsType(basicType, nil, nil)
 }
 
-func (gt *GenericsType) GetType() *ClassNode {
+func (gt *GenericsType) GetType() IClassNode {
 	return gt.typ
 }
 
@@ -86,7 +86,7 @@ func (gt *GenericsType) toString(visited map[string]bool) string {
 	return ret.String()
 }
 
-func genericsBounds(theType *ClassNode, visited map[string]bool) string {
+func genericsBounds(theType IClassNode, visited map[string]bool) string {
 	var gen interface{} = theType.AsGenericsType()
 	if _, ok := gen.(*LowestUpperBoundClassNode); ok {
 		var ret strings.Builder
@@ -119,7 +119,7 @@ func genericsBounds(theType *ClassNode, visited map[string]bool) string {
 	return ret.String()
 }
 
-func appendName(theType *ClassNode, sb *strings.Builder) {
+func appendName(theType IClassNode, sb *strings.Builder) {
 	if theType.IsArray() {
 		appendName(theType.GetComponentType(), sb)
 		sb.WriteString("[]")
@@ -130,7 +130,7 @@ func appendName(theType *ClassNode, sb *strings.Builder) {
 		if theType.IsStatic() || theType.IsInterface() {
 			sb.WriteString(parentClassNodeName)
 		} else {
-			var outerClass *ClassNode = (theType.GetNodeMetaData("outer.class")).(*ClassNode)
+			var outerClass IClassNode = (theType.GetNodeMetaData("outer.class")).(*ClassNode)
 			if outerClass == nil {
 				outerClass = theType.GetOuterClass()
 			}
@@ -182,17 +182,17 @@ func (gt *GenericsType) SetWildcard(wildcard bool) {
 	gt.placeholder = gt.placeholder && !wildcard
 }
 
-func (gt *GenericsType) GetLowerBound() *ClassNode {
+func (gt *GenericsType) GetLowerBound() IClassNode {
 	return gt.lowerBound
 }
 
-func (gt *GenericsType) GetUpperBounds() []*ClassNode {
+func (gt *GenericsType) GetUpperBounds() []IClassNode {
 	return gt.upperBounds
 }
 
 // IsCompatibleWith determines if the provided type is compatible with this specification.
-/*
-func (gt *GenericsType) IsCompatibleWith(classNode *ClassNode) bool {
+
+func (gt *GenericsType) IsCompatibleWith(classNode IClassNode) bool {
 	genericsTypes := classNode.GetGenericsTypes()
 	if len(genericsTypes) == 0 {
 		return true // diamond always matches
@@ -219,30 +219,33 @@ func (gt *GenericsType) IsCompatibleWith(classNode *ClassNode) bool {
 		}
 		return gt.checkGenerics(classNode)
 	}
-	if gt.IsWildcard() || gt.IsPlaceholder() {
-		lowerBound := gt.GetLowerBound()
-		if lowerBound != nil {
-			if !implementsInterfaceOrIsSubclassOf(lowerBound, classNode) {
-				return false
-			}
-			return gt.checkGenerics(classNode)
-		}
-		upperBounds := gt.GetUpperBounds()
-		if upperBounds != nil {
-			for _, upperBound := range upperBounds {
-				if !implementsInterfaceOrIsSubclassOf(classNode, upperBound) {
+
+	// TODO: implement wildcard and placeholder checks
+	/*
+		if gt.IsWildcard() || gt.IsPlaceholder() {
+			lowerBound := gt.GetLowerBound()
+			if lowerBound != nil {
+				if !implementsInterfaceOrIsSubclassOf(lowerBound, classNode) {
 					return false
 				}
+				return gt.checkGenerics(classNode)
 			}
-			return gt.checkGenerics(classNode)
+			upperBounds := gt.GetUpperBounds()
+			if upperBounds != nil {
+				for _, upperBound := range upperBounds {
+					if !implementsInterfaceOrIsSubclassOf(classNode, upperBound) {
+						return false
+					}
+				}
+				return gt.checkGenerics(classNode)
+			}
+			return true
 		}
-		return true
-	}
+	*/
 	return classNode.Equals(gt.GetType()) && compareGenericsWithBound(classNode, gt.GetType())
 }
-*/
 
-func (gt *GenericsType) checkGenerics(classNode *ClassNode) bool {
+func (gt *GenericsType) checkGenerics(classNode IClassNode) bool {
 	lowerBound := gt.GetLowerBound()
 	if lowerBound != nil {
 		return compareGenericsWithBound(classNode, lowerBound)
@@ -258,7 +261,7 @@ func (gt *GenericsType) checkGenerics(classNode *ClassNode) bool {
 	return true
 }
 
-func compareGenericsWithBound(classNode, bound *ClassNode) bool {
+func compareGenericsWithBound(classNode, bound IClassNode) bool {
 	// Implementation of compareGenericsWithBound
 	// This function is quite complex and involves many helper functions and conditions.
 	// For brevity, I'll omit the full implementation here.

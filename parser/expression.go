@@ -8,15 +8,15 @@ var _ ASTNode = (*BaseExpression)(nil)
 // Expression is the base interface for any expression
 type Expression interface {
 	ASTNode
-	GetType() *ClassNode
-	SetType(*ClassNode)
+	GetType() IClassNode
+	SetType(IClassNode)
 }
 
 // BaseExpression provides a base implementation for Expression
 
 type BaseExpression struct {
 	*AnnotatedNode
-	expressionType *ClassNode
+	expressionType IClassNode
 }
 
 var (
@@ -32,14 +32,14 @@ func NewBaseExpression() *BaseExpression {
 	}
 }
 
-func (e *BaseExpression) GetType() *ClassNode {
+func (e *BaseExpression) GetType() IClassNode {
 	if e.expressionType == NullType {
-		e.expressionType = dynamicType()
+		e.expressionType = DynamicType()
 	}
 	return e.expressionType
 }
 
-func (e *BaseExpression) SetType(t *ClassNode) {
+func (e *BaseExpression) SetType(t IClassNode) {
 	e.expressionType = t
 }
 

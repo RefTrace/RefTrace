@@ -8,7 +8,7 @@ import (
 // ImportNode represents an import statement.
 type ImportNode struct {
 	AnnotatedNode
-	Type        *ClassNode
+	Type        IClassNode
 	Alias       string
 	FieldName   string
 	PackageName string
@@ -18,7 +18,7 @@ type ImportNode struct {
 }
 
 // NewImportNodeType creates an import of a single type
-func NewImportNodeType(typ *ClassNode, alias string) *ImportNode {
+func NewImportNodeType(typ IClassNode, alias string) *ImportNode {
 	return &ImportNode{
 		Type:     typ,
 		Alias:    alias,
@@ -37,7 +37,7 @@ func NewImportNodePackage(packageName string) *ImportNode {
 }
 
 // NewImportNodeStatic creates an import of all static members of a type
-func NewImportNodeStatic(typ *ClassNode) *ImportNode {
+func NewImportNodeStatic(typ IClassNode) *ImportNode {
 	return &ImportNode{
 		Type:     typ,
 		IsStar:   true,
@@ -46,7 +46,7 @@ func NewImportNodeStatic(typ *ClassNode) *ImportNode {
 }
 
 // NewImportNodeStaticField creates an import of a static field or method of a type
-func NewImportNodeStaticField(typ *ClassNode, fieldName, alias string) *ImportNode {
+func NewImportNodeStaticField(typ IClassNode, fieldName, alias string) *ImportNode {
 	return &ImportNode{
 		Type:      typ,
 		Alias:     alias,
@@ -88,7 +88,7 @@ func (in *ImportNode) GetClassName() string {
 }
 
 // SetType sets the type
-func (in *ImportNode) SetType(typ *ClassNode) {
+func (in *ImportNode) SetType(typ IClassNode) {
 	in.Type = typ
 	in.hashCode = 0
 }
