@@ -1,11 +1,12 @@
 package nf
 
 import (
-	"github.com/antlr4-go/antlr/v4"
 	"path/filepath"
 	"reft-go/parser"
 	"runtime/debug"
 	"testing"
+
+	"github.com/antlr4-go/antlr/v4"
 )
 
 func TestSarekEntireMain(t *testing.T) {
@@ -31,5 +32,13 @@ func TestSarekEntireMain(t *testing.T) {
 	paramVisitor := NewParamVisitor()
 	paramVisitor.VisitBlockStatement(ast.StatementBlock)
 	params := paramVisitor.GetSortedParams()
-	_ = params
+	if len(params) != 65 {
+		t.Fatalf("Expected 65 params, got %d", len(params))
+	}
+	includeVisitor := NewIncludeVisitor()
+	includeVisitor.VisitBlockStatement(ast.StatementBlock)
+	includes := includeVisitor.GetSortedIncludes()
+	if len(includes) != 8 {
+		t.Fatalf("Expected 8 includes, got %d", len(includes))
+	}
 }
