@@ -7,23 +7,30 @@ import (
 
 var _ parser.GroovyCodeVisitor = (*ParamVisitor)(nil)
 
+type ParamInfo struct {
+	Name       string
+	LineNumber int
+}
+
 type ParamVisitor struct {
-	params map[string]struct{} // Use a map to represent a set of strings
+	params map[string]int // Use a map to represent a set of strings with line numbers
 }
 
 // NewParamVisitor creates a new ParamVisitor
 func NewParamVisitor() *ParamVisitor {
 	return &ParamVisitor{
-		params: make(map[string]struct{}),
+		params: make(map[string]int),
 	}
 }
 
-func (v *ParamVisitor) GetSortedParams() []string {
-	sortedParams := make([]string, 0, len(v.params))
-	for param := range v.params {
-		sortedParams = append(sortedParams, param)
+func (v *ParamVisitor) GetSortedParams() []ParamInfo {
+	sortedParams := make([]ParamInfo, 0, len(v.params))
+	for param, lineNumber := range v.params {
+		sortedParams = append(sortedParams, ParamInfo{Name: param, LineNumber: lineNumber})
 	}
-	sort.Strings(sortedParams)
+	sort.Slice(sortedParams, func(i, j int) bool {
+		return sortedParams[i].LineNumber < sortedParams[j].LineNumber
+	})
 	return sortedParams
 }
 
@@ -204,7 +211,12 @@ func (v *ParamVisitor) VisitPropertyExpression(expression *parser.PropertyExpres
 	varExpr, isVarExpr := expression.GetObjectExpression().(*parser.VariableExpression)
 	constExpr, isConstExpr := expression.GetProperty().(*parser.ConstantExpression)
 	if isVarExpr && isConstExpr && varExpr.GetName() == "params" {
-		v.params[constExpr.GetText()] = struct{}{}
+		paramName := constExpr.GetText()
+		lineNumber := constExpr.GetLineNumber()
+		// Only store the line number if it's the first occurrence of this param
+		if _, exists := v.params[paramName]; !exists {
+			v.params[paramName] = lineNumber
+		}
 	}
 	v.VisitExpression(expression.GetObjectExpression())
 	v.VisitExpression(expression.GetProperty())
