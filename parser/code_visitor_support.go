@@ -1,5 +1,7 @@
 package parser
 
+var _ GroovyCodeVisitor = (*CodeVisitorSupport)(nil)
+
 // CodeVisitorSupport is a base implementation of GroovyCodeVisitor
 type CodeVisitorSupport struct {
 	VisitReturnStatementFunc    func(statement *ReturnStatement)

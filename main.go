@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reft-go/parser"
+	"runtime/debug"
 	"sync"
 
 	// Adjust the import path based on your module name and structure
@@ -12,6 +13,7 @@ import (
 )
 
 func main() {
+	debug.SetGCPercent(-1)
 	// Ensure the input directory path is provided as a command-line argument
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run main.go <path_to_directory>")
@@ -29,7 +31,8 @@ func main() {
 		}
 
 		// Check if the file has a .nf or .groovy extension
-		if !info.IsDir() && (filepath.Ext(path) == ".nf" || filepath.Ext(path) == ".groovy") {
+		// TODO: handle groovy extension
+		if !info.IsDir() && (filepath.Ext(path) == ".nf") {
 			wg.Add(1)
 			go func(path string) {
 				defer wg.Done()
@@ -90,10 +93,11 @@ func processFile(filePath string) {
 		fmt.Printf("File: %s has no errors.\n", filePath)
 		//tokenStream := lexer.NewPreloadedTokenStream(tokens, l)
 		p := parser.NewGroovyParser(stream)
-		unit := p.CompilationUnit()
+		tree := p.CompilationUnit()
 		fmt.Println("Parsed Successfully")
 		builder := parser.NewASTBuilder(filePath)
-		builder.Visit(unit)
+		ast := builder.Visit(tree).(*parser.ModuleNode)
+		_ = ast
 		//builder.VisitCompilationUnit(unit.(*parser.CompilationUnitContext))
 		//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
 	}
