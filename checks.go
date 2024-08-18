@@ -7,7 +7,6 @@ import (
 	"os"
 	"reft-go/nf"
 	"reft-go/parser"
-	"runtime/debug"
 	"strconv"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -71,8 +70,55 @@ func NewStarlarkParamInfo(p nf.ParamInfo) *StarlarkParamInfo {
 	return &StarlarkParamInfo{paramInfo: p}
 }
 
-func parse(filePath string) []nf.ParamInfo {
-	debug.SetGCPercent(-1)
+type StarlarkIncludeInfo struct {
+	includeInfo nf.IncludeInfo
+}
+
+func (i *StarlarkIncludeInfo) String() string {
+	return fmt.Sprintf("Include(name=%s, from_=%s, line=%d)", i.includeInfo.Name, i.includeInfo.From, i.includeInfo.LineNumber)
+}
+
+func (i *StarlarkIncludeInfo) Type() string {
+	return "Include"
+}
+
+func (i *StarlarkIncludeInfo) Freeze() {}
+
+func (i *StarlarkIncludeInfo) Truth() starlark.Bool {
+	return starlark.Bool(true)
+}
+
+func (i *StarlarkIncludeInfo) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(i.includeInfo.Name))
+	h.Write([]byte(i.includeInfo.From))
+	h.Write([]byte(strconv.Itoa(i.includeInfo.LineNumber)))
+	return h.Sum32(), nil
+}
+
+func (i *StarlarkIncludeInfo) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(i.includeInfo.Name), nil
+	case "from_":
+		return starlark.String(i.includeInfo.From), nil
+	case "line":
+		return starlark.MakeInt(i.includeInfo.LineNumber), nil
+	default:
+		return nil, nil
+	}
+}
+
+func (i *StarlarkIncludeInfo) AttrNames() []string {
+	return []string{"name", "from_", "line"}
+}
+
+func NewStarlarkIncludeInfo(i nf.IncludeInfo) *StarlarkIncludeInfo {
+	return &StarlarkIncludeInfo{includeInfo: i}
+}
+
+func parse(filePath string) ([]nf.ParamInfo, []nf.IncludeInfo) {
+	//debug.SetGCPercent(-1)
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		log.Fatalf("Failed to open file %s: %s", filePath, err)
@@ -93,7 +139,12 @@ func parse(filePath string) []nf.ParamInfo {
 	paramVisitor := nf.NewParamVisitor()
 	paramVisitor.VisitBlockStatement(ast.StatementBlock)
 	params := paramVisitor.GetSortedParams()
-	return params
+
+	includeVisitor := nf.NewIncludeVisitor()
+	includeVisitor.VisitBlockStatement(ast.StatementBlock)
+	includes := includeVisitor.GetSortedIncludes()
+
+	return params, includes
 }
 
 func runCheck(cmd *cobra.Command, args []string) {
@@ -143,15 +194,21 @@ func runCheck(cmd *cobra.Command, args []string) {
 	}
 
 	// Create the params list
-	params := parse(nfFile)
+	params, includes := parse(nfFile)
 	starlarkParams := make([]starlark.Value, len(params))
 	for i, param := range params {
 		starlarkParams[i] = NewStarlarkParamInfo(param)
 	}
 	starlarkParamsList := starlark.NewList(starlarkParams)
 
+	starlarkIncludes := make([]starlark.Value, len(includes))
+	for i, include := range includes {
+		starlarkIncludes[i] = NewStarlarkIncludeInfo(include)
+	}
+	starlarkIncludesList := starlark.NewList(starlarkIncludes)
+
 	// Call the main function
-	_, err = starlark.Call(thread, mainFunc, starlark.Tuple{starlarkParamsList}, nil)
+	_, err = starlark.Call(thread, mainFunc, starlark.Tuple{starlarkParamsList, starlarkIncludesList}, nil)
 	if err != nil {
 		if evalErr, ok := err.(*starlark.EvalError); ok {
 			fmt.Printf("Execution failed: %s\n", evalErr.Msg)
