@@ -40,3 +40,15 @@ func (a *ArgumentListExpression) TransformExpression(transformer ExpressionTrans
 func (a *ArgumentListExpression) Visit(visitor GroovyCodeVisitor) {
 	visitor.VisitArgumentlistExpression(a)
 }
+
+func (a *ArgumentListExpression) GetExpressions() []Expression {
+	if len(a.expressions) == 1 {
+		if tuple, ok := a.expressions[0].(*TupleExpression); ok {
+			return tuple.GetExpressions()
+		}
+		if argListExpr, ok := a.expressions[0].(*ArgumentListExpression); ok {
+			return argListExpr.GetExpressions()
+		}
+	}
+	return a.expressions
+}

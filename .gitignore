@@ -7,3 +7,4 @@ parser/GroovyParser.interp
 parser/GroovyParser.tokens
 parser/__debug*
 .vscode
+reft
