@@ -2,7 +2,7 @@ package parser
 
 // SynchronizedStatement represents a synchronized statement
 type SynchronizedStatement struct {
-	Statement
+	*BaseStatement
 	code       Statement
 	expression Expression
 }
@@ -10,8 +10,9 @@ type SynchronizedStatement struct {
 // NewSynchronizedStatement creates a new SynchronizedStatement
 func NewSynchronizedStatement(expression Expression, code Statement) *SynchronizedStatement {
 	return &SynchronizedStatement{
-		code:       code,
-		expression: expression,
+		BaseStatement: NewBaseStatement(),
+		code:          code,
+		expression:    expression,
 	}
 }
 

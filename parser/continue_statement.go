@@ -2,14 +2,15 @@ package parser
 
 // ContinueStatement represents a continue statement in a loop statement
 type ContinueStatement struct {
-	Statement
+	*BaseStatement
 	label string
 }
 
 // NewContinueStatement creates a new ContinueStatement
 func NewContinueStatement(label string) *ContinueStatement {
 	return &ContinueStatement{
-		label: label,
+		BaseStatement: NewBaseStatement(),
+		label:         label,
 	}
 }
 

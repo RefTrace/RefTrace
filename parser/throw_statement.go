@@ -2,14 +2,15 @@ package parser
 
 // ThrowStatement represents a throw statement
 type ThrowStatement struct {
-	Statement
+	*BaseStatement
 	expression Expression
 }
 
 // NewThrowStatement creates a new ThrowStatement
 func NewThrowStatement(expression Expression) *ThrowStatement {
 	return &ThrowStatement{
-		expression: expression,
+		BaseStatement: NewBaseStatement(),
+		expression:    expression,
 	}
 }
 

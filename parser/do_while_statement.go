@@ -2,7 +2,7 @@ package parser
 
 // DoWhileStatement represents a do { ... } while (condition) loop in Go
 type DoWhileStatement struct {
-	Statement
+	*BaseStatement
 	booleanExpression *BooleanExpression
 	loopBlock         Statement
 }
@@ -10,6 +10,7 @@ type DoWhileStatement struct {
 // NewDoWhileStatement creates a new DoWhileStatement
 func NewDoWhileStatement(booleanExpression *BooleanExpression, loopBlock Statement) *DoWhileStatement {
 	return &DoWhileStatement{
+		BaseStatement:     NewBaseStatement(),
 		booleanExpression: booleanExpression,
 		loopBlock:         loopBlock,
 	}

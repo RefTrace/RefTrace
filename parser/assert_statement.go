@@ -4,7 +4,7 @@ package parser
 // E.g.:
 // assert i != 0 : "should never be zero"
 type AssertStatement struct {
-	Statement
+	*BaseStatement
 	booleanExpression *BooleanExpression
 	messageExpression Expression
 }
@@ -17,6 +17,7 @@ func NewAssertStatement(booleanExpression *BooleanExpression) *AssertStatement {
 // NewAssertStatementWithMessage creates a new AssertStatement with a boolean expression and message
 func NewAssertStatementWithMessage(booleanExpression *BooleanExpression, messageExpression Expression) *AssertStatement {
 	return &AssertStatement{
+		BaseStatement:     NewBaseStatement(),
 		booleanExpression: booleanExpression,
 		messageExpression: messageExpression,
 	}

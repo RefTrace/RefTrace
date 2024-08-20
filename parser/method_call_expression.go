@@ -64,7 +64,8 @@ func (mce *MethodCallExpression) GetArguments() Expression {
 }
 
 func (mce *MethodCallExpression) SetArguments(arguments Expression) {
-	if _, ok := arguments.(*TupleExpression); !ok {
+	// make the args a ITupleExpression if they're not already
+	if _, ok := arguments.(ITupleExpression); !ok {
 		mce.Arguments = NewTupleExpressionWithExpressions(arguments)
 		mce.Arguments.SetSourcePosition(arguments)
 	} else {

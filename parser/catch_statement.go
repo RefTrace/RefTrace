@@ -2,7 +2,7 @@ package parser
 
 // CatchStatement represents a catch (Exception var) { } statement
 type CatchStatement struct {
-	Statement
+	*BaseStatement
 	variable *Parameter
 	code     Statement
 }
@@ -10,8 +10,9 @@ type CatchStatement struct {
 // NewCatchStatement creates a new CatchStatement
 func NewCatchStatement(variable *Parameter, code Statement) *CatchStatement {
 	return &CatchStatement{
-		variable: variable,
-		code:     code,
+		BaseStatement: NewBaseStatement(),
+		variable:      variable,
+		code:          code,
 	}
 }
 

@@ -606,7 +606,11 @@ func (v *ASTBuilder) translateExpressionList(ctx *ExpressionListContext) Express
 }
 
 func (v *ASTBuilder) VisitEnhancedForControl(ctx *EnhancedForControlContext) interface{} {
-	parameter := NewParameter(v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode), v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName())
+	var varType *TypeContext
+	if ctx.Type_() != nil {
+		varType = ctx.Type_().(*TypeContext)
+	}
+	parameter := NewParameter(v.VisitType(varType).(IClassNode), v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName())
 	modifierManager := NewModifierManager(v, v.VisitVariableModifiersOpt(ctx.VariableModifiersOpt().(*VariableModifiersOptContext)).([]*ModifierNode))
 	modifierManager.ProcessParameter(parameter)
 	configureAST(parameter, ctx.VariableDeclaratorId())
@@ -683,9 +687,14 @@ func (v *ASTBuilder) VisitTryCatchStatement(ctx *TryCatchStatementContext) inter
 		panic(createParsingFailedException("Either a catch or finally clause or both is required for a try-catch-finally statement", parserRuleContextAdapter{ctx}))
 	}
 
+	var finallyBlockCtx *FinallyBlockContext
+	if ctx.FinallyBlock() != nil {
+		finallyBlockCtx = ctx.FinallyBlock().(*FinallyBlockContext)
+	}
+
 	tryCatchStatement := NewTryCatchStatement(
 		v.Visit(ctx.Block()).(Statement),
-		v.VisitFinallyBlock(ctx.FinallyBlock().(*FinallyBlockContext)).(Statement),
+		v.VisitFinallyBlock(finallyBlockCtx).(Statement),
 	)
 
 	if resourcesExists {
@@ -776,7 +785,11 @@ func (v *ASTBuilder) VisitResource(ctx *ResourceContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitCatchClause(ctx *CatchClauseContext) interface{} {
-	catchTypes := v.VisitCatchType(ctx.CatchType().(*CatchTypeContext)).([]IClassNode)
+	var catchTypeCtx *CatchTypeContext
+	if ctx.CatchType() != nil {
+		catchTypeCtx = ctx.CatchType().(*CatchTypeContext)
+	}
+	catchTypes := v.VisitCatchType(catchTypeCtx).([]IClassNode)
 	catchStatements := make([]*CatchStatement, 0, len(catchTypes))
 
 	for _, e := range catchTypes {
@@ -2178,13 +2191,20 @@ func (v *ASTBuilder) VisitVariableDeclaration(ctx *VariableDeclarationContext) i
 		return v.createMultiAssignmentDeclarationListStatement(ctx, modifierManager)
 	}
 
-	variableType := v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode)
+	var varType *TypeContext
+	if ctx.Type_() != nil {
+		varType = ctx.Type_().(*TypeContext)
+	}
+	variableType := v.VisitType(varType).(IClassNode)
 	declarators := ctx.VariableDeclarators().(*VariableDeclaratorsContext)
 	declarators.PutNodeMetaData(VARIABLE_DECLARATION_VARIABLE_TYPE, variableType)
 	declarationExpressionList := v.VisitVariableDeclarators(ctx.VariableDeclarators().(*VariableDeclaratorsContext)).([]*DeclarationExpression)
 
 	// if classNode is not nil, the variable declaration is for class declaration. In other words, it is a field declaration
-	classNode := ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
+	var classNode IClassNode
+	if ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE) != nil {
+		classNode = ctx.GetNodeMetaData(CLASS_DECLARATION_CLASS_NODE).(IClassNode)
+	}
 
 	if classNode != nil {
 		return v.createFieldDeclarationListStatement(ctx, modifierManager, variableType, declarationExpressionList, classNode)
@@ -2383,10 +2403,14 @@ func (v *ASTBuilder) VisitTypeNamePairs(ctx *TypeNamePairsContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitTypeNamePair(ctx *TypeNamePairContext) interface{} {
+	var typeCtx *TypeContext
+	if ctx.Type_() != nil {
+		typeCtx = ctx.Type_().(*TypeContext)
+	}
 	return configureAST(
 		NewVariableExpression(
 			v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName(),
-			v.VisitType(ctx.Type_().(*TypeContext)).(IClassNode),
+			v.VisitType(typeCtx).(IClassNode),
 		),
 		ctx,
 	)
@@ -2419,6 +2443,10 @@ func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) int
 	} else {
 		token = NewToken(ASSIGN, ASSIGN_STR, ctx.GetStart().GetLine(), 1)
 	}
+	var variableInitializerCtx *VariableInitializerContext
+	if ctx.VariableInitializer() != nil {
+		variableInitializerCtx = ctx.VariableInitializer().(*VariableInitializerContext)
+	}
 
 	return configureAST(
 		NewDeclarationExpression(
@@ -2430,7 +2458,7 @@ func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) int
 				ctx.VariableDeclaratorId(),
 			),
 			token,
-			v.VisitVariableInitializer(ctx.VariableInitializer().(*VariableInitializerContext)).(Expression),
+			v.VisitVariableInitializer(variableInitializerCtx).(Expression),
 		),
 		ctx,
 	)
@@ -3161,6 +3189,10 @@ func (v *ASTBuilder) VisitArgumentListElement(ctx *ArgumentListElementContext) i
 	if ctx.ExpressionListElement() != nil {
 		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
+	if ctx.NamedPropertyArg() != nil {
+		return configureAST(v.VisitNamedPropertyArg(ctx.NamedPropertyArg().(*NamedPropertyArgContext)).(*MapEntryExpression), ctx)
+	}
+	ctx.NamedPropertyArg()
 
 	// TODO: implement this
 
@@ -3644,7 +3676,10 @@ func (v *ASTBuilder) VisitCreator(ctx *CreatorContext) interface{} {
 
 	if ctx.Arguments() != nil { // create instance of class
 		arguments := v.VisitArguments(ctx.Arguments().(*ArgumentsContext)).(Expression)
-		enclosingInstanceExpression := ctx.GetNodeMetaData(ENCLOSING_INSTANCE_EXPRESSION).(Expression)
+		var enclosingInstanceExpression Expression
+		if ctx.GetNodeMetaData(ENCLOSING_INSTANCE_EXPRESSION) != nil {
+			enclosingInstanceExpression = ctx.GetNodeMetaData(ENCLOSING_INSTANCE_EXPRESSION).(Expression)
+		}
 
 		if enclosingInstanceExpression != nil {
 			if argumentListExpression, ok := arguments.(*ArgumentListExpression); ok {
@@ -3862,8 +3897,12 @@ func (v *ASTBuilder) VisitCreatedName(ctx *CreatedNameContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitMap(ctx *MapContext) interface{} {
+	var mapEntryListCtx *MapEntryListContext
+	if ctx.MapEntryList() != nil {
+		mapEntryListCtx = ctx.MapEntryList().(*MapEntryListContext)
+	}
 	return configureAST(
-		NewMapExpressionWithEntries(v.VisitMapEntryList(ctx.MapEntryList().(*MapEntryListContext)).([]*MapEntryExpression)),
+		NewMapExpressionWithEntries(v.VisitMapEntryList(mapEntryListCtx).([]*MapEntryExpression)),
 		ctx)
 }
 
@@ -4294,7 +4333,12 @@ func (v *ASTBuilder) VisitFormalParameters(ctx *FormalParametersContext) interfa
 		return []*Parameter{}
 	}
 
-	return v.VisitFormalParameterList(ctx.FormalParameterList().(*FormalParameterListContext)).([]*Parameter)
+	var formalParameterListCtx *FormalParameterListContext
+	if ctx.FormalParameterList() != nil {
+		formalParameterListCtx = ctx.FormalParameterList().(*FormalParameterListContext)
+	}
+
+	return v.VisitFormalParameterList(formalParameterListCtx).([]*Parameter)
 }
 
 func (v *ASTBuilder) VisitFormalParameterList(ctx *FormalParameterListContext) interface{} {
@@ -5122,7 +5166,7 @@ func NewDeclarationListStatement(declarations ...*DeclarationExpression) *Declar
 		}
 		declarationStatements[i] = configureASTFromSource(stmt, decl)
 	}
-	return &DeclarationListStatement{declarationStatements: declarationStatements}
+	return &DeclarationListStatement{Statement: NewBaseStatement(), declarationStatements: declarationStatements}
 }
 
 // GetDeclarationStatements returns the list of ExpressionStatements

@@ -253,7 +253,7 @@ func (v *IncludeVisitor) VisitLambdaExpression(expression *parser.LambdaExpressi
 	v.VisitClosureExpression(expression.ClosureExpression)
 }
 
-func (v *IncludeVisitor) VisitTupleExpression(expression *parser.TupleExpression) {
+func (v *IncludeVisitor) VisitTupleExpression(expression parser.ITupleExpression) {
 	v.VisitListOfExpressions(expression.GetExpressions())
 }
 
@@ -350,7 +350,7 @@ func (v *IncludeVisitor) VisitCastExpression(expression *parser.CastExpression) 
 }
 
 func (v *IncludeVisitor) VisitArgumentlistExpression(expression *parser.ArgumentListExpression) {
-	v.VisitTupleExpression(expression.TupleExpression)
+	v.VisitTupleExpression(expression)
 }
 
 func (v *IncludeVisitor) VisitClosureListExpression(expression *parser.ClosureListExpression) {

@@ -7,7 +7,7 @@ import (
 
 // ImportNode represents an import statement.
 type ImportNode struct {
-	AnnotatedNode
+	*AnnotatedNode
 	Type        IClassNode
 	Alias       string
 	FieldName   string
@@ -20,38 +20,42 @@ type ImportNode struct {
 // NewImportNodeType creates an import of a single type
 func NewImportNodeType(typ IClassNode, alias string) *ImportNode {
 	return &ImportNode{
-		Type:     typ,
-		Alias:    alias,
-		IsStar:   false,
-		IsStatic: false,
+		AnnotatedNode: NewAnnotatedNode(),
+		Type:          typ,
+		Alias:         alias,
+		IsStar:        false,
+		IsStatic:      false,
 	}
 }
 
 // NewImportNodePackage creates an import of all types in a package
 func NewImportNodePackage(packageName string) *ImportNode {
 	return &ImportNode{
-		PackageName: packageName,
-		IsStar:      true,
-		IsStatic:    false,
+		AnnotatedNode: NewAnnotatedNode(),
+		PackageName:   packageName,
+		IsStar:        true,
+		IsStatic:      false,
 	}
 }
 
 // NewImportNodeStatic creates an import of all static members of a type
 func NewImportNodeStatic(typ IClassNode) *ImportNode {
 	return &ImportNode{
-		Type:     typ,
-		IsStar:   true,
-		IsStatic: true,
+		AnnotatedNode: NewAnnotatedNode(),
+		Type:          typ,
+		IsStar:        true,
+		IsStatic:      true,
 	}
 }
 
 // NewImportNodeStaticField creates an import of a static field or method of a type
 func NewImportNodeStaticField(typ IClassNode, fieldName, alias string) *ImportNode {
 	return &ImportNode{
-		Type:      typ,
-		Alias:     alias,
-		FieldName: fieldName,
-		IsStatic:  true,
+		AnnotatedNode: NewAnnotatedNode(),
+		Type:          typ,
+		Alias:         alias,
+		FieldName:     fieldName,
+		IsStatic:      true,
 	}
 }
 

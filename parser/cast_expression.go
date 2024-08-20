@@ -32,7 +32,7 @@ func NewCastExpressionWithAutoboxing(typ IClassNode, expression Expression, igno
 		expression:       expression,
 		ignoreAutoboxing: ignoreAutoboxing,
 	}
-	ce.SetType(typ)
+	expression.SetType(typ)
 	return ce
 }
 

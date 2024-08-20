@@ -2,14 +2,15 @@ package parser
 
 // BreakStatement represents a break statement in a switch or loop statement
 type BreakStatement struct {
-	Statement
+	*BaseStatement
 	label string
 }
 
 // NewBreakStatement creates a new BreakStatement with an optional label
 func NewBreakStatement(label string) *BreakStatement {
 	return &BreakStatement{
-		label: label,
+		BaseStatement: NewBaseStatement(),
+		label:         label,
 	}
 }
 

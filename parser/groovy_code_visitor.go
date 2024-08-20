@@ -33,7 +33,7 @@ type GroovyCodeVisitor interface {
 	VisitBooleanExpression(*BooleanExpression)
 	VisitClosureExpression(*ClosureExpression)
 	VisitLambdaExpression(*LambdaExpression)
-	VisitTupleExpression(*TupleExpression)
+	VisitTupleExpression(ITupleExpression)
 	VisitMapExpression(*MapExpression)
 	VisitMapEntryExpression(*MapEntryExpression)
 	VisitListExpression(*ListExpression)

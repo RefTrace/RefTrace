@@ -2,7 +2,7 @@ package parser
 
 // NamedArgumentListExpression represents one or more arguments being passed into a method by name
 type NamedArgumentListExpression struct {
-	MapExpression
+	*MapExpression
 }
 
 func NewNamedArgumentListExpression() *NamedArgumentListExpression {
@@ -11,6 +11,6 @@ func NewNamedArgumentListExpression() *NamedArgumentListExpression {
 
 func NewNamedArgumentListExpressionWithEntries(mapEntryExpressions []*MapEntryExpression) *NamedArgumentListExpression {
 	return &NamedArgumentListExpression{
-		MapExpression: MapExpression{mapEntryExpressions: mapEntryExpressions},
+		MapExpression: NewMapExpressionWithEntries(mapEntryExpressions),
 	}
 }

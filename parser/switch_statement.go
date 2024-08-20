@@ -2,7 +2,7 @@ package parser
 
 // SwitchStatement represents a switch (object) { case value: ... case [1, 2, 3]: ...  default: ... } statement in Go.
 type SwitchStatement struct {
-	Statement
+	*BaseStatement
 	expression       Expression
 	caseStatements   []*CaseStatement
 	defaultStatement Statement
@@ -14,6 +14,7 @@ func NewSwitchStatement(expression Expression) *SwitchStatement {
 
 func NewSwitchStatementWithDefault(expression Expression, defaultStatement Statement) *SwitchStatement {
 	return &SwitchStatement{
+		BaseStatement:    NewBaseStatement(),
 		expression:       expression,
 		defaultStatement: defaultStatement,
 	}
@@ -21,6 +22,7 @@ func NewSwitchStatementWithDefault(expression Expression, defaultStatement State
 
 func NewSwitchStatementFull(expression Expression, caseStatements []*CaseStatement, defaultStatement Statement) *SwitchStatement {
 	return &SwitchStatement{
+		BaseStatement:    NewBaseStatement(),
 		expression:       expression,
 		caseStatements:   caseStatements,
 		defaultStatement: defaultStatement,

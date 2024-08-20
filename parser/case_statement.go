@@ -1,15 +1,16 @@
 package parser
 
 type CaseStatement struct {
-	Statement
+	*BaseStatement
 	code       Statement
 	expression Expression
 }
 
 func NewCaseStatement(expression Expression, code Statement) *CaseStatement {
 	return &CaseStatement{
-		expression: expression,
-		code:       code,
+		BaseStatement: NewBaseStatement(),
+		expression:    expression,
+		code:          code,
 	}
 }
 
@@ -34,5 +35,5 @@ func (c *CaseStatement) Visit(visitor GroovyCodeVisitor) {
 }
 
 func (c *CaseStatement) String() string {
-	return c.Statement.GetText() + "[expression: " + c.expression.GetText() + "; code: " + c.code.GetText() + "]"
+	return c.BaseStatement.GetText() + "[expression: " + c.expression.GetText() + "; code: " + c.code.GetText() + "]"
 }

@@ -4,6 +4,18 @@ import (
 	"strings"
 )
 
+type ITupleExpression interface {
+	PrependExpression(expression Expression) ITupleExpression
+	AddExpression(expression Expression)
+	GetExpression(i int) Expression
+	GetExpressions() []Expression
+	Visit(visitor GroovyCodeVisitor)
+	//TransformExpression(transformer ExpressionTransformer) Expression
+	GetText() string
+}
+
+var _ ITupleExpression = (*TupleExpression)(nil)
+
 type TupleExpression struct {
 	*BaseExpression
 	expressions []Expression
@@ -21,14 +33,13 @@ func NewTupleExpressionWithExpressions(expressions ...Expression) *TupleExpressi
 	return &TupleExpression{BaseExpression: NewBaseExpression(), expressions: expressions}
 }
 
-func (t *TupleExpression) PrependExpression(expression Expression) *TupleExpression {
+func (t *TupleExpression) PrependExpression(expression Expression) ITupleExpression {
 	t.expressions = append([]Expression{expression}, t.expressions...)
 	return t
 }
 
-func (t *TupleExpression) AddExpression(expression Expression) *TupleExpression {
+func (t *TupleExpression) AddExpression(expression Expression) {
 	t.expressions = append(t.expressions, expression)
-	return t
 }
 
 func (t *TupleExpression) GetExpression(i int) Expression {
