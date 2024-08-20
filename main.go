@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reft-go/parser"
 	"runtime/debug"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	// Adjust the import path based on your module name and structure
 	"github.com/antlr4-go/antlr/v4" // Ensure this import path is correct based on your setup
@@ -32,6 +35,14 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) {
+	start := time.Now()
+	var totalFiles, totalLines int64
+	defer func() {
+		elapsed := time.Since(start)
+		fmt.Printf("Total execution time: %v\n", elapsed)
+		fmt.Printf("Total files parsed: %d\n", totalFiles)
+		fmt.Printf("Total lines processed: %d\n", totalLines)
+	}()
 	debug.SetGCPercent(-1)
 	dir := args[0]
 
@@ -49,7 +60,9 @@ func run(cmd *cobra.Command, args []string) {
 			wg.Add(1)
 			go func(path string) {
 				defer wg.Done()
-				processFile(path)
+				fileLines := processFile(path)
+				atomic.AddInt64(&totalFiles, 1)
+				atomic.AddInt64(&totalLines, int64(fileLines))
 			}(path)
 		}
 		return nil
@@ -63,12 +76,14 @@ func run(cmd *cobra.Command, args []string) {
 	wg.Wait()
 }
 
-func processFile(filePath string) {
+func processFile(filePath string) int {
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		fmt.Printf("Failed to open file %s: %s\n", filePath, err)
-		return
+		return 0
 	}
+
+	lineCount := countLines(filePath)
 
 	// Create a new instance of the lexer
 	l := parser.NewGroovyLexer(input)
@@ -88,15 +103,37 @@ func processFile(filePath string) {
 
 	// Check for lexing errors
 	if !errorListener.HasError() {
-		fmt.Printf("File: %s has no errors.\n", filePath)
+		//fmt.Printf("File: %s has no errors.\n", filePath)
 		//tokenStream := lexer.NewPreloadedTokenStream(tokens, l)
 		p := parser.NewGroovyParser(stream)
 		tree := p.CompilationUnit()
-		fmt.Println("Parsed Successfully")
+		//fmt.Println("Parsed Successfully")
 		builder := parser.NewASTBuilder(filePath)
 		ast := builder.Visit(tree).(*parser.ModuleNode)
 		_ = ast
 		//builder.VisitCompilationUnit(unit.(*parser.CompilationUnitContext))
 		//antlr.ParseTreeWalkerDefault.Walk(NewTreeShapeListener(), tree)
 	}
+	return lineCount
+}
+
+func countLines(filePath string) int {
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Printf("Failed to open file for line counting %s: %s\n", filePath, err)
+		return 0
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	lineCount := 0
+	for scanner.Scan() {
+		lineCount++
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Error counting lines in %s: %s\n", filePath, err)
+	}
+
+	return lineCount
 }
