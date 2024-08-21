@@ -830,6 +830,58 @@ func TestUtilsNFCorePipelineMain(t *testing.T) {
 	}
 }
 
+func TestEagerMain(t *testing.T) {
+	debug.SetGCPercent(-1)
+	filePath := filepath.Join("testdata", "eager_main.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+}
+
+func TestPathInProcess(t *testing.T) {
+	debug.SetGCPercent(-1)
+	filePath := filepath.Join("testdata", "path_in_process.nf")
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		t.Fatalf("Failed to open file %s: %s", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	//tokens := lexer.GetAllTokens()
+	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
+
+	// Parse the file
+	tree := parser.CompilationUnit()
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(tree).(*ModuleNode)
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	}
+}
+
 func TestSarekEntireMain(t *testing.T) {
 	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "sarek_entire_main.nf")
@@ -887,6 +939,15 @@ func TestDeepVariantMain(t *testing.T) {
 	_ = ast
 }
 
+func TestParseSpeed(t *testing.T) {
+	debug.SetGCPercent(-1)
+	dir := filepath.Join("testdata", "sarek")
+	_, _, err := ProcessDirectory(dir)
+	if err != nil {
+		return
+	}
+}
+
 func TestParseAllSarekFiles(t *testing.T) {
 	debug.SetGCPercent(-1)
 	dir := filepath.Join("testdata", "sarek")
@@ -907,6 +968,7 @@ func TestParseAllSarekFiles(t *testing.T) {
 				stream := antlr.NewCommonTokenStream(lexer, 0)
 				stream.Fill()
 				parser := NewGroovyParser(stream)
+				//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
 
 				defer func() {
 					if r := recover(); r != nil {

@@ -8,3 +8,4 @@ parser/GroovyParser.tokens
 parser/__debug*
 .vscode
 reft
+main.wasm
