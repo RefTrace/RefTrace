@@ -2738,7 +2738,7 @@ func (v *ASTBuilder) VisitPathExpression(ctx *PathExpressionContext) interface{}
 	if staticTerminalNode != nil {
 		primaryExpr = NewVariableExpressionWithString(staticTerminalNode.GetText())
 	} else {
-		primaryExpr = v.Visit(ctx.BasicPrimary()).(Expression)
+		primaryExpr = v.Visit(ctx.Primary()).(Expression)
 	}
 
 	return v.createPathExpression(primaryExpr, ctx.AllPathElement())
@@ -3192,7 +3192,6 @@ func (v *ASTBuilder) VisitArgumentListElement(ctx *ArgumentListElementContext) i
 	if ctx.NamedPropertyArg() != nil {
 		return configureAST(v.VisitNamedPropertyArg(ctx.NamedPropertyArg().(*NamedPropertyArgContext)).(*MapEntryExpression), ctx)
 	}
-	ctx.NamedPropertyArg()
 
 	// TODO: implement this
 
@@ -3208,6 +3207,9 @@ func (v *ASTBuilder) VisitArgumentListElement(ctx *ArgumentListElementContext) i
 func (v *ASTBuilder) VisitFirstArgumentListElement(ctx *FirstArgumentListElementContext) interface{} {
 	if ctx.ExpressionListElement() != nil {
 		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
+	}
+	if ctx.NamedPropertyArg() != nil {
+		return configureAST(v.VisitNamedPropertyArg(ctx.NamedPropertyArg().(*NamedPropertyArgContext)).(*MapEntryExpression), ctx)
 	}
 
 	// TODO: implement this
@@ -3964,8 +3966,8 @@ func (v *ASTBuilder) VisitNamedPropertyArg(ctx *NamedPropertyArgContext) interfa
 func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) interface{} {
 	if ctx.Keywords() != nil {
 		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
-	} else if ctx.BasicPrimary() != nil {
-		expression := v.Visit(ctx.BasicPrimary()).(Expression)
+	} else if ctx.Primary() != nil {
+		expression := v.Visit(ctx.Primary()).(Expression)
 
 		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
 		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {
@@ -4884,10 +4886,14 @@ func (v *ASTBuilder) createMethodCallExpression(baseExpr Expression, arguments E
 			methodCallExpression.SetSafe(false)
 		}
 
+		genericsTypes, ok := propertyExpression.GetNodeMetaData(PATH_EXPRESSION_BASE_EXPR_GENERICS_TYPES).([]*GenericsType)
+		if !ok {
+			// If the type assertion fails, use an empty slice
+			genericsTypes = []*GenericsType{}
+		}
+
 		// if the generics types metadata is not empty, it is a generic method call, e.g. obj.<Integer>a(1, 2)
-		methodCallExpression.SetGenericsTypes(
-			propertyExpression.GetNodeMetaData(PATH_EXPRESSION_BASE_EXPR_GENERICS_TYPES).([]*GenericsType),
-		)
+		methodCallExpression.SetGenericsTypes(genericsTypes)
 	} else {
 		// Case for other expressions (e.g., m(1, 2) or m 1, 2)
 		thisExpr := NewVariableExpressionWithString("this")
