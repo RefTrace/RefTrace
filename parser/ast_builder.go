@@ -3208,8 +3208,8 @@ func (v *ASTBuilder) VisitFirstArgumentListElement(ctx *FirstArgumentListElement
 	if ctx.ExpressionListElement() != nil {
 		return configureAST(v.VisitExpressionListElement(ctx.ExpressionListElement().(*ExpressionListElementContext)).(Expression), ctx)
 	}
-	if ctx.NamedPropertyArg() != nil {
-		return configureAST(v.VisitNamedPropertyArg(ctx.NamedPropertyArg().(*NamedPropertyArgContext)).(*MapEntryExpression), ctx)
+	if ctx.NamedArg() != nil {
+		return configureAST(v.VisitNamedArg(ctx.NamedArg().(*NamedArgContext)).(*MapEntryExpression), ctx)
 	}
 
 	// TODO: implement this
@@ -3937,6 +3937,23 @@ func (v *ASTBuilder) VisitMapEntry(ctx *MapEntryContext) interface{} {
 		keyExpr = configureAST(NewSpreadMapExpression(valueExpr), ctx)
 	} else if ctx.MapEntryLabel() != nil {
 		keyExpr = v.VisitMapEntryLabel(ctx.MapEntryLabel().(*MapEntryLabelContext)).(Expression)
+	} else {
+		panic(createParsingFailedException("Unsupported map entry: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+	}
+
+	return configureAST(
+		NewMapEntryExpression(keyExpr, valueExpr),
+		ctx)
+}
+
+func (v *ASTBuilder) VisitNamedArg(ctx *NamedArgContext) interface{} {
+	var keyExpr Expression
+	valueExpr := v.Visit(ctx.Expression()).(Expression)
+
+	if ctx.MUL() != nil {
+		keyExpr = configureAST(NewSpreadMapExpression(valueExpr), ctx)
+	} else if ctx.NamedArgLabel() != nil {
+		keyExpr = v.VisitNamedArgLabel(ctx.NamedArgLabel().(*NamedArgLabelContext)).(Expression)
 	} else {
 		panic(createParsingFailedException("Unsupported map entry: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 	}

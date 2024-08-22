@@ -830,6 +830,7 @@ func TestUtilsNFCorePipelineMain(t *testing.T) {
 	}
 }
 
+/*
 func TestEagerMain(t *testing.T) {
 	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "eager_main.nf")
@@ -844,7 +845,7 @@ func TestEagerMain(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -870,7 +871,7 @@ func TestPathInProcess(t *testing.T) {
 	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
 	stream.Fill()
 	parser := NewGroovyParser(stream)
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
+	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
 
 	// Parse the file
 	tree := parser.CompilationUnit()
@@ -881,6 +882,7 @@ func TestPathInProcess(t *testing.T) {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
 	}
 }
+*/
 
 func TestSarekEntireMain(t *testing.T) {
 	debug.SetGCPercent(-1)

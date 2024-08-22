@@ -152,6 +152,12 @@ func isFollowingArgumentsOrClosure() bool {
 			return t == 2 || t == 3
 		}
 	*/
+	/*
+		if pathExpressionContext, ok := context.(*PathExpressionContext); ok {
+			t := pathExpressionContext.GetT()
+			return t == 2 || t == 3
+		}
+	*/
 
 	return false
 }

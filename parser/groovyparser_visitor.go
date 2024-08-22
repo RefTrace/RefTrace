@@ -574,9 +574,6 @@ type GroovyParserVisitor interface {
 	// Visit a parse tree produced by GroovyParser#mapPrmrAltNamedPropertyArgPrimary.
 	VisitMapPrmrAltNamedPropertyArgPrimary(ctx *MapPrmrAltNamedPropertyArgPrimaryContext) interface{}
 
-	// Visit a parse tree produced by GroovyParser#namedPropertyArgPrimary.
-	VisitNamedPropertyArgPrimary(ctx *NamedPropertyArgPrimaryContext) interface{}
-
 	// Visit a parse tree produced by GroovyParser#identifierPrmrAltNamedArgPrimary.
 	VisitIdentifierPrmrAltNamedArgPrimary(ctx *IdentifierPrmrAltNamedArgPrimaryContext) interface{}
 
@@ -586,9 +583,6 @@ type GroovyParserVisitor interface {
 	// Visit a parse tree produced by GroovyParser#gstringPrmrAltNamedArgPrimary.
 	VisitGstringPrmrAltNamedArgPrimary(ctx *GstringPrmrAltNamedArgPrimaryContext) interface{}
 
-	// Visit a parse tree produced by GroovyParser#namedArgPrimary.
-	VisitNamedArgPrimary(ctx *NamedArgPrimaryContext) interface{}
-
 	// Visit a parse tree produced by GroovyParser#identifierPrmrAltCommandPrimary.
 	VisitIdentifierPrmrAltCommandPrimary(ctx *IdentifierPrmrAltCommandPrimaryContext) interface{}
 
@@ -597,9 +591,6 @@ type GroovyParserVisitor interface {
 
 	// Visit a parse tree produced by GroovyParser#gstringPrmrAltCommandPrimary.
 	VisitGstringPrmrAltCommandPrimary(ctx *GstringPrmrAltCommandPrimaryContext) interface{}
-
-	// Visit a parse tree produced by GroovyParser#commandPrimary.
-	VisitCommandPrimary(ctx *CommandPrimaryContext) interface{}
 
 	// Visit a parse tree produced by GroovyParser#list.
 	VisitList(ctx *ListContext) interface{}

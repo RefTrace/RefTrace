@@ -735,7 +735,7 @@ enhancedStatementExpression
     ;
 
 statementExpression
-    :   commandExpression                   #commandExprAlt
+    :   commandExpression                  #commandExprAlt
     ;
 
 postfixExpression
@@ -881,6 +881,7 @@ castOperandExpression
 commandExpression
     :   expression
         (
+            { !isFollowingArgumentsOrClosure() }?
             argumentList
         |
             /* if pathExpression is a method call, no need to have any more arguments */
@@ -924,7 +925,7 @@ commandArgument
  */
 pathExpression returns [int t]
     :   (
-            basicPrimary
+            primary
         |
             // if 'static' followed by DOT, we can treat them as identifiers, e.g. static.unused = { -> }
             { p.GetTokenStream().LT(2).GetTokenType() == GroovyParserDOT }?
@@ -1017,7 +1018,7 @@ namedPropertyArgs
     :   (SAFE_INDEX | LBRACK) (namedPropertyArgList | COLON) RBRACK
     ;
 
-basicPrimary
+primary
     :
         // Append `typeArguments?` to `identifier` to support constructor reference with generics, e.g. HashMap<String, Integer>::new
         // Though this is not a graceful solution, it is much faster than replacing `builtInType` with `type`
@@ -1034,7 +1035,7 @@ basicPrimary
     |   builtInType                                                                         #builtInTypePrmrAlt
     ;
 
-basicNamedPropertyArgPrimary
+namedPropertyArgPrimary
     :   identifier                                                                          #identifierPrmrAltNamedPropertyArgPrimary
     |   literal                                                                             #literalPrmrAltNamedPropertyArgPrimary
     |   gstring                                                                             #gstringPrmrAltNamedPropertyArgPrimary
@@ -1043,30 +1044,16 @@ basicNamedPropertyArgPrimary
     |   map                                                                                 #mapPrmrAltNamedPropertyArgPrimary
     ;
 
-namedPropertyArgPrimary
-    :   basicNamedPropertyArgPrimary
-    |   basicPrimary
-    ;
-
-basicNamedArgPrimary
+namedArgPrimary
     :   identifier                                                                          #identifierPrmrAltNamedArgPrimary
     |   literal                                                                             #literalPrmrAltNamedArgPrimary
     |   gstring                                                                             #gstringPrmrAltNamedArgPrimary
     ;
 
-namedArgPrimary
-    :   basicNamedArgPrimary
-    |   basicPrimary
-    ;
-
-basicCommandPrimary
+commandPrimary
     :   identifier                                                                          #identifierPrmrAltCommandPrimary
     |   literal                                                                             #literalPrmrAltCommandPrimary
     |   gstring                                                                             #gstringPrmrAltCommandPrimary
-    ;
-
-commandPrimary
-    :   basicCommandPrimary
     ;
 
 list
@@ -1106,7 +1093,7 @@ namedArg
 
 mapEntryLabel
     :   keywords
-    |   basicPrimary
+    |   primary
     ;
 
 namedPropertyArgLabel

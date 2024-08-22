@@ -764,10 +764,6 @@ func (v *BaseGroovyParserVisitor) VisitMapPrmrAltNamedPropertyArgPrimary(ctx *Ma
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseGroovyParserVisitor) VisitNamedPropertyArgPrimary(ctx *NamedPropertyArgPrimaryContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseGroovyParserVisitor) VisitIdentifierPrmrAltNamedArgPrimary(ctx *IdentifierPrmrAltNamedArgPrimaryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -780,10 +776,6 @@ func (v *BaseGroovyParserVisitor) VisitGstringPrmrAltNamedArgPrimary(ctx *Gstrin
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseGroovyParserVisitor) VisitNamedArgPrimary(ctx *NamedArgPrimaryContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseGroovyParserVisitor) VisitIdentifierPrmrAltCommandPrimary(ctx *IdentifierPrmrAltCommandPrimaryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -793,10 +785,6 @@ func (v *BaseGroovyParserVisitor) VisitLiteralPrmrAltCommandPrimary(ctx *Literal
 }
 
 func (v *BaseGroovyParserVisitor) VisitGstringPrmrAltCommandPrimary(ctx *GstringPrmrAltCommandPrimaryContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseGroovyParserVisitor) VisitCommandPrimary(ctx *CommandPrimaryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
