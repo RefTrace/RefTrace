@@ -230,6 +230,13 @@ func makeDirective(statement parser.Statement) (directives.Directive, error) {
 				}
 				return nil, err
 			}
+			if mce.GetMethod().GetText() == "publishDir" {
+				directive, err := directives.MakePublishDirDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
 		}
 	}
 	return nil, errors.New("unknown directive")
