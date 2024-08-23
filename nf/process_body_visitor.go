@@ -2,6 +2,8 @@ package nf
 
 import (
 	"reft-go/parser"
+
+	"reft-go/nf/directives"
 )
 
 var _ parser.GroovyCodeVisitor = (*ProcessBodyVisitor)(nil)
@@ -20,7 +22,7 @@ type ProcessBodyVisitor struct {
 	hitDeclBlock bool
 	inputs       []parser.Statement
 	outputs      []parser.Statement
-	directives   []Directive
+	directives   []directives.Directive
 }
 
 // NewProcessBodyVisitor creates a new ProcessBodyVisitor
@@ -28,75 +30,34 @@ func NewProcessBodyVisitor() *ProcessBodyVisitor {
 	return &ProcessBodyVisitor{mode: ScriptMode, hitDeclBlock: false}
 }
 
-type DirectiveType int
-
-const (
-	AcceleratorType DirectiveType = iota
-	AfterScriptType
-	// Add new types here
-)
-
-type Directive interface {
-	Type() DirectiveType
-}
-
-type Accelerator struct {
-	NumGPUs int
-	GPUType string
-}
-
-func (a Accelerator) Type() DirectiveType { return AcceleratorType }
-
-func makeAccelerator(mce *parser.MethodCallExpression) *Accelerator {
-	var numGPUs int = -1
-	var gpuType string = ""
-	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
-		exprs := args.GetExpressions()
-		for _, expr := range exprs {
-			if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
-				value := constantExpr.GetValue()
-				if intValue, ok := value.(int); ok {
-					numGPUs = intValue
-				}
-			}
-			if mapExpr, ok := expr.(*parser.MapExpression); ok {
-				entries := mapExpr.GetMapEntryExpressions()
-				for _, entry := range entries {
-					if entry.GetKeyExpression().GetText() == "type" {
-						if constantExpr, ok := entry.GetValueExpression().(*parser.ConstantExpression); ok {
-							gpuTypeVal := constantExpr.GetValue()
-							if gpuTypeStr, ok := gpuTypeVal.(string); ok {
-								gpuType = gpuTypeStr
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	if numGPUs != -1 {
-		return &Accelerator{NumGPUs: numGPUs, GPUType: gpuType}
-	}
-	return nil
-}
-
-type AfterScript struct{}
-
-func (a AfterScript) Type() DirectiveType { return AfterScriptType }
-
-func makeDirective(statement parser.Statement) Directive {
+func makeDirective(statement parser.Statement) directives.Directive {
 	if exprStmt, ok := statement.(*parser.ExpressionStatement); ok {
 		if mce, ok := exprStmt.GetExpression().(*parser.MethodCallExpression); ok {
 			if mce.GetMethod().GetText() == "accelerator" {
-				return makeAccelerator(mce)
+				return directives.MakeAccelerator(mce)
+			}
+			if mce.GetMethod().GetText() == "afterScript" {
+				return directives.MakeAfterScript(mce)
+			}
+			if mce.GetMethod().GetText() == "arch" {
+				return directives.MakeArch(mce)
+			}
+			if mce.GetMethod().GetText() == "array" {
+				return directives.MakeArrayDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "beforeScript" {
+				return directives.MakeBeforeScript(mce)
+			}
+			if mce.GetMethod().GetText() == "cache" {
+				return directives.MakeCacheDirective(mce)
 			}
 		}
 	}
 	return nil
 }
 
-func makeDirectives(statements []parser.Statement) []Directive {
-	var directives []Directive
+func makeDirectives(statements []parser.Statement) []directives.Directive {
+	var directives []directives.Directive
 	for _, statement := range statements {
 		directive := makeDirective(statement)
 		if directive != nil {

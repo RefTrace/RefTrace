@@ -2,6 +2,8 @@ package nf
 
 import (
 	"reft-go/parser"
+
+	"reft-go/nf/directives"
 )
 
 var _ parser.GroovyCodeVisitor = (*ProcessVisitor)(nil)
@@ -10,7 +12,7 @@ type Process struct {
 	Name       string
 	NumInputs  int
 	NumOutputs int
-	Directives []Directive
+	Directives []directives.Directive
 	Closure    *parser.ClosureExpression
 }
 

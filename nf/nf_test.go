@@ -84,6 +84,10 @@ func TestSimpleProcess(t *testing.T) {
 	if len(processes) != 1 {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
+	directives := processes[0].Directives
+	if len(directives) != 3 {
+		t.Fatalf("Expected 3 directives, got %d", len(directives))
+	}
 }
 
 func TestChannelFromPath(t *testing.T) {
