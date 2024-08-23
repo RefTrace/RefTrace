@@ -3652,6 +3652,10 @@ func (v *ASTBuilder) VisitIdentifierPrmrAlt(ctx *IdentifierPrmrAltContext) inter
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
 }
 
+func (v *ASTBuilder) VisitIdentifierPrmrAltNamedArgPrimary(ctx *IdentifierPrmrAltNamedArgPrimaryContext) interface{} {
+	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
+}
+
 func (v *ASTBuilder) VisitIdentifierPrmrAltNamedPropertyArgPrimary(ctx *IdentifierPrmrAltNamedPropertyArgPrimaryContext) interface{} {
 	return configureAST(NewVariableExpressionWithString(v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)), ctx)
 }
@@ -3953,7 +3957,8 @@ func (v *ASTBuilder) VisitNamedArg(ctx *NamedArgContext) interface{} {
 	if ctx.MUL() != nil {
 		keyExpr = configureAST(NewSpreadMapExpression(valueExpr), ctx)
 	} else if ctx.NamedArgLabel() != nil {
-		keyExpr = v.VisitNamedArgLabel(ctx.NamedArgLabel().(*NamedArgLabelContext)).(Expression)
+		var label = v.VisitNamedArgLabel(ctx.NamedArgLabel().(*NamedArgLabelContext))
+		keyExpr = label.(Expression)
 	} else {
 		panic(createParsingFailedException("Unsupported map entry: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
 	}
@@ -3985,6 +3990,25 @@ func (v *ASTBuilder) VisitMapEntryLabel(ctx *MapEntryLabelContext) interface{} {
 		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
 	} else if ctx.Primary() != nil {
 		expression := v.Visit(ctx.Primary()).(Expression)
+
+		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
+		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {
+			expression = configureASTFromSource(
+				NewConstantExpression(varExpr.GetName()),
+				expression)
+		}
+
+		return configureAST(expression, ctx)
+	}
+
+	panic(createParsingFailedException("Unsupported map entry label: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+}
+
+func (v *ASTBuilder) VisitNamedArgLabel(ctx *NamedArgLabelContext) interface{} {
+	if ctx.Keywords() != nil {
+		return configureAST(v.VisitKeywords(ctx.Keywords().(*KeywordsContext)).(*ConstantExpression), ctx)
+	} else if ctx.NamedArgPrimary() != nil {
+		expression := v.Visit(ctx.NamedArgPrimary()).(Expression)
 
 		// if the key is variable and not inside parentheses, convert it to a constant, e.g. [a:1, b:2]
 		if varExpr, ok := expression.(*VariableExpression); ok && !v.isInsideParentheses(expression) {

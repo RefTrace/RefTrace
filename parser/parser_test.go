@@ -1,140 +1,63 @@
 package parser
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"runtime/debug"
 	"testing"
-
-	"github.com/antlr4-go/antlr/v4"
 )
 
 func TestGroovyParserGStringFile(t *testing.T) {
 	filePath := filepath.Join("testdata", "gstring.groovy")
-	input, err := antlr.NewFileStream(filePath)
+	_, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	parser := NewGroovyParser(stream)
-
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-		}
-	}()
-
-	// Parse the file
-	parser.CompilationUnit()
 }
 
 func TestGroovyParserUtils(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nfcore_pipeline.nf")
-	input, err := antlr.NewFileStream(filePath)
+	_, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-		}
-	}()
-
-	// Parse the file
-	parser.CompilationUnit()
 }
 
 func TestGroovyParserExpression(t *testing.T) {
 	filePath := filepath.Join("testdata", "expression", "01.groovy")
-	input, err := antlr.NewFileStream(filePath)
+	_, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-		}
-	}()
-
-	// Parse the file
-	parser.CompilationUnit()
 }
 
 func TestGroovyParserCommandExpr(t *testing.T) {
 	filePath := filepath.Join("testdata", "cnvkit_batch_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
+	}
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
 	}
 
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	/*
-		defer func() {
-			if r := recover(); r != nil {
-				t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-			}
-		}()
-	*/
-
-	// Parse the file
-	tree := parser.CompilationUnit()
-	fmt.Println(tree)
+	if result.Tree == nil {
+		t.Fatal("Parse tree is nil")
+	}
 }
 
 func TestInclude(t *testing.T) {
 	filePath := filepath.Join("testdata", "include.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	/*
-		defer func() {
-			if r := recover(); r != nil {
-				t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-			}
-		}()
-	*/
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -193,31 +116,15 @@ func TestInclude(t *testing.T) {
 
 func TestParams(t *testing.T) {
 	filePath := filepath.Join("testdata", "params.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	/*
-		defer func() {
-			if r := recover(); r != nil {
-				t.Fatalf("parser.CompilationUnit() panicked: %v", r)
-			}
-		}()
-	*/
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -271,23 +178,15 @@ func TestParams(t *testing.T) {
 
 func TestElvis(t *testing.T) {
 	filePath := filepath.Join("testdata", "elvis.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -331,23 +230,15 @@ func TestElvis(t *testing.T) {
 
 func TestTernary(t *testing.T) {
 	filePath := filepath.Join("testdata", "ternary.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -404,23 +295,15 @@ func TestTernary(t *testing.T) {
 
 func TestTernaryClosure(t *testing.T) {
 	filePath := filepath.Join("testdata", "ternary_closure.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -493,23 +376,15 @@ func TestTernaryClosure(t *testing.T) {
 
 func TestTopLevelIf(t *testing.T) {
 	filePath := filepath.Join("testdata", "top_level_if.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -524,23 +399,15 @@ func TestTopLevelIf(t *testing.T) {
 func TestSimpleWorkflow(t *testing.T) {
 	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "simple_workflow.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -559,23 +426,15 @@ func TestSimpleWorkflow(t *testing.T) {
 
 func TestFunction(t *testing.T) {
 	filePath := filepath.Join("testdata", "function.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	methods := ast.Methods
 	if len(methods) != 1 {
 		t.Errorf("Expected exactly 1 method in the block, but got %d", len(methods))
@@ -583,25 +442,16 @@ func TestFunction(t *testing.T) {
 }
 
 func TestSarekMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "sarek_main_workflow.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -623,25 +473,16 @@ func TestSarekMain(t *testing.T) {
 }
 
 func TestSarekMain2(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "sarek_main_workflow2.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 37 {
 		t.Errorf("Expected exactly 37 statements in the block, but got %d", len(bs.statements))
@@ -649,25 +490,16 @@ func TestSarekMain2(t *testing.T) {
 }
 
 func TestCnvKitBatchMain2(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "cnvkit_batch_main2.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -675,25 +507,16 @@ func TestCnvKitBatchMain2(t *testing.T) {
 }
 
 func TestVarcalMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "varcal_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -701,25 +524,16 @@ func TestVarcalMain(t *testing.T) {
 }
 
 func TestPrepareIntervalsMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "prepare_intervals_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 6 {
 		t.Errorf("Expected exactly 6 statements in the block, but got %d", len(bs.statements))
@@ -727,25 +541,16 @@ func TestPrepareIntervalsMain(t *testing.T) {
 }
 
 func TestSamplesheetToChannelMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "samplesheet_to_channel_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -753,25 +558,16 @@ func TestSamplesheetToChannelMain(t *testing.T) {
 }
 
 func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "utils_nfcore_sarek_pipeline_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 15 {
 		t.Errorf("Expected exactly 15 statements in the block, but got %d", len(bs.statements))
@@ -779,25 +575,16 @@ func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
 }
 
 func TestUtilsNFPipelineMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "utils_nextflow_pipeline_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
@@ -805,105 +592,67 @@ func TestUtilsNFPipelineMain(t *testing.T) {
 }
 
 func TestUtilsNFCorePipelineMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "utils_nfcore_pipeline_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
 	}
 }
 
-/*
 func TestEagerMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "eager_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
-	if len(bs.statements) != 1 {
-		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
+	if len(bs.statements) != 183 {
+		t.Errorf("Expected exactly 183 statements in the block, but got %d", len(bs.statements))
 	}
 }
 
 func TestPathInProcess(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "path_in_process.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
 		t.Errorf("Expected exactly 1 statement in the block, but got %d", len(bs.statements))
 	}
 }
-*/
 
 func TestSarekEntireMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "sarek_entire_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "SLL" {
+		t.Fatalf("Expected parsing mode to be SLL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	bs := ast.StatementBlock
 	if len(bs.statements) != 71 {
 		t.Errorf("Expected exactly 71 statements in the block, but got %d", len(bs.statements))
@@ -919,28 +668,20 @@ func TestSarekEntireMain(t *testing.T) {
 }
 
 func TestDeepVariantMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "deepvariant_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := buildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	parser := NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := parser.CompilationUnit()
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
+	}
 	builder := NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*ModuleNode)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
 	_ = ast
 }
 
+/*
 func TestParseSpeed(t *testing.T) {
 	debug.SetGCPercent(-1)
 	dir := filepath.Join("testdata", "sarek")
@@ -949,7 +690,74 @@ func TestParseSpeed(t *testing.T) {
 		return
 	}
 }
+*/
 
+/*
+func getStatementsCount(ast *ModuleNode) int {
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		return len(bs.statements)
+	}
+
+	// Try to convert the single statement to a MethodCallExpression
+	methodCall, ok := bs.statements[0].(*MethodCallExpression)
+	if !ok {
+		return 1
+	}
+
+	// Check if there are any arguments
+	if len(methodCall.Arguments) == 0 {
+		return 1
+	}
+
+	// Try to convert the first argument to a Closure
+	closure, ok := methodCall.Arguments[0].(*Closure)
+	if !ok {
+		return 1
+	}
+
+	// Return the number of statements in the closure's code field
+	return len(closure.Code.statements)
+}
+*/
+
+func getStatementsCount(ast *ModuleNode) int {
+	bs := ast.StatementBlock
+	if len(bs.statements) != 1 {
+		return len(bs.statements)
+	}
+	exprStmt, ok := bs.statements[0].(*ExpressionStatement)
+	if !ok {
+		return 1
+	}
+	expr, ok := exprStmt.GetExpression().(*MethodCallExpression)
+	if !ok {
+		return 1
+	}
+	args := expr.GetArguments().(*ArgumentListExpression)
+	if len(args.GetExpressions()) != 1 {
+		return 1
+	}
+	firstExpr := args.GetExpressions()[0]
+	mce, ok := firstExpr.(*MethodCallExpression)
+	if !ok {
+		return 1
+	}
+	args = mce.GetArguments().(*ArgumentListExpression)
+	if len(args.GetExpressions()) != 1 {
+		return 1
+	}
+	firstExpr = args.GetExpressions()[0]
+	closure, ok := firstExpr.(*ClosureExpression)
+	if !ok {
+		return 1
+	}
+	code := closure.GetCode().(*BlockStatement)
+	stmts := code.GetStatements()
+	return len(stmts)
+}
+
+/*
 func TestParseAllSarekFiles(t *testing.T) {
 	debug.SetGCPercent(-1)
 	dir := filepath.Join("testdata", "sarek")
@@ -970,7 +778,7 @@ func TestParseAllSarekFiles(t *testing.T) {
 				stream := antlr.NewCommonTokenStream(lexer, 0)
 				stream.Fill()
 				parser := NewGroovyParser(stream)
-				//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
+				//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
 
 				defer func() {
 					if r := recover(); r != nil {
@@ -981,6 +789,8 @@ func TestParseAllSarekFiles(t *testing.T) {
 				tree := parser.CompilationUnit()
 				builder := NewASTBuilder(path)
 				ast := builder.Visit(tree).(*ModuleNode)
+				numStatements := getStatementsCount(ast)
+				t.Logf("File: %s, Number of statements: %d", path, numStatements)
 
 				if ast == nil {
 					t.Errorf("Failed to parse file: %s", path)
@@ -994,3 +804,128 @@ func TestParseAllSarekFiles(t *testing.T) {
 		t.Fatalf("Error walking the path %s: %v", dir, err)
 	}
 }
+*/
+
+func TestSarekGoldMapping(t *testing.T) {
+	dir := filepath.Join("testdata", "sarek")
+
+	// Load the gold mapping
+	goldFile, err := os.Open(filepath.Join("testdata", "sarek_gold_mapping.json"))
+	if err != nil {
+		t.Fatalf("Failed to open gold mapping file: %v", err)
+	}
+	defer goldFile.Close()
+
+	var goldMapping map[string]int
+	decoder := json.NewDecoder(goldFile)
+	if err := decoder.Decode(&goldMapping); err != nil {
+		t.Fatalf("Failed to decode gold mapping: %v", err)
+	}
+
+	totalFiles := 0
+	passedFiles := 0
+	failedFiles := 0
+	nLL := 0
+
+	// Walk through the files and compare with gold mapping
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && filepath.Ext(path) == ".nf" {
+			totalFiles++
+			relPath, _ := filepath.Rel(dir, path)
+
+			result, err := buildCST(path)
+			if err != nil {
+				t.Errorf("Failed to open file %s: %s", path, err)
+				failedFiles++
+				return nil
+			}
+			if result.Mode == "LL" {
+				nLL++
+			}
+			builder := NewASTBuilder(path)
+			ast := builder.Visit(result.Tree).(*ModuleNode)
+			numStatements := getStatementsCount(ast)
+
+			expectedCount, ok := goldMapping[relPath]
+			if !ok {
+				t.Errorf("File %s not found in gold mapping", relPath)
+				failedFiles++
+			} else if numStatements != expectedCount {
+				t.Errorf("Mismatch for file %s: expected %d statements, got %d", relPath, expectedCount, numStatements)
+				failedFiles++
+			} else {
+				passedFiles++
+				t.Logf("File %s: Passed (expected %d, got %d)", relPath, expectedCount, numStatements)
+			}
+
+			// Print progress
+			t.Logf("Progress: %d/%d files processed, %d passed, %d failed", totalFiles, len(goldMapping), passedFiles, failedFiles)
+		}
+		return nil
+	})
+
+	if err != nil {
+		t.Fatalf("Error walking the path %s: %v", dir, err)
+	}
+
+	// Print final summary
+	t.Logf("Final Summary: %d/%d files processed, %d passed, %d failed, %d LL", totalFiles, len(goldMapping), passedFiles, failedFiles, nLL)
+}
+
+/*
+func TestGenerateGoldMapping(t *testing.T) {
+	debug.SetGCPercent(-1)
+	dir := filepath.Join("testdata", "sarek")
+	goldMapping := make(map[string]int)
+
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && filepath.Ext(path) == ".nf" {
+			input, err := antlr.NewFileStream(path)
+			if err != nil {
+				t.Fatalf("Failed to open file %s: %s", path, err)
+			}
+
+			lexer := NewGroovyLexer(input)
+			stream := antlr.NewCommonTokenStream(lexer, 0)
+			stream.Fill()
+			parser := NewGroovyParser(stream)
+
+			tree := parser.CompilationUnit()
+			builder := NewASTBuilder(path)
+			ast := builder.Visit(tree).(*ModuleNode)
+			numStatements := getStatementsCount(ast)
+
+			relPath, _ := filepath.Rel(dir, path)
+			goldMapping[relPath] = numStatements
+		}
+		return nil
+	})
+
+	if err != nil {
+		t.Fatalf("Error walking the path %s: %v", dir, err)
+	}
+
+	// Save the gold mapping to a JSON file
+	goldFile, err := os.Create(filepath.Join("testdata", "sarek_gold_mapping.json"))
+	if err != nil {
+		t.Fatalf("Failed to create gold mapping file: %v", err)
+	}
+	defer goldFile.Close()
+
+	encoder := json.NewEncoder(goldFile)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(goldMapping); err != nil {
+		t.Fatalf("Failed to encode gold mapping: %v", err)
+	}
+
+	t.Logf("Gold mapping generated and saved to testdata/sarek_gold_mapping.json")
+}
+*/

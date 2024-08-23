@@ -1,8 +1,11 @@
 package parser
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/antlr4-go/antlr/v4"
 )
 
 var invalidJavaIdentifiers = map[string]bool{
@@ -44,4 +47,68 @@ func IsJavaIdentifier(name string) bool {
 		}
 	}
 	return true
+}
+
+type ParseResult struct {
+	Tree antlr.ParseTree
+	Mode string // "SLL", "LL", or "Failed"
+}
+
+func buildCST(filePath string) (ParseResult, error) {
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		return ParseResult{Mode: "Failed"}, fmt.Errorf("failed to open file %s: %w", filePath, err)
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	stream.Fill()
+	parser := NewGroovyParser(stream)
+	strategy := NewCustomErrorStrategy()
+	parser.SetErrorHandler(strategy)
+
+	var result antlr.ParseTree
+	var parseErr error
+
+	// First, try SLL mode
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				parseErr = fmt.Errorf("SLL parsing panicked: %v", r)
+			}
+		}()
+		result = parser.CompilationUnit()
+	}()
+
+	// Check for panics or errors in SLL mode
+	if parseErr != nil || len(strategy.GetErrors()) > 0 {
+		// If SLL failed, try LL mode
+		stream.Seek(0)
+		parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
+		strategy.ClearErrors()
+		parseErr = nil // Reset the panic error
+
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					parseErr = fmt.Errorf("LL parsing panicked: %v", r)
+				}
+			}()
+			result = parser.CompilationUnit()
+		}()
+
+		if parseErr != nil {
+			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed due to panic in both SLL and LL modes: %w", parseErr)
+		}
+
+		if len(strategy.GetErrors()) > 0 {
+			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %v", strategy.GetErrors())
+		}
+
+		return ParseResult{Tree: result, Mode: "LL"}, nil
+	}
+
+	return ParseResult{Tree: result, Mode: "SLL"}, nil
 }

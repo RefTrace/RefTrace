@@ -836,7 +836,7 @@ func groovyparserParserInit() {
 		120, 0, 1468, 1472, 1, 0, 0, 0, 1469, 1470, 7, 9, 0, 0, 1470, 1472, 3,
 		240, 120, 0, 1471, 1461, 1, 0, 0, 0, 1471, 1464, 1, 0, 0, 0, 1471, 1465,
 		1, 0, 0, 0, 1471, 1469, 1, 0, 0, 0, 1472, 241, 1, 0, 0, 0, 1473, 1477,
-		3, 238, 119, 0, 1474, 1475, 4, 121, 20, 0, 1475, 1478, 3, 302, 151, 0,
+		3, 238, 119, 0, 1474, 1475, 4, 121, 20, 1, 1475, 1478, 3, 302, 151, 0,
 		1476, 1478, 1, 0, 0, 0, 1477, 1474, 1, 0, 0, 0, 1477, 1476, 1, 0, 0, 0,
 		1478, 1482, 1, 0, 0, 0, 1479, 1481, 3, 244, 122, 0, 1480, 1479, 1, 0, 0,
 		0, 1481, 1484, 1, 0, 0, 0, 1482, 1480, 1, 0, 0, 0, 1482, 1483, 1, 0, 0,
@@ -28081,6 +28081,12 @@ type ICommandExpressionContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
+	// Get_expression returns the _expression rule contexts.
+	Get_expression() IExpressionContext
+
+	// Set_expression sets the _expression rule contexts.
+	Set_expression(IExpressionContext)
+
 	// Getter signatures
 	Expression() IExpressionContext
 	ArgumentList() IArgumentListContext
@@ -28093,7 +28099,8 @@ type ICommandExpressionContext interface {
 
 type CommandExpressionContext struct {
 	*GroovyParserRuleContext
-	parser antlr.Parser
+	parser      antlr.Parser
+	_expression IExpressionContext
 }
 
 func NewEmptyCommandExpressionContext() *CommandExpressionContext {
@@ -28121,6 +28128,10 @@ func NewCommandExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCon
 }
 
 func (s *CommandExpressionContext) GetParser() antlr.Parser { return s.parser }
+
+func (s *CommandExpressionContext) Get_expression() IExpressionContext { return s._expression }
+
+func (s *CommandExpressionContext) Set_expression(v IExpressionContext) { s._expression = v }
 
 func (s *CommandExpressionContext) Expression() IExpressionContext {
 	var t antlr.RuleContext
@@ -28221,7 +28232,10 @@ func (p *GroovyParser) CommandExpression() (localctx ICommandExpressionContext) 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(1473)
-		p.expression(0)
+
+		var _x = p.expression(0)
+
+		localctx.(*CommandExpressionContext)._expression = _x
 	}
 	p.SetState(1477)
 	p.GetErrorHandler().Sync(p)
@@ -28233,8 +28247,8 @@ func (p *GroovyParser) CommandExpression() (localctx ICommandExpressionContext) 
 	case 1:
 		p.SetState(1474)
 
-		if !(!isFollowingArgumentsOrClosure()) {
-			p.SetError(antlr.NewFailedPredicateException(p, " !isFollowingArgumentsOrClosure() ", ""))
+		if !(!isFollowingArgumentsOrClosure(localctx.(*CommandExpressionContext).Get_expression())) {
+			p.SetError(antlr.NewFailedPredicateException(p, " !isFollowingArgumentsOrClosure($expression.ctx) ", ""))
 			goto errorExit
 		}
 		{
@@ -36625,11 +36639,7 @@ func (p *GroovyParser) Sempred(localctx antlr.RuleContext, ruleIndex, predIndex 
 		return p.Expression_Sempred(t, predIndex)
 
 	case 121:
-		var t *CommandExpressionContext = nil
-		if localctx != nil {
-			t = localctx.(*CommandExpressionContext)
-		}
-		return p.CommandExpression_Sempred(t, predIndex)
+		return p.CommandExpression_Sempred(localctx, predIndex)
 
 	case 123:
 		var t *PathExpressionContext = nil
@@ -36741,7 +36751,20 @@ func (p *GroovyParser) Expression_Sempred(localctx antlr.RuleContext, predIndex 
 func (p *GroovyParser) CommandExpression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 20:
-		return !isFollowingArgumentsOrClosure()
+		/*
+		if pctx, ok := localctx.(*PathExpressionContext); ok {
+			t := pctx.GetT()
+			return t == 2 || t == 3
+		}
+		if pctx, ok := localctx.(*PostfixExprAltContext); ok {
+			return !isFollowingArgumentsOrClosure(pctx)
+		}
+		 */
+		if cmdExprCtx, ok := localctx.(*CommandExpressionContext); ok {
+			return !isFollowingArgumentsOrClosure(cmdExprCtx.Get_expression())
+		}
+		return !isFollowingArgumentsOrClosure(localctx)
+		//return !isFollowingArgumentsOrClosure(localctx.(*CommandExpressionContext).Get_expression())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))

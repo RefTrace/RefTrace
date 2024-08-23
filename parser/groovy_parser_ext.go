@@ -2,6 +2,7 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 	"unicode"
 
@@ -130,28 +131,27 @@ type MyGroovyParser struct {
 	inSwitchExpressionLevel int
 }
 
-func isFollowingArgumentsOrClosure() bool {
-	/*
-		if postfixExprAltContext, ok := context.(*PostfixExprAltContext); ok {
-			peacChildren := postfixExprAltContext.GetChildren()
+func isFollowingArgumentsOrClosure(ctx interface{}) bool {
 
-			defer func() {
-				if r := recover(); r != nil {
-					panic(fmt.Sprintf("Unexpected structure of expression context: %v", context))
-				}
-			}()
+	if postfixExprAltContext, ok := ctx.(*PostfixExprAltContext); ok {
+		peacChildren := postfixExprAltContext.GetChildren()
 
-			peacChild := peacChildren[0]
-			pecChildren := peacChild.(*PostfixExpressionContext).GetChildren()
+		defer func() {
+			if r := recover(); r != nil {
+				panic(fmt.Sprintf("Unexpected structure of expression context: %v", ctx))
+			}
+		}()
 
-			pecChild := pecChildren[0]
-			pec := pecChild.(*PathExpressionContext)
+		peacChild := peacChildren[0]
+		pecChildren := peacChild.(*PostfixExpressionContext).GetChildren()
 
-			t := pec.GetT()
+		pecChild := pecChildren[0]
+		pec := pecChild.(*PathExpressionContext)
 
-			return t == 2 || t == 3
-		}
-	*/
+		t := pec.GetT()
+
+		return t == 2 || t == 3
+	}
 	/*
 		if pathExpressionContext, ok := context.(*PathExpressionContext); ok {
 			t := pathExpressionContext.GetT()
