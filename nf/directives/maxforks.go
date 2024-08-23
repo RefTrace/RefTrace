@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type MaxForksDirective struct {
 
 func (a MaxForksDirective) Type() DirectiveType { return MaxForksDirectiveType }
 
-func MakeMaxForksDirective(mce *parser.MethodCallExpression) *MaxForksDirective {
+func MakeMaxForksDirective(mce *parser.MethodCallExpression) (*MaxForksDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid max forks directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if intValue, ok := constantExpr.GetValue().(int); ok {
-				return &MaxForksDirective{Num: intValue}
+				return &MaxForksDirective{Num: intValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid max forks directive")
 }

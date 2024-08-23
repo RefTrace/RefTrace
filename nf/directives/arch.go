@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -13,7 +14,7 @@ type Arch struct {
 
 func (a Arch) Type() DirectiveType { return ArchType }
 
-func MakeArch(mce *parser.MethodCallExpression) *Arch {
+func MakeArch(mce *parser.MethodCallExpression) (*Arch, error) {
 	var name string = ""
 	var target string = ""
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
@@ -35,7 +36,7 @@ func MakeArch(mce *parser.MethodCallExpression) *Arch {
 		}
 	}
 	if name != "" {
-		return &Arch{Name: name, Target: target}
+		return &Arch{Name: name, Target: target}, nil
 	}
-	return nil
+	return nil, errors.New("invalid arch directive")
 }

@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 	"strings"
 )
@@ -13,7 +14,7 @@ type ClusterOptions struct {
 
 func (a ClusterOptions) Type() DirectiveType { return ClusterOptionsType }
 
-func MakeClusterOptions(mce *parser.MethodCallExpression) *ClusterOptions {
+func MakeClusterOptions(mce *parser.MethodCallExpression) (*ClusterOptions, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		options := []string{}
@@ -24,7 +25,7 @@ func MakeClusterOptions(mce *parser.MethodCallExpression) *ClusterOptions {
 			}
 		}
 		joinedOptions := strings.Join(options, " ")
-		return &ClusterOptions{Options: joinedOptions}
+		return &ClusterOptions{Options: joinedOptions}, nil
 	}
-	return nil
+	return nil, errors.New("invalid clusterOptions directive")
 }

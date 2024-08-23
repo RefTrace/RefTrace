@@ -1,6 +1,7 @@
 package nf
 
 import (
+	"errors"
 	"reft-go/parser"
 
 	"reft-go/nf/directives"
@@ -30,103 +31,215 @@ func NewProcessBodyVisitor() *ProcessBodyVisitor {
 	return &ProcessBodyVisitor{mode: ScriptMode, hitDeclBlock: false}
 }
 
-func makeDirective(statement parser.Statement) directives.Directive {
+func makeDirective(statement parser.Statement) (directives.Directive, error) {
 	if exprStmt, ok := statement.(*parser.ExpressionStatement); ok {
 		if mce, ok := exprStmt.GetExpression().(*parser.MethodCallExpression); ok {
 			if mce.GetMethod().GetText() == "accelerator" {
-				return directives.MakeAccelerator(mce)
+				directive, err := directives.MakeAccelerator(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "afterScript" {
-				return directives.MakeAfterScript(mce)
+				directive, err := directives.MakeAfterScript(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "arch" {
-				return directives.MakeArch(mce)
+				directive, err := directives.MakeArch(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "array" {
-				return directives.MakeArrayDirective(mce)
+				directive, err := directives.MakeArrayDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "beforeScript" {
-				return directives.MakeBeforeScript(mce)
+				directive, err := directives.MakeBeforeScript(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "cache" {
-				return directives.MakeCacheDirective(mce)
+				directive, err := directives.MakeCacheDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "clusterOptions" {
-				return directives.MakeClusterOptions(mce)
+				directive, err := directives.MakeClusterOptions(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "conda" {
-				return directives.MakeConda(mce)
+				directive, err := directives.MakeConda(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "container" {
-				return directives.MakeContainer(mce)
+				directive, err := directives.MakeContainer(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "containerOptions" {
-				return directives.MakeContainerOptions(mce)
+				directive, err := directives.MakeContainerOptions(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "cpus" {
-				return directives.MakeCpusDirective(mce)
+				directive, err := directives.MakeCpusDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "debug" {
-				return directives.MakeDebugDirective(mce)
+				directive, err := directives.MakeDebugDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "disk" {
-				return directives.MakeDiskDirective(mce)
+				directive, err := directives.MakeDiskDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "echo" {
-				return directives.MakeEchoDirective(mce)
+				directive, err := directives.MakeEchoDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "errorStrategy" {
-				return directives.MakeErrorStrategyDirective(mce)
+				directive, err := directives.MakeErrorStrategyDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "executor" {
-				return directives.MakeExecutorDirective(mce)
+				directive, err := directives.MakeExecutorDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "ext" {
-				return directives.MakeExtDirective(mce)
+				directive, err := directives.MakeExtDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "fair" {
-				return directives.MakeFairDirective(mce)
+				directive, err := directives.MakeFairDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "label" {
-				return directives.MakeLabelDirective(mce)
+				directive, err := directives.MakeLabelDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "machineType" {
-				return directives.MakeMachineTypeDirective(mce)
+				directive, err := directives.MakeMachineTypeDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "maxSubmitAwait" {
-				return directives.MakeMaxSubmitAwaitDirective(mce)
+				directive, err := directives.MakeMaxSubmitAwaitDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "maxErrors" {
-				return directives.MakeMaxErrorsDirective(mce)
+				directive, err := directives.MakeMaxErrorsDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "maxForks" {
-				return directives.MakeMaxForksDirective(mce)
+				directive, err := directives.MakeMaxForksDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "maxRetries" {
-				return directives.MakeMaxRetriesDirective(mce)
+				directive, err := directives.MakeMaxRetriesDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "memory" {
-				return directives.MakeMemoryDirective(mce)
+				directive, err := directives.MakeMemoryDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "module" {
-				return directives.MakeModuleDirective(mce)
+				directive, err := directives.MakeModuleDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "penv" {
-				return directives.MakePenvDirective(mce)
+				directive, err := directives.MakePenvDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 			if mce.GetMethod().GetText() == "pod" {
-				return directives.MakePodDirective(mce)
+				directive, err := directives.MakePodDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("unknown directive")
 }
 
 func makeDirectives(statements []parser.Statement) []directives.Directive {
 	var directives []directives.Directive
 	for _, statement := range statements {
-		directive := makeDirective(statement)
-		if directive != nil {
+		directive, err := makeDirective(statement)
+		if err == nil {
 			directives = append(directives, directive)
 		}
 	}

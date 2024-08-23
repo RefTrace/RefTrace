@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -13,12 +14,12 @@ type ExtDirective struct {
 
 func (a ExtDirective) Type() DirectiveType { return ExtDirectiveType }
 
-func MakeExtDirective(mce *parser.MethodCallExpression) *ExtDirective {
+func MakeExtDirective(mce *parser.MethodCallExpression) (*ExtDirective, error) {
 	var version string = ""
 	var extArgs string = ""
 	if args, ok := mce.GetArguments().(*parser.TupleExpression); ok {
 		if len(args.GetExpressions()) != 1 {
-			return nil
+			return nil, errors.New("invalid ext directive")
 		}
 		expr := args.GetExpressions()[0]
 		if namedArgListExpr, ok := expr.(*parser.NamedArgumentListExpression); ok {
@@ -42,7 +43,7 @@ func MakeExtDirective(mce *parser.MethodCallExpression) *ExtDirective {
 		}
 	}
 	if version != "" {
-		return &ExtDirective{Version: version, Args: extArgs}
+		return &ExtDirective{Version: version, Args: extArgs}, nil
 	}
-	return nil
+	return nil, errors.New("invalid ext directive")
 }

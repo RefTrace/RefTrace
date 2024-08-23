@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type PenvDirective struct {
 
 func (a PenvDirective) Type() DirectiveType { return PenvDirectiveType }
 
-func MakePenvDirective(mce *parser.MethodCallExpression) *PenvDirective {
+func MakePenvDirective(mce *parser.MethodCallExpression) (*PenvDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid penv directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if strValue, ok := constantExpr.GetValue().(string); ok {
-				return &PenvDirective{Environment: strValue}
+				return &PenvDirective{Environment: strValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid penv directive")
 }

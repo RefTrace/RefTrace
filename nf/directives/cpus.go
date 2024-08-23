@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type CpusDirective struct {
 
 func (a CpusDirective) Type() DirectiveType { return CpusDirectiveType }
 
-func MakeCpusDirective(mce *parser.MethodCallExpression) *CpusDirective {
+func MakeCpusDirective(mce *parser.MethodCallExpression) (*CpusDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid cpus directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if intValue, ok := constantExpr.GetValue().(int); ok {
-				return &CpusDirective{Num: intValue}
+				return &CpusDirective{Num: intValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid cpus directive")
 }

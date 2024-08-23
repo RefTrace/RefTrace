@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type ArrayDirective struct {
 
 func (a ArrayDirective) Type() DirectiveType { return ArrayDirectiveType }
 
-func MakeArrayDirective(mce *parser.MethodCallExpression) *ArrayDirective {
+func MakeArrayDirective(mce *parser.MethodCallExpression) (*ArrayDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid array directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if intValue, ok := constantExpr.GetValue().(int); ok {
-				return &ArrayDirective{Size: intValue}
+				return &ArrayDirective{Size: intValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid array directive")
 }

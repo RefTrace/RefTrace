@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type FairDirective struct {
 
 func (a FairDirective) Type() DirectiveType { return FairDirectiveType }
 
-func MakeFairDirective(mce *parser.MethodCallExpression) *FairDirective {
+func MakeFairDirective(mce *parser.MethodCallExpression) (*FairDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid fair directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if boolValue, ok := constantExpr.GetValue().(bool); ok {
-				return &FairDirective{Enabled: boolValue}
+				return &FairDirective{Enabled: boolValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid fair directive")
 }

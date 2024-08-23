@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type MachineTypeDirective struct {
 
 func (a MachineTypeDirective) Type() DirectiveType { return MachineTypeDirectiveType }
 
-func MakeMachineTypeDirective(mce *parser.MethodCallExpression) *MachineTypeDirective {
+func MakeMachineTypeDirective(mce *parser.MethodCallExpression) (*MachineTypeDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid machine type directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if strValue, ok := constantExpr.GetValue().(string); ok {
-				return &MachineTypeDirective{MachineType: strValue}
+				return &MachineTypeDirective{MachineType: strValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid machine type directive")
 }

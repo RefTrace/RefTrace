@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -14,30 +15,30 @@ type CacheDirective struct {
 
 func (a CacheDirective) Type() DirectiveType { return CacheDirectiveType }
 
-func MakeCacheDirective(mce *parser.MethodCallExpression) *CacheDirective {
+func MakeCacheDirective(mce *parser.MethodCallExpression) (*CacheDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid cache directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if boolExpr, ok := constantExpr.GetValue().(bool); ok {
 				if boolExpr {
-					return &CacheDirective{Enabled: true}
+					return &CacheDirective{Enabled: true}, nil
 				} else {
-					return &CacheDirective{Enabled: false}
+					return &CacheDirective{Enabled: false}, nil
 				}
 			}
 			if stringExpr, ok := constantExpr.GetValue().(string); ok {
 				if stringExpr == "deep" {
-					return &CacheDirective{Enabled: true, Deep: true}
+					return &CacheDirective{Enabled: true, Deep: true}, nil
 				}
 				if stringExpr == "lenient" {
-					return &CacheDirective{Enabled: true, Lenient: true}
+					return &CacheDirective{Enabled: true, Lenient: true}, nil
 				}
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid cache directive")
 }

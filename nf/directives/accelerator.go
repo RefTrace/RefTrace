@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -13,7 +14,7 @@ type Accelerator struct {
 
 func (a Accelerator) Type() DirectiveType { return AcceleratorType }
 
-func MakeAccelerator(mce *parser.MethodCallExpression) *Accelerator {
+func MakeAccelerator(mce *parser.MethodCallExpression) (*Accelerator, error) {
 	var numGPUs int = -1
 	var gpuType string = ""
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
@@ -41,7 +42,7 @@ func MakeAccelerator(mce *parser.MethodCallExpression) *Accelerator {
 		}
 	}
 	if numGPUs != -1 {
-		return &Accelerator{NumGPUs: numGPUs, GPUType: gpuType}
+		return &Accelerator{NumGPUs: numGPUs, GPUType: gpuType}, nil
 	}
-	return nil
+	return nil, errors.New("invalid accelerator directive")
 }

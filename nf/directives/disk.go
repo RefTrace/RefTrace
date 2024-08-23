@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type DiskDirective struct {
 
 func (a DiskDirective) Type() DirectiveType { return DiskDirectiveType }
 
-func MakeDiskDirective(mce *parser.MethodCallExpression) *DiskDirective {
+func MakeDiskDirective(mce *parser.MethodCallExpression) (*DiskDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid disk directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if strValue, ok := constantExpr.GetValue().(string); ok {
-				return &DiskDirective{Space: strValue}
+				return &DiskDirective{Space: strValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid disk directive")
 }

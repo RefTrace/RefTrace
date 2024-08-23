@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -13,12 +14,12 @@ type PodDirective struct {
 
 func (a PodDirective) Type() DirectiveType { return PodDirectiveType }
 
-func MakePodDirective(mce *parser.MethodCallExpression) *PodDirective {
+func MakePodDirective(mce *parser.MethodCallExpression) (*PodDirective, error) {
 	var env string = ""
 	var val string = ""
 	if args, ok := mce.GetArguments().(*parser.TupleExpression); ok {
 		if len(args.GetExpressions()) != 1 {
-			return nil
+			return nil, errors.New("invalid pod directive")
 		}
 		expr := args.GetExpressions()[0]
 		if namedArgListExpr, ok := expr.(*parser.NamedArgumentListExpression); ok {
@@ -42,7 +43,7 @@ func MakePodDirective(mce *parser.MethodCallExpression) *PodDirective {
 		}
 	}
 	if env != "" && val != "" {
-		return &PodDirective{Env: env, Value: val}
+		return &PodDirective{Env: env, Value: val}, nil
 	}
-	return nil
+	return nil, errors.New("invalid pod directive")
 }

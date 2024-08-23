@@ -1,6 +1,7 @@
 package directives
 
 import (
+	"errors"
 	"reft-go/parser"
 )
 
@@ -12,18 +13,18 @@ type MaxRetriesDirective struct {
 
 func (a MaxRetriesDirective) Type() DirectiveType { return MaxRetriesDirectiveType }
 
-func MakeMaxRetriesDirective(mce *parser.MethodCallExpression) *MaxRetriesDirective {
+func MakeMaxRetriesDirective(mce *parser.MethodCallExpression) (*MaxRetriesDirective, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {
-			return nil
+			return nil, errors.New("invalid max retries directive")
 		}
 		expr := exprs[0]
 		if constantExpr, ok := expr.(*parser.ConstantExpression); ok {
 			if intValue, ok := constantExpr.GetValue().(int); ok {
-				return &MaxRetriesDirective{Num: intValue}
+				return &MaxRetriesDirective{Num: intValue}, nil
 			}
 		}
 	}
-	return nil
+	return nil, errors.New("invalid max retries directive")
 }
