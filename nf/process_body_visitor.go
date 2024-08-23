@@ -54,6 +54,69 @@ func makeDirective(statement parser.Statement) directives.Directive {
 			if mce.GetMethod().GetText() == "clusterOptions" {
 				return directives.MakeClusterOptions(mce)
 			}
+			if mce.GetMethod().GetText() == "conda" {
+				return directives.MakeConda(mce)
+			}
+			if mce.GetMethod().GetText() == "container" {
+				return directives.MakeContainer(mce)
+			}
+			if mce.GetMethod().GetText() == "containerOptions" {
+				return directives.MakeContainerOptions(mce)
+			}
+			if mce.GetMethod().GetText() == "cpus" {
+				return directives.MakeCpusDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "debug" {
+				return directives.MakeDebugDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "disk" {
+				return directives.MakeDiskDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "echo" {
+				return directives.MakeEchoDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "errorStrategy" {
+				return directives.MakeErrorStrategyDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "executor" {
+				return directives.MakeExecutorDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "ext" {
+				return directives.MakeExtDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "fair" {
+				return directives.MakeFairDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "label" {
+				return directives.MakeLabelDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "machineType" {
+				return directives.MakeMachineTypeDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "maxSubmitAwait" {
+				return directives.MakeMaxSubmitAwaitDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "maxErrors" {
+				return directives.MakeMaxErrorsDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "maxForks" {
+				return directives.MakeMaxForksDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "maxRetries" {
+				return directives.MakeMaxRetriesDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "memory" {
+				return directives.MakeMemoryDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "module" {
+				return directives.MakeModuleDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "penv" {
+				return directives.MakePenvDirective(mce)
+			}
+			if mce.GetMethod().GetText() == "pod" {
+				return directives.MakePodDirective(mce)
+			}
 		}
 	}
 	return nil
