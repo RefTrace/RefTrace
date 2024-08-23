@@ -237,6 +237,27 @@ func makeDirective(statement parser.Statement) (directives.Directive, error) {
 				}
 				return nil, err
 			}
+			if mce.GetMethod().GetText() == "queue" {
+				directive, err := directives.MakeQueueDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "resourceLabels" {
+				directive, err := directives.MakeResourceLabelsDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "resourceLimits" {
+				directive, err := directives.MakeResourceLimitsDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
 		}
 	}
 	return nil, errors.New("unknown directive")
