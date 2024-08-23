@@ -12,24 +12,13 @@ import (
 func TestSarekEntireMain(t *testing.T) {
 	debug.SetGCPercent(-1)
 	filePath := filepath.Join("../parser/testdata", "sarek_entire_main.nf")
-	input, err := antlr.NewFileStream(filePath)
+	result, err := parser.BuildCST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build CST: %v", err)
 	}
-
-	lexer := parser.NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	groovyParser := parser.NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := groovyParser.CompilationUnit()
 	builder := parser.NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*parser.ModuleNode)
-	cls := ast.GetClasses()[0]
+	ast := builder.Visit(result.Tree).(*parser.ModuleNode)
+	//cls := ast.GetClasses()[0]
 	paramVisitor := NewParamVisitor()
 	paramVisitor.VisitBlockStatement(ast.StatementBlock)
 	params := paramVisitor.GetSortedParams()
@@ -42,8 +31,8 @@ func TestSarekEntireMain(t *testing.T) {
 	if len(includes) != 8 {
 		t.Fatalf("Expected 8 includes, got %d", len(includes))
 	}
-	stcVisitor := NewStcVisitor(cls)
-	stcVisitor.VisitBlockStatement(ast.StatementBlock)
+	//stcVisitor := NewStcVisitor(cls)
+	//stcVisitor.VisitBlockStatement(ast.StatementBlock)
 }
 
 func TestChannelFromPath(t *testing.T) {

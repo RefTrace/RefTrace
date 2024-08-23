@@ -399,33 +399,33 @@ func isUpperCase(ch int) bool {
 type CustomErrorListener struct {
 	*antlr.DefaultErrorListener
 	filename string
-	hasError bool
+	errors   []string
 }
 
 func NewCustomErrorListener(filename string) *CustomErrorListener {
-	return &CustomErrorListener{filename: filename}
+	return &CustomErrorListener{filename: filename, errors: []string{}}
 }
 
 func (c *CustomErrorListener) SyntaxError(_ antlr.Recognizer, _ interface{}, line, column int, msg string, _ antlr.RecognitionException) {
-	c.hasError = true
-	fmt.Printf("File: %s - line %d:%d %s\n", c.filename, line, column, msg)
+	c.errors = append(c.errors, fmt.Sprintf("File: %s - line %d:%d %s", c.filename, line, column, msg))
 }
 
 func (c *CustomErrorListener) ReportAmbiguity(_ antlr.Parser, _ *antlr.DFA, _, _ int, _ bool, _ *antlr.BitSet, _ *antlr.ATNConfigSet) {
-	c.hasError = true
-	fmt.Printf("File: %s - Ambiguity detected\n", c.filename)
+	c.errors = append(c.errors, fmt.Sprintf("File: %s - Ambiguity detected", c.filename))
 }
 
 func (c *CustomErrorListener) ReportAttemptingFullContext(_ antlr.Parser, _ *antlr.DFA, _, _ int, _ *antlr.BitSet, _ *antlr.ATNConfigSet) {
-	c.hasError = true
-	fmt.Printf("File: %s - Attempting full context\n", c.filename)
+	c.errors = append(c.errors, fmt.Sprintf("File: %s - Attempting full context", c.filename))
 }
 
 func (c *CustomErrorListener) ReportContextSensitivity(_ antlr.Parser, _ *antlr.DFA, _, _, _ int, _ *antlr.ATNConfigSet) {
-	c.hasError = true
-	fmt.Printf("File: %s - Context sensitivity\n", c.filename)
+	c.errors = append(c.errors, fmt.Sprintf("File: %s - Context sensitivity", c.filename))
 }
 
-func (c *CustomErrorListener) HasError() bool {
-	return c.hasError
+func (c *CustomErrorListener) HasErrors() bool {
+	return len(c.errors) > 0
+}
+
+func (c *CustomErrorListener) GetErrors() []string {
+	return c.errors
 }

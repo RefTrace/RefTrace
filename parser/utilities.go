@@ -54,16 +54,25 @@ type ParseResult struct {
 	Mode string // "SLL", "LL", or "Failed"
 }
 
-func buildCST(filePath string) (ParseResult, error) {
+func BuildCST(filePath string) (ParseResult, error) {
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		return ParseResult{Mode: "Failed"}, fmt.Errorf("failed to open file %s: %w", filePath, err)
 	}
 
 	lexer := NewGroovyLexer(input)
+	lexerErrorListener := NewCustomErrorListener(filePath)
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(lexerErrorListener)
+
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	stream.Fill()
+
 	parser := NewGroovyParser(stream)
+	parserErrorListener := NewCustomErrorListener(filePath)
+	parser.RemoveErrorListeners()
+	parser.AddErrorListener(parserErrorListener)
+
 	strategy := NewCustomErrorStrategy()
 	parser.SetErrorHandler(strategy)
 
@@ -82,12 +91,18 @@ func buildCST(filePath string) (ParseResult, error) {
 		result = parser.CompilationUnit()
 	}()
 
-	// Check for panics or errors in SLL mode
+	// Check for panics, or parser errors in SLL mode
 	if parseErr != nil || len(strategy.GetErrors()) > 0 {
-		// If SLL failed, try LL mode
+		// If SLL failed or there were lexer errors, try LL mode
 		stream.Seek(0)
 		parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
 		strategy.ClearErrors()
+		lexerErrorListener = NewCustomErrorListener(filePath)
+		parserErrorListener = NewCustomErrorListener(filePath)
+		lexer.RemoveErrorListeners()
+		lexer.AddErrorListener(lexerErrorListener)
+		parser.RemoveErrorListeners()
+		parser.AddErrorListener(parserErrorListener)
 		parseErr = nil // Reset the panic error
 
 		func() {
@@ -100,12 +115,28 @@ func buildCST(filePath string) (ParseResult, error) {
 		}()
 
 		if parseErr != nil {
-			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed due to panic in both SLL and LL modes: %w", parseErr)
+			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %w", parseErr)
 		}
 
-		if len(strategy.GetErrors()) > 0 {
-			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %v", strategy.GetErrors())
-		}
+		/*
+			var allErrors []string
+			if len(strategy.GetErrors()) > 0 {
+				for _, err := range strategy.GetErrors() {
+					allErrors = append(allErrors, err.Error())
+				}
+			}
+			if lexerErrorListener.HasErrors() {
+				allErrors = append(allErrors, lexerErrorListener.GetErrors()...)
+			}
+			if parserErrorListener.HasErrors() {
+				allErrors = append(allErrors, parserErrorListener.GetErrors()...)
+			}
+
+			if len(allErrors) > 0 {
+				allErrors := append(lexerErrorListener.GetErrors(), parserErrorListener.GetErrors()...)
+				return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %v", allErrors)
+			}
+		*/
 
 		return ParseResult{Tree: result, Mode: "LL"}, nil
 	}

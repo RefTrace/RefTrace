@@ -10,7 +10,7 @@ import (
 
 func TestGroovyParserGStringFile(t *testing.T) {
 	filePath := filepath.Join("testdata", "gstring.groovy")
-	_, err := buildCST(filePath)
+	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -18,7 +18,7 @@ func TestGroovyParserGStringFile(t *testing.T) {
 
 func TestGroovyParserUtils(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nfcore_pipeline.nf")
-	_, err := buildCST(filePath)
+	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -26,7 +26,7 @@ func TestGroovyParserUtils(t *testing.T) {
 
 func TestGroovyParserExpression(t *testing.T) {
 	filePath := filepath.Join("testdata", "expression", "01.groovy")
-	_, err := buildCST(filePath)
+	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -34,7 +34,7 @@ func TestGroovyParserExpression(t *testing.T) {
 
 func TestGroovyParserCommandExpr(t *testing.T) {
 	filePath := filepath.Join("testdata", "cnvkit_batch_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestGroovyParserCommandExpr(t *testing.T) {
 
 func TestInclude(t *testing.T) {
 	filePath := filepath.Join("testdata", "include.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -116,7 +116,7 @@ func TestInclude(t *testing.T) {
 
 func TestParams(t *testing.T) {
 	filePath := filepath.Join("testdata", "params.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -178,7 +178,7 @@ func TestParams(t *testing.T) {
 
 func TestElvis(t *testing.T) {
 	filePath := filepath.Join("testdata", "elvis.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -230,7 +230,7 @@ func TestElvis(t *testing.T) {
 
 func TestTernary(t *testing.T) {
 	filePath := filepath.Join("testdata", "ternary.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -295,7 +295,7 @@ func TestTernary(t *testing.T) {
 
 func TestTernaryClosure(t *testing.T) {
 	filePath := filepath.Join("testdata", "ternary_closure.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -376,7 +376,7 @@ func TestTernaryClosure(t *testing.T) {
 
 func TestTopLevelIf(t *testing.T) {
 	filePath := filepath.Join("testdata", "top_level_if.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -399,7 +399,7 @@ func TestTopLevelIf(t *testing.T) {
 func TestSimpleWorkflow(t *testing.T) {
 	debug.SetGCPercent(-1)
 	filePath := filepath.Join("testdata", "simple_workflow.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -426,7 +426,7 @@ func TestSimpleWorkflow(t *testing.T) {
 
 func TestFunction(t *testing.T) {
 	filePath := filepath.Join("testdata", "function.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -443,7 +443,7 @@ func TestFunction(t *testing.T) {
 
 func TestSarekMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "sarek_main_workflow.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -474,7 +474,7 @@ func TestSarekMain(t *testing.T) {
 
 func TestSarekMain2(t *testing.T) {
 	filePath := filepath.Join("testdata", "sarek_main_workflow2.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -491,7 +491,7 @@ func TestSarekMain2(t *testing.T) {
 
 func TestCnvKitBatchMain2(t *testing.T) {
 	filePath := filepath.Join("testdata", "cnvkit_batch_main2.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -508,7 +508,7 @@ func TestCnvKitBatchMain2(t *testing.T) {
 
 func TestVarcalMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "varcal_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -525,7 +525,7 @@ func TestVarcalMain(t *testing.T) {
 
 func TestPrepareIntervalsMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "prepare_intervals_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -542,7 +542,7 @@ func TestPrepareIntervalsMain(t *testing.T) {
 
 func TestSamplesheetToChannelMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "samplesheet_to_channel_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -559,7 +559,7 @@ func TestSamplesheetToChannelMain(t *testing.T) {
 
 func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nfcore_sarek_pipeline_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -576,7 +576,7 @@ func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
 
 func TestUtilsNFPipelineMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nextflow_pipeline_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -593,7 +593,7 @@ func TestUtilsNFPipelineMain(t *testing.T) {
 
 func TestUtilsNFCorePipelineMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "utils_nfcore_pipeline_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -610,7 +610,7 @@ func TestUtilsNFCorePipelineMain(t *testing.T) {
 
 func TestEagerMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "eager_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -627,7 +627,7 @@ func TestEagerMain(t *testing.T) {
 
 func TestPathInProcess(t *testing.T) {
 	filePath := filepath.Join("testdata", "path_in_process.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -644,7 +644,7 @@ func TestPathInProcess(t *testing.T) {
 
 func TestSarekEntireMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "sarek_entire_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -669,7 +669,21 @@ func TestSarekEntireMain(t *testing.T) {
 
 func TestDeepVariantMain(t *testing.T) {
 	filePath := filepath.Join("testdata", "deepvariant_main.nf")
-	result, err := buildCST(filePath)
+	result, err := BuildCST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build CST: %v", err)
+	}
+	if result.Mode != "LL" {
+		t.Fatalf("Expected parsing mode to be LL, but got %s", result.Mode)
+	}
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(result.Tree).(*ModuleNode)
+	_ = ast
+}
+
+func TestCreateIntervalsBed(t *testing.T) {
+	filePath := filepath.Join("testdata", "sarek/modules/local/create_intervals_bed", "main.nf")
+	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
 	}
@@ -837,7 +851,7 @@ func TestSarekGoldMapping(t *testing.T) {
 			totalFiles++
 			relPath, _ := filepath.Rel(dir, path)
 
-			result, err := buildCST(path)
+			result, err := BuildCST(path)
 			if err != nil {
 				t.Errorf("Failed to open file %s: %s", path, err)
 				failedFiles++

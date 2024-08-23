@@ -155,21 +155,14 @@ func (v *IncludeVisitor) VisitMethodCallExpression(call *parser.MethodCallExpres
 	if !(method.GetText() == "from") {
 		return
 	}
-	args, ok := mce.GetArguments().(*parser.TupleExpression)
+	args, ok := mce.GetArguments().(*parser.ArgumentListExpression)
 	if !ok {
 		return
 	}
 	if len(args.GetExpressions()) != 1 {
 		return
 	}
-	argListExpr, ok := args.GetExpressions()[0].(*parser.ArgumentListExpression)
-	if !ok {
-		return
-	}
-	if len(argListExpr.GetExpressions()) != 1 {
-		return
-	}
-	closure, ok := argListExpr.GetExpressions()[0].(*parser.ClosureExpression)
+	closure, ok := args.GetExpressions()[0].(*parser.ClosureExpression)
 	if !ok {
 		return
 	}
@@ -177,21 +170,14 @@ func (v *IncludeVisitor) VisitMethodCallExpression(call *parser.MethodCallExpres
 	if err != nil {
 		return
 	}
-	args, ok = call.GetArguments().(*parser.TupleExpression)
+	args, ok = call.GetArguments().(*parser.ArgumentListExpression)
 	if !ok {
 		return
 	}
 	if len(args.GetExpressions()) != 1 {
 		return
 	}
-	argListExpr, ok = args.GetExpressions()[0].(*parser.ArgumentListExpression)
-	if !ok {
-		return
-	}
-	if len(argListExpr.GetExpressions()) != 1 {
-		return
-	}
-	arg, ok := argListExpr.GetExpressions()[0].(*parser.ConstantExpression)
+	arg, ok := args.GetExpressions()[0].(*parser.ConstantExpression)
 	if !ok {
 		return
 	}
