@@ -7,8 +7,11 @@ import (
 var _ parser.GroovyCodeVisitor = (*ProcessVisitor)(nil)
 
 type Process struct {
-	Name    string
-	Closure *parser.ClosureExpression
+	Name       string
+	NumInputs  int
+	NumOutputs int
+	Directives []Directive
+	Closure    *parser.ClosureExpression
 }
 
 type ProcessVisitor struct {
@@ -145,8 +148,11 @@ func makeProcess(name string, closure *parser.ClosureExpression) Process {
 	visitor := NewProcessBodyVisitor()
 	visitor.VisitClosureExpression(closure)
 	return Process{
-		Name:    name,
-		Closure: closure,
+		Name:       name,
+		NumInputs:  len(visitor.inputs),
+		NumOutputs: len(visitor.outputs),
+		Directives: visitor.directives,
+		Closure:    closure,
 	}
 }
 
