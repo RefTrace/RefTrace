@@ -9,6 +9,7 @@ import (
 var _ parser.GroovyCodeVisitor = (*IncludeVisitor)(nil)
 
 type IncludeInfo struct {
+	//TODO: add alias
 	Name       string
 	From       string
 	LineNumber int
