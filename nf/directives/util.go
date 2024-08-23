@@ -9,6 +9,7 @@ const (
 	ArrayDirectiveType
 	BeforeScriptType
 	CacheDirectiveType
+	ClusterOptionsType
 )
 
 type Directive interface {

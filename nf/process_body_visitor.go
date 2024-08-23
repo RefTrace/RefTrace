@@ -51,6 +51,9 @@ func makeDirective(statement parser.Statement) directives.Directive {
 			if mce.GetMethod().GetText() == "cache" {
 				return directives.MakeCacheDirective(mce)
 			}
+			if mce.GetMethod().GetText() == "clusterOptions" {
+				return directives.MakeClusterOptions(mce)
+			}
 		}
 	}
 	return nil
