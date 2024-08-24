@@ -54,7 +54,29 @@ var (
 	BIGINTEGER_TYPE            = NewClassNode("java.math.BigInteger", ACC_PUBLIC, OBJECT_TYPE)
 	BIGDECIMAL_TYPE            = NewClassNode("java.math.BigDecimal", ACC_PUBLIC, OBJECT_TYPE)
 	NUMBER_TYPE                = NewClassNode("java.lang.Number", ACC_PUBLIC, OBJECT_TYPE)
+
+	// Wrapper types for primitives
+	BYTE_WRAPPER_TYPE      = NewClassNode("java.lang.Byte", ACC_PUBLIC, OBJECT_TYPE)
+	SHORT_WRAPPER_TYPE     = NewClassNode("java.lang.Short", ACC_PUBLIC, OBJECT_TYPE)
+	INTEGER_WRAPPER_TYPE   = NewClassNode("java.lang.Integer", ACC_PUBLIC, OBJECT_TYPE)
+	LONG_WRAPPER_TYPE      = NewClassNode("java.lang.Long", ACC_PUBLIC, OBJECT_TYPE)
+	CHARACTER_WRAPPER_TYPE = NewClassNode("java.lang.Character", ACC_PUBLIC, OBJECT_TYPE)
+	FLOAT_WRAPPER_TYPE     = NewClassNode("java.lang.Float", ACC_PUBLIC, OBJECT_TYPE)
+	DOUBLE_WRAPPER_TYPE    = NewClassNode("java.lang.Double", ACC_PUBLIC, OBJECT_TYPE)
+	BOOLEAN_WRAPPER_TYPE   = NewClassNode("java.lang.Boolean", ACC_PUBLIC, OBJECT_TYPE)
 )
+
+var PRIMITIVE_TYPE_TO_DESCRIPTION_MAP = map[IClassNode]string{
+	INT_TYPE:     "I",
+	VOID_TYPE:    "V",
+	BOOLEAN_TYPE: "Z",
+	BYTE_TYPE:    "B",
+	CHAR_TYPE:    "C",
+	SHORT_TYPE:   "S",
+	DOUBLE_TYPE:  "D",
+	FLOAT_TYPE:   "F",
+	LONG_TYPE:    "J",
+}
 
 var (
 	primitiveClassNames = []string{"boolean", "char", "byte", "short", "int", "long", "float", "double", "void"}
@@ -212,9 +234,11 @@ func IsGroovyObjectType(type_ IClassNode) bool {
 }
 
 func IsPrimitiveType(cn IClassNode) bool {
-	return cn.Equals(BOOLEAN_TYPE) || cn.Equals(CHAR_TYPE) || cn.Equals(BYTE_TYPE) ||
-		cn.Equals(SHORT_TYPE) || cn.Equals(INT_TYPE) || cn.Equals(LONG_TYPE) ||
-		cn.Equals(FLOAT_TYPE) || cn.Equals(DOUBLE_TYPE) || cn.Equals(VOID_TYPE)
+	if cn == nil {
+		return false
+	}
+	_, exists := PRIMITIVE_TYPE_TO_DESCRIPTION_MAP[cn.Redirect()]
+	return exists
 }
 
 func IsNumberType(cn IClassNode) bool {

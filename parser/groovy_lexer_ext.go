@@ -396,8 +396,9 @@ func isUpperCase(ch int) bool {
 	return unicode.IsUpper(rune(ch))
 }
 
+var _ antlr.ErrorListener = &CustomErrorListener{}
+
 type CustomErrorListener struct {
-	*antlr.DefaultErrorListener
 	filename string
 	errors   []string
 }

@@ -55,9 +55,26 @@ type ParseResult struct {
 }
 
 func BuildCST(filePath string) (ParseResult, error) {
+	// Try SLL mode first
+	result, err := TryBuildCST(filePath, antlr.PredictionModeSLL)
+	if err == nil {
+		return ParseResult{Tree: result, Mode: "SLL"}, nil
+	}
+
+	// If SLL failed, try LL mode
+	result, err = TryBuildCST(filePath, antlr.PredictionModeLL)
+	if err == nil {
+		return ParseResult{Tree: result, Mode: "LL"}, nil
+	}
+
+	// If both modes failed, return the error
+	return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %w", err)
+}
+
+func TryBuildCST(filePath string, mode int) (antlr.ParseTree, error) {
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
-		return ParseResult{Mode: "Failed"}, fmt.Errorf("failed to open file %s: %w", filePath, err)
+		return nil, fmt.Errorf("failed to open file %s: %w", filePath, err)
 	}
 
 	lexer := NewGroovyLexer(input)
@@ -69,79 +86,82 @@ func BuildCST(filePath string) (ParseResult, error) {
 	stream.Fill()
 
 	parser := NewGroovyParser(stream)
-	parserErrorListener := NewCustomErrorListener(filePath)
 	parser.RemoveErrorListeners()
-	parser.AddErrorListener(parserErrorListener)
 
 	strategy := NewCustomErrorStrategy()
 	parser.SetErrorHandler(strategy)
 
+	parser.GetInterpreter().SetPredictionMode(mode)
+
 	var result antlr.ParseTree
 	var parseErr error
 
-	// First, try SLL mode
-	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	var modeStr string
+	if mode == antlr.PredictionModeSLL {
+		modeStr = "SLL"
+	} else {
+		modeStr = "LL"
+	}
 
 	func() {
 		defer func() {
 			if r := recover(); r != nil {
-				parseErr = fmt.Errorf("SLL parsing panicked: %v", r)
+				parseErr = fmt.Errorf("%s parsing panicked: %v", modeStr, r)
 			}
 		}()
 		result = parser.CompilationUnit()
 	}()
 
-	// Check for panics, or parser errors in SLL mode
-	if parseErr != nil || len(strategy.GetErrors()) > 0 {
-		// If SLL failed or there were lexer errors, try LL mode
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	var allErrors []string
+	for _, err := range strategy.GetErrors() {
+		allErrors = append(allErrors, err.Error())
+	}
+	if len(allErrors) > 0 {
+		return nil, fmt.Errorf("parsing failed in %s mode: %v", modeStr, allErrors)
+	}
+
+	return result, nil
+}
+
+// BuildCSTTest builds a CST without error handling, for testing purposes.
+// It panics on any errors, which is useful for stack trace testing.
+func BuildCSTTest(filePath string) ParseResult {
+	input, err := antlr.NewFileStream(filePath)
+	if err != nil {
+		panic(fmt.Sprintf("failed to open file %s: %v", filePath, err))
+	}
+
+	lexer := NewGroovyLexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	stream.Fill()
+
+	parser := NewGroovyParser(stream)
+	strategy := NewCustomErrorStrategy()
+	parser.SetErrorHandler(strategy)
+
+	// Try SLL mode
+	parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeSLL)
+	result := parser.CompilationUnit()
+
+	if len(strategy.GetErrors()) > 0 {
+		// If SLL failed, try LL mode
 		stream.Seek(0)
 		parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLL)
 		strategy.ClearErrors()
-		lexerErrorListener = NewCustomErrorListener(filePath)
-		parserErrorListener = NewCustomErrorListener(filePath)
-		lexer.RemoveErrorListeners()
-		lexer.AddErrorListener(lexerErrorListener)
-		parser.RemoveErrorListeners()
-		parser.AddErrorListener(parserErrorListener)
-		parseErr = nil // Reset the panic error
+		result = parser.CompilationUnit()
 
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					parseErr = fmt.Errorf("LL parsing panicked: %v", r)
-				}
-			}()
-			result = parser.CompilationUnit()
-		}()
-
-		if parseErr != nil {
-			return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %w", parseErr)
+		if len(strategy.GetErrors()) > 0 {
+			panic("parsing failed in both SLL and LL modes")
 		}
 
-		/*
-			var allErrors []string
-			if len(strategy.GetErrors()) > 0 {
-				for _, err := range strategy.GetErrors() {
-					allErrors = append(allErrors, err.Error())
-				}
-			}
-			if lexerErrorListener.HasErrors() {
-				allErrors = append(allErrors, lexerErrorListener.GetErrors()...)
-			}
-			if parserErrorListener.HasErrors() {
-				allErrors = append(allErrors, parserErrorListener.GetErrors()...)
-			}
-
-			if len(allErrors) > 0 {
-				allErrors := append(lexerErrorListener.GetErrors(), parserErrorListener.GetErrors()...)
-				return ParseResult{Mode: "Failed"}, fmt.Errorf("parsing failed in both SLL and LL modes: %v", allErrors)
-			}
-		*/
-
-		return ParseResult{Tree: result, Mode: "LL"}, nil
+		return ParseResult{Tree: result, Mode: "LL"}
 	}
 
-	return ParseResult{Tree: result, Mode: "SLL"}, nil
+	return ParseResult{Tree: result, Mode: "SLL"}
 }
 
 // BuildAST builds the Abstract Syntax Tree (AST) for the given file.
@@ -169,4 +189,17 @@ func BuildAST(filePath string) (*ModuleNode, error) {
 	}
 
 	return ast, nil
+}
+
+// BuildASTTest builds the Abstract Syntax Tree (AST) for the given file without error handling.
+// It panics on any errors, which is useful for stack trace testing.
+func BuildASTTest(filePath string) *ModuleNode {
+	// First, build the Concrete Syntax Tree (CST)
+	parseResult := BuildCSTTest(filePath)
+
+	// Now, build the AST
+	builder := NewASTBuilder(filePath)
+	ast := builder.Visit(parseResult.Tree).(*ModuleNode)
+
+	return ast
 }

@@ -18,7 +18,7 @@ type PropertyNode struct {
 // NewPropertyNode creates a new PropertyNode with the given field, modifiers, and getter/setter blocks
 func NewPropertyNode(field *FieldNode, modifiers int, getterBlock, setterBlock Statement) *PropertyNode {
 	return &PropertyNode{
-		AnnotatedNode: &AnnotatedNode{},
+		AnnotatedNode: NewAnnotatedNode(),
 		field:         field,
 		modifiers:     modifiers,
 		getterBlock:   getterBlock,

@@ -36,6 +36,7 @@ func NewStatic(theClass reflect.Type, name string) (*FieldNode, error) {
 
 func NewFieldNode(name string, modifiers int, fieldType, owner IClassNode, initialValueExpression Expression) *FieldNode {
 	f := &FieldNode{
+		AnnotatedNode:          NewAnnotatedNode(),
 		name:                   name,
 		modifiers:              modifiers,
 		owner:                  owner,

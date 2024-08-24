@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime/debug"
@@ -943,3 +945,114 @@ func TestGenerateGoldMapping(t *testing.T) {
 	t.Logf("Gold mapping generated and saved to testdata/sarek_gold_mapping.json")
 }
 */
+
+func TestAmpliseqPipelineMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "ampliseq_pipeline_main.nf")
+	ast := BuildASTTest(filePath)
+	_ = ast
+}
+
+func TestCrisprseqScreening(t *testing.T) {
+	filePath := filepath.Join("testdata", "crisprseq_screening.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
+func TestCrisprseqTargeted(t *testing.T) {
+	filePath := filepath.Join("testdata", "crisprseq_targeted.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
+func TestChannelEdgeCase(t *testing.T) {
+	filePath := filepath.Join("testdata", "channel_edge_case.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
+func TestRead2TreeMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "read2tree_main.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
+func TestOncoanalyzerMRD(t *testing.T) {
+	filePath := filepath.Join("testdata", "mrd.nf")
+	ast := BuildASTTest(filePath)
+	_ = ast
+}
+
+func TestFastqFastaContigExtensionCobraMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "fastq_fasta_contig_extension_cobra_main.nf")
+	ast := BuildASTTest(filePath)
+	_ = ast
+}
+
+func TestQuantMSCreateInputChannel(t *testing.T) {
+	filePath := filepath.Join("testdata", "create_input_channel.nf")
+	ast := BuildASTTest(filePath)
+	_ = ast
+}
+
+func TestVCFChrExtractMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "vcfchrextract_main.nf")
+	ast, _ := BuildAST(filePath)
+	_ = ast
+}
+
+func TestPreprocessRnaseqMain(t *testing.T) {
+	filePath := filepath.Join("testdata", "preprocess_rnaseq_main.nf")
+	ast := BuildASTTest(filePath)
+	_ = ast
+}
+
+func TestDatasyncSync(t *testing.T) {
+	filePath := filepath.Join("testdata", "datasync_sync.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
+func TestQiime2Intree(t *testing.T) {
+	filePath := filepath.Join("testdata", "qiime2_intree.nf")
+
+	// Capture stdout and stderr
+	oldStdout := os.Stdout
+	oldStderr := os.Stderr
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	os.Stderr = w
+	_, err := BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Error building AST")
+	}
+	// Restore original stdout and stderr
+	err = w.Close()
+	if err != nil {
+		t.Errorf("Error closing pipe: %v", err)
+	}
+	os.Stdout = oldStdout
+	os.Stderr = oldStderr
+
+	// Read the captured output
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, r)
+	if err != nil {
+		t.Errorf("Error copying buf: %v", err)
+	}
+	capturedOutput := buf.String()
+
+	// Assert that no output was produced
+	if capturedOutput != "" {
+		t.Errorf("Expected no output, but got: %s", capturedOutput)
+	}
+}

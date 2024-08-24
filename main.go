@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"reft-go/parser"
-	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -49,7 +48,7 @@ func ProcessDirectory(dir string) (int64, int64, error) {
 				fileLines, err := processFile(path)
 				if err != nil {
 					mu.Lock()
-					errors = append(errors, fmt.Errorf("error processing file %s: %v", path, err))
+					errors = append(errors, fmt.Errorf("error processing file %s", path))
 					mu.Unlock()
 					return
 				}
@@ -80,23 +79,21 @@ func run(cmd *cobra.Command, args []string) {
 		fmt.Printf("Total execution time: %v\n", elapsed)
 	}()
 
-	debug.SetGCPercent(-1)
 	dir := args[0]
 
 	totalFiles, totalLines, err := ProcessDirectory(dir)
-	if err != nil {
-		fmt.Printf("Error processing directory %s: %v\n", dir, err)
-		os.Exit(1)
-	}
 
 	fmt.Printf("Total files parsed: %d\n", totalFiles)
 	fmt.Printf("Total lines processed: %d\n", totalLines)
+
+	if err != nil {
+		fmt.Printf("Errors encountered during processing:\n%v\n", err)
+	}
 }
 
 func processFile(filePath string) (int, error) {
-	_, err := parser.BuildCST(filePath)
+	_, err := parser.BuildAST(filePath)
 	if err != nil {
-		fmt.Printf("Failed to build CST for file %s: %s\n", filePath, err)
 		return 0, err
 	}
 	lineCount := countLines(filePath)

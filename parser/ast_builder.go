@@ -290,7 +290,7 @@ func (v *ASTBuilder) popClassNode() IClassNode {
 
 func (v *ASTBuilder) peekClassNode() IClassNode {
 	if v.classNodeStack.Len() == 0 {
-		panic("peek empty class node stack")
+		return nil
 	}
 	return v.classNodeStack.Front().Value.(IClassNode)
 }
@@ -299,7 +299,13 @@ func (builder *ASTBuilder) VisitCompilationUnit(ctx *CompilationUnitContext) int
 	//builder.VisitPackageDeclaration(ctx.PackageDeclaration().(*PackageDeclarationContext))
 	builder.Visit(ctx.PackageDeclaration())
 
-	for _, node := range builder.VisitScriptStatements(ctx.ScriptStatements().(*ScriptStatementsContext)).([]ASTNode) {
+	// handle empty script
+	var scriptStatementsPtr *ScriptStatementsContext
+	if ctx.ScriptStatements() != nil {
+		scriptStatementsPtr = ctx.ScriptStatements().(*ScriptStatementsContext)
+	}
+
+	for _, node := range builder.VisitScriptStatements(scriptStatementsPtr).([]ASTNode) {
 		switch n := node.(type) {
 		case *DeclarationListStatement:
 			for _, stmt := range n.GetDeclarationStatements() {
@@ -349,7 +355,11 @@ func (builder *ASTBuilder) VisitScriptStatements(ctx *ScriptStatementsContext) i
 }
 
 func (v *ASTBuilder) VisitPackageDeclaration(ctx *PackageDeclarationContext) interface{} {
-	packageName := v.VisitQualifiedName(ctx.QualifiedName().(*QualifiedNameContext)).(string)
+	var qctx *QualifiedNameContext
+	if ctx.QualifiedName() != nil {
+		qctx = ctx.QualifiedName().(*QualifiedNameContext)
+	}
+	packageName := v.VisitQualifiedName(qctx).(string)
 	v.moduleNode.SetPackageName(packageName + DOT_STR)
 
 	packageNode := v.moduleNode.PackageNode
@@ -634,7 +644,7 @@ func (v *ASTBuilder) VisitClassicalForControl(ctx *ClassicalForControlContext) i
 }
 
 func (v *ASTBuilder) VisitWhileStmtAlt(ctx *WhileStmtAltContext) interface{} {
-	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(*StatementContext))
+	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(IStatementContext))
 
 	var block Statement
 	if conditionAndBlock.V2 != nil {
@@ -650,7 +660,7 @@ func (v *ASTBuilder) VisitWhileStmtAlt(ctx *WhileStmtAltContext) interface{} {
 }
 
 func (v *ASTBuilder) VisitDoWhileStmtAlt(ctx *DoWhileStmtAltContext) interface{} {
-	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(*StatementContext))
+	conditionAndBlock := v.createLoopConditionExpressionAndBlock(ctx.ExpressionInPar().(*ExpressionInParContext), ctx.Statement().(IStatementContext))
 
 	var block Statement
 	if conditionAndBlock.V2 != nil {
@@ -665,7 +675,7 @@ func (v *ASTBuilder) VisitDoWhileStmtAlt(ctx *DoWhileStmtAltContext) interface{}
 	)
 }
 
-func (v *ASTBuilder) createLoopConditionExpressionAndBlock(eipc *ExpressionInParContext, sc *StatementContext) Tuple2[*BooleanExpression, Statement] {
+func (v *ASTBuilder) createLoopConditionExpressionAndBlock(eipc *ExpressionInParContext, sc IStatementContext) Tuple2[*BooleanExpression, Statement] {
 	conditionExpression := v.VisitExpressionInPar(eipc).(Expression)
 
 	booleanExpression := configureASTFromSource(
@@ -1273,7 +1283,11 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 	if packageName == "" {
 		packageName = ""
 	}
-	className := v.VisitIdentifier(ctx.Identifier().(*IdentifierContext)).(string)
+	var idCtx *IdentifierContext
+	if ctx.Identifier() != nil {
+		idCtx = ctx.Identifier().(*IdentifierContext)
+	}
+	className := v.VisitIdentifier(idCtx).(string)
 	if className == "var" {
 		panic(createParsingFailedException("var cannot be used for type declarations", parserRuleContextAdapter{ctx.Identifier()}))
 	}
@@ -1414,7 +1428,11 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 
 	configureAST(classNode, ctx)
 	classNode.SetSyntheticPublic(syntheticPublic)
-	classNode.SetGenericsTypes(v.VisitTypeParameters(ctx.TypeParameters().(*TypeParametersContext)).([]*GenericsType))
+	var typeParametersCtxPtr *TypeParametersContext
+	if ctx.TypeParameters() != nil {
+		typeParametersCtxPtr = ctx.TypeParameters().(*TypeParametersContext)
+	}
+	classNode.SetGenericsTypes(v.VisitTypeParameters(typeParametersCtxPtr).([]*GenericsType))
 	isInterfaceWithDefaultMethods := (isInterface && v.containsDefaultOrPrivateMethods(ctx))
 	// TODO: handle this
 	/*
@@ -1446,25 +1464,35 @@ func (v *ASTBuilder) VisitClassDeclaration(ctx *ClassDeclarationContext) interfa
 	}
 	classNode.PutNodeMetaData(CLASS_NAME, className)
 
+	var scsCtx *TypeListContext
+	if ctx.scs != nil {
+		scsCtx = ctx.scs.(*TypeListContext)
+	}
+
+	var isCtx *TypeListContext
+	if ctx.is != nil {
+		isCtx = ctx.is.(*TypeListContext)
+	}
+
 	if ctx.CLASS() != nil || ctx.TRAIT() != nil {
 		if ctx.scs != nil {
-			scs := v.VisitTypeList(ctx.scs.(*TypeListContext)).([]IClassNode)
+			scs := v.VisitTypeList(scsCtx).([]IClassNode)
 			if len(scs) > 1 {
 				panic(createParsingFailedException("Cannot extend multiple classes", tokenAdapter{ctx.EXTENDS().GetSymbol()}))
 			}
 			classNode.SetSuperClass(scs[0])
 		}
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]IClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(isCtx).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 
 	} else if isInterface {
 		classNode.SetModifiers(classNode.GetModifiers() | ACC_INTERFACE | ACC_ABSTRACT)
-		classNode.SetInterfaces(v.VisitTypeList(ctx.scs.(*TypeListContext)).([]IClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(scsCtx).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 		v.hackMixins(classNode)
 
 	} else if isEnum || isRecord {
-		classNode.SetInterfaces(v.VisitTypeList(ctx.is.(*TypeListContext)).([]IClassNode))
+		classNode.SetInterfaces(v.VisitTypeList(isCtx).([]IClassNode))
 		v.checkUsingGenerics(classNode)
 		if isRecord {
 			v.transformRecordHeaderToProperties(ctx, classNode)
@@ -2133,12 +2161,9 @@ func (v *ASTBuilder) VisitReturnType(ctx *ReturnTypeContext) interface{} {
 		return DynamicType()
 	}
 
-	// TODO: handle this
-	/*
-		if ctx.StandardType() != nil {
-			return v.VisitType(ctx.StandardType().(*TypeContext))
-		}
-	*/
+	if ctx.StandardType() != nil {
+		return v.VisitStandardType(ctx.StandardType().(*StandardTypeContext))
+	}
 
 	if ctx.VOID() != nil {
 		if ctx.ct == 3 { // annotation
@@ -2448,11 +2473,13 @@ func (v *ASTBuilder) VisitVariableDeclarator(ctx *VariableDeclaratorContext) int
 		variableInitializerCtx = ctx.VariableInitializer().(*VariableInitializerContext)
 	}
 
+	ve := v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression)
+
 	return configureAST(
 		NewDeclarationExpression(
 			configureAST(
 				NewVariableExpression(
-					v.VisitVariableDeclaratorId(ctx.VariableDeclaratorId().(*VariableDeclaratorIdContext)).(*VariableExpression).GetName(),
+					ve.GetName(),
 					variableType,
 				),
 				ctx.VariableDeclaratorId(),
@@ -4592,22 +4619,59 @@ func (v *ASTBuilder) VisitType(ctx *TypeContext) interface{} {
 	return configureAST(classNode, ctx)
 }
 
+func (v *ASTBuilder) VisitStandardType(ctx *StandardTypeContext) interface{} {
+	if ctx == nil {
+		return DynamicType()
+	}
+
+	var classNode IClassNode
+
+	if ctx.StandardClassOrInterfaceType() != nil {
+		if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
+			ctx.StandardClassOrInterfaceType().(*StandardClassOrInterfaceTypeContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
+		}
+		classNode = v.VisitStandardClassOrInterfaceType(ctx.StandardClassOrInterfaceType().(*StandardClassOrInterfaceTypeContext)).(IClassNode)
+	} else if ctx.PrimitiveType() != nil {
+		classNode = v.VisitPrimitiveType(ctx.PrimitiveType().(*PrimitiveTypeContext)).(IClassNode)
+	}
+
+	if classNode == nil {
+		if ctx.GetText() == VOID_STR {
+			panic(createParsingFailedException("void is not allowed here", parserRuleContextAdapter{ctx}))
+		}
+		panic(createParsingFailedException("Unsupported type: "+ctx.GetText(), parserRuleContextAdapter{ctx}))
+	}
+
+	classNode.AddTypeAnnotations(v.VisitAnnotationsOpt(ctx.AnnotationsOpt().(*AnnotationsOptContext)).([]*AnnotationNode))
+
+	dimList := v.VisitEmptyDimsOpt(ctx.EmptyDimsOpt().(*EmptyDimsOptContext)).([][]*AnnotationNode)
+	if len(dimList) > 0 {
+		classNode = v.createArrayTypeWithAnnotations(classNode, dimList)
+	}
+
+	return configureAST(classNode, ctx)
+}
+
+func (v *ASTBuilder) VisitStandardClassOrInterfaceType(ctx *StandardClassOrInterfaceTypeContext) interface{} {
+	var classNode IClassNode
+	if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
+		ctx.QualifiedStandardClassName().(*QualifiedStandardClassNameContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
+	}
+	classNode = v.VisitQualifiedStandardClassName(ctx.QualifiedStandardClassName().(*QualifiedStandardClassNameContext)).(IClassNode)
+
+	if ctx.TypeArguments() != nil {
+		classNode.SetGenericsTypes(v.VisitTypeArguments(ctx.TypeArguments().(*TypeArgumentsContext)).([]*GenericsType))
+	}
+
+	return configureAST(classNode, ctx)
+}
+
 func (v *ASTBuilder) VisitClassOrInterfaceType(ctx *GeneralClassOrInterfaceTypeContext) interface{} {
 	var classNode IClassNode
-	if ctx.QualifiedClassName() != nil {
-		if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
-			ctx.QualifiedClassName().(*QualifiedClassNameContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
-		}
-		classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode)
-	} else {
-		// TODO: implement this
-		/*
-			if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
-				ctx.QualifiedStandardClassName().(*QualifiedStandardClassNameContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
-			}
-			classNode = v.VisitQualifiedStandardClassName(ctx.QualifiedStandardClassName().(*QualifiedStandardClassNameContext))
-		*/
+	if isTrue(ctx, IS_INSIDE_INSTANCEOF_EXPR) {
+		ctx.QualifiedClassName().(*QualifiedClassNameContext).PutNodeMetaData(IS_INSIDE_INSTANCEOF_EXPR, true)
 	}
+	classNode = v.VisitQualifiedClassName(ctx.QualifiedClassName().(*QualifiedClassNameContext)).(IClassNode)
 
 	if ctx.TypeArguments() != nil {
 		classNode.SetGenericsTypes(v.VisitTypeArguments(ctx.TypeArguments().(*TypeArgumentsContext)).([]*GenericsType))
