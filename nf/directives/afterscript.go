@@ -13,7 +13,7 @@ type AfterScript struct {
 
 func (a AfterScript) Type() DirectiveType { return AfterScriptType }
 
-func MakeAfterScript(mce *parser.MethodCallExpression) (*AfterScript, error) {
+func MakeAfterScript(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

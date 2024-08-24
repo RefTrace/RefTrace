@@ -14,7 +14,7 @@ type Accelerator struct {
 
 func (a Accelerator) Type() DirectiveType { return AcceleratorType }
 
-func MakeAccelerator(mce *parser.MethodCallExpression) (*Accelerator, error) {
+func MakeAccelerator(mce *parser.MethodCallExpression) (Directive, error) {
 	var numGPUs int = -1
 	var gpuType string = ""
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
