@@ -143,3 +143,30 @@ func BuildCST(filePath string) (ParseResult, error) {
 
 	return ParseResult{Tree: result, Mode: "SLL"}, nil
 }
+
+// BuildAST builds the Abstract Syntax Tree (AST) for the given file.
+func BuildAST(filePath string) (*ModuleNode, error) {
+	// First, build the Concrete Syntax Tree (CST)
+	parseResult, err := BuildCST(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build CST: %w", err)
+	}
+
+	// Now, build the AST
+	var ast *ModuleNode
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("panic while building AST: %v", r)
+			}
+		}()
+		builder := NewASTBuilder(filePath)
+		ast = builder.Visit(parseResult.Tree).(*ModuleNode)
+	}()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return ast, nil
+}

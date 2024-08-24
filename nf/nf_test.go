@@ -3,22 +3,15 @@ package nf
 import (
 	"path/filepath"
 	"reft-go/parser"
-	"runtime/debug"
 	"testing"
-
-	"github.com/antlr4-go/antlr/v4"
 )
 
 func TestSarekEntireMain(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("../parser/testdata", "sarek_entire_main.nf")
-	result, err := parser.BuildCST(filePath)
+	ast, err := parser.BuildAST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to build CST: %v", err)
+		t.Fatalf("Failed to build AST: %v", err)
 	}
-	builder := parser.NewASTBuilder(filePath)
-	ast := builder.Visit(result.Tree).(*parser.ModuleNode)
-	//cls := ast.GetClasses()[0]
 	paramVisitor := NewParamVisitor()
 	paramVisitor.VisitBlockStatement(ast.StatementBlock)
 	params := paramVisitor.GetSortedParams()
@@ -34,22 +27,19 @@ func TestSarekEntireMain(t *testing.T) {
 	workflowVisitor := NewWorkflowVisitor()
 	workflowVisitor.VisitBlockStatement(ast.StatementBlock)
 	workflows := workflowVisitor.workflows
-	if len(workflows) != 1 {
-		t.Fatalf("Expected 1 workflow, got %d", len(workflows))
+	if len(workflows) != 2 {
+		t.Fatalf("Expected 2 workflows, got %d", len(workflows))
 	}
 	//stcVisitor := NewStcVisitor(cls)
 	//stcVisitor.VisitBlockStatement(ast.StatementBlock)
 }
 
 func TestSimpleWorkflow(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("./testdata", "simple_workflow.nf")
-	result, err := parser.BuildCST(filePath)
+	ast, err := parser.BuildAST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to build CST: %v", err)
+		t.Fatalf("Failed to build AST: %v", err)
 	}
-	builder := parser.NewASTBuilder(filePath)
-	ast := builder.Visit(result.Tree).(*parser.ModuleNode)
 
 	workflowVisitor := NewWorkflowVisitor()
 	workflowVisitor.VisitBlockStatement(ast.StatementBlock)
@@ -69,14 +59,11 @@ func TestSimpleWorkflow(t *testing.T) {
 }
 
 func TestSimpleProcess(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("./testdata", "simple_process.nf")
-	result, err := parser.BuildCST(filePath)
+	ast, err := parser.BuildAST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to build CST: %v", err)
+		t.Fatalf("Failed to build AST: %v", err)
 	}
-	builder := parser.NewASTBuilder(filePath)
-	ast := builder.Visit(result.Tree).(*parser.ModuleNode)
 
 	processVisitor := NewProcessVisitor()
 	processVisitor.VisitBlockStatement(ast.StatementBlock)
@@ -85,31 +72,36 @@ func TestSimpleProcess(t *testing.T) {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
 	directives := processes[0].Directives
-	if len(directives) != 50 {
-		t.Fatalf("Expected 50 directives, got %d", len(directives))
+	if len(directives) != 51 {
+		t.Fatalf("Expected 51 directives, got %d", len(directives))
+	}
+}
+
+func TestClosureDirective(t *testing.T) {
+	filePath := filepath.Join("./testdata", "closure_directive.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	directives := processes[0].Directives
+	if len(directives) != 2 {
+		t.Fatalf("Expected 2 directives, got %d", len(directives))
 	}
 }
 
 func TestChannelFromPath(t *testing.T) {
-	debug.SetGCPercent(-1)
 	filePath := filepath.Join("./testdata", "channel_frompath.nf")
-	input, err := antlr.NewFileStream(filePath)
+	ast, err := parser.BuildAST(filePath)
 	if err != nil {
-		t.Fatalf("Failed to open file %s: %s", filePath, err)
+		t.Fatalf("Failed to build AST: %v", err)
 	}
-
-	lexer := parser.NewGroovyLexer(input)
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	//tokens := lexer.GetAllTokens()
-	//tokenStream := NewPreloadedTokenStream(tokens, lexer)
-	stream.Fill()
-	groovyParser := parser.NewGroovyParser(stream)
-	//parser.GetInterpreter().SetPredictionMode(antlr.PredictionModeLLExactAmbigDetection)
-
-	// Parse the file
-	tree := groovyParser.CompilationUnit()
-	builder := parser.NewASTBuilder(filePath)
-	ast := builder.Visit(tree).(*parser.ModuleNode)
 	cls := ast.GetClasses()[0]
 	stcVisitor := NewStcVisitor(cls)
 	stcVisitor.VisitBlockStatement(ast.StatementBlock)

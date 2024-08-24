@@ -77,11 +77,27 @@ var directiveSet = map[string]func(*parser.MethodCallExpression) (directives.Dir
 func makeDirective(statement parser.Statement) (directives.Directive, error) {
 	if exprStmt, ok := statement.(*parser.ExpressionStatement); ok {
 		if mce, ok := exprStmt.GetExpression().(*parser.MethodCallExpression); ok {
-			if makeFunc, exists := directiveSet[mce.GetMethod().GetText()]; exists {
+			methodName := mce.GetMethod().GetText()
+
+			// Check if there's one argument and it's a closure
+			if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
+				if len(args.GetExpressions()) == 1 {
+					if _, isClosure := args.GetExpressions()[0].(*parser.ClosureExpression); isClosure {
+						if _, exists := directiveSet[methodName]; exists {
+							if methodName != "executor" && methodName != "label" && methodName != "maxForks" {
+								return &directives.DynamicDirective{Name: methodName}, nil
+							}
+						}
+					}
+				}
+			}
+			if makeFunc, exists := directiveSet[methodName]; exists {
 				return makeFunc(mce)
 			}
+			return &directives.UnknownDirective{Name: methodName}, nil
 		}
 	}
+	panic("TAKE THIS OUT: unknown statement")
 	return nil, errors.New("unknown directive")
 }
 

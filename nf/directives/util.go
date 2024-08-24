@@ -43,8 +43,26 @@ const (
 	StoreDirDirectiveType
 	TagDirectiveType
 	TimeDirectiveType
+	DynamicDirectiveType
+	UnknownDirectiveType
 )
 
 type Directive interface {
 	Type() DirectiveType
 }
+
+var _ Directive = (*DynamicDirective)(nil)
+
+type DynamicDirective struct {
+	Name string
+}
+
+func (a DynamicDirective) Type() DirectiveType { return DynamicDirectiveType }
+
+var _ Directive = (*UnknownDirective)(nil)
+
+type UnknownDirective struct {
+	Name string
+}
+
+func (a UnknownDirective) Type() DirectiveType { return UnknownDirectiveType }
