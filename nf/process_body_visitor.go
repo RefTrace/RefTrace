@@ -258,6 +258,62 @@ func makeDirective(statement parser.Statement) (directives.Directive, error) {
 				}
 				return nil, err
 			}
+			if mce.GetMethod().GetText() == "scratch" {
+				directive, err := directives.MakeScratchDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "shell" {
+				directive, err := directives.MakeShellDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "spack" {
+				directive, err := directives.MakeSpackDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "stageInMode" {
+				directive, err := directives.MakeStageInModeDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "stageOutMode" {
+				directive, err := directives.MakeStageOutModeDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "storeDir" {
+				directive, err := directives.MakeStoreDirDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "tag" {
+				directive, err := directives.MakeTagDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
+			if mce.GetMethod().GetText() == "time" {
+				directive, err := directives.MakeTimeDirective(mce)
+				if err == nil {
+					return directive, nil
+				}
+				return nil, err
+			}
 		}
 	}
 	return nil, errors.New("unknown directive")
@@ -281,9 +337,11 @@ func (v *ProcessBodyVisitor) VisitBlockStatement(block *parser.BlockStatement) {
 	v.outputs = findOutputs(stmts)
 	possibleDirectives := findPossibleDirectives(stmts)
 	v.directives = makeDirectives(possibleDirectives)
-	for _, statement := range stmts {
-		v.VisitStatement(statement)
-	}
+	/*
+		for _, statement := range stmts {
+			v.VisitStatement(statement)
+		}
+	*/
 }
 
 func findPossibleDirectives(statements []parser.Statement) []parser.Statement {

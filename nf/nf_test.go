@@ -85,8 +85,8 @@ func TestSimpleProcess(t *testing.T) {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
 	directives := processes[0].Directives
-	if len(directives) != 3 {
-		t.Fatalf("Expected 3 directives, got %d", len(directives))
+	if len(directives) != 50 {
+		t.Fatalf("Expected 50 directives, got %d", len(directives))
 	}
 }
 
