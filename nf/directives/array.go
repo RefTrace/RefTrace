@@ -13,7 +13,7 @@ type ArrayDirective struct {
 
 func (a ArrayDirective) Type() DirectiveType { return ArrayDirectiveType }
 
-func MakeArrayDirective(mce *parser.MethodCallExpression) (*ArrayDirective, error) {
+func MakeArrayDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

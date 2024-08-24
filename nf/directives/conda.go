@@ -13,7 +13,7 @@ type Conda struct {
 
 func (a Conda) Type() DirectiveType { return CondaType }
 
-func MakeConda(mce *parser.MethodCallExpression) (*Conda, error) {
+func MakeConda(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

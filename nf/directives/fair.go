@@ -13,7 +13,7 @@ type FairDirective struct {
 
 func (a FairDirective) Type() DirectiveType { return FairDirectiveType }
 
-func MakeFairDirective(mce *parser.MethodCallExpression) (*FairDirective, error) {
+func MakeFairDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

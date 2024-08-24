@@ -13,7 +13,7 @@ type MaxForksDirective struct {
 
 func (a MaxForksDirective) Type() DirectiveType { return MaxForksDirectiveType }
 
-func MakeMaxForksDirective(mce *parser.MethodCallExpression) (*MaxForksDirective, error) {
+func MakeMaxForksDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

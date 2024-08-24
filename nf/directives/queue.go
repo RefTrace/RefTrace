@@ -13,7 +13,7 @@ type QueueDirective struct {
 
 func (a QueueDirective) Type() DirectiveType { return QueueDirectiveType }
 
-func MakeQueueDirective(mce *parser.MethodCallExpression) (*QueueDirective, error) {
+func MakeQueueDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

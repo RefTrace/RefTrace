@@ -13,7 +13,7 @@ type TimeDirective struct {
 
 func (a TimeDirective) Type() DirectiveType { return TimeDirectiveType }
 
-func MakeTimeDirective(mce *parser.MethodCallExpression) (*TimeDirective, error) {
+func MakeTimeDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

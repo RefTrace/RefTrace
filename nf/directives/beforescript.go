@@ -13,7 +13,7 @@ type BeforeScript struct {
 
 func (a BeforeScript) Type() DirectiveType { return BeforeScriptType }
 
-func MakeBeforeScript(mce *parser.MethodCallExpression) (*BeforeScript, error) {
+func MakeBeforeScript(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

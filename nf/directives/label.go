@@ -13,7 +13,7 @@ type LabelDirective struct {
 
 func (a LabelDirective) Type() DirectiveType { return LabelDirectiveType }
 
-func MakeLabelDirective(mce *parser.MethodCallExpression) (*LabelDirective, error) {
+func MakeLabelDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

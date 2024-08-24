@@ -16,7 +16,7 @@ type ResourceLimitsDirective struct {
 
 func (a ResourceLimitsDirective) Type() DirectiveType { return ResourceLimitsDirectiveType }
 
-func MakeResourceLimitsDirective(mce *parser.MethodCallExpression) (*ResourceLimitsDirective, error) {
+func MakeResourceLimitsDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var cpus *int
 	var disk *string
 	var memory *string

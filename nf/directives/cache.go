@@ -15,7 +15,7 @@ type CacheDirective struct {
 
 func (a CacheDirective) Type() DirectiveType { return CacheDirectiveType }
 
-func MakeCacheDirective(mce *parser.MethodCallExpression) (*CacheDirective, error) {
+func MakeCacheDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

@@ -13,7 +13,7 @@ type MaxErrorsDirective struct {
 
 func (a MaxErrorsDirective) Type() DirectiveType { return MaxErrorsDirectiveType }
 
-func MakeMaxErrorsDirective(mce *parser.MethodCallExpression) (*MaxErrorsDirective, error) {
+func MakeMaxErrorsDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

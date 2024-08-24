@@ -13,7 +13,7 @@ type ExecutorDirective struct {
 
 func (a ExecutorDirective) Type() DirectiveType { return ExecutorDirectiveType }
 
-func MakeExecutorDirective(mce *parser.MethodCallExpression) (*ExecutorDirective, error) {
+func MakeExecutorDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

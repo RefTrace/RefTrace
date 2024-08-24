@@ -13,7 +13,7 @@ type TagDirective struct {
 
 func (a TagDirective) Type() DirectiveType { return TagDirectiveType }
 
-func MakeTagDirective(mce *parser.MethodCallExpression) (*TagDirective, error) {
+func MakeTagDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

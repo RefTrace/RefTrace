@@ -13,7 +13,7 @@ type ResourceLabelsDirective struct {
 
 func (a ResourceLabelsDirective) Type() DirectiveType { return ResourceLabelsDirectiveType }
 
-func MakeResourceLabelsDirective(mce *parser.MethodCallExpression) (*ResourceLabelsDirective, error) {
+func MakeResourceLabelsDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var keys []string = []string{}
 	if args, ok := mce.GetArguments().(*parser.TupleExpression); ok {
 		if len(args.GetExpressions()) != 1 {

@@ -13,7 +13,7 @@ type DiskDirective struct {
 
 func (a DiskDirective) Type() DirectiveType { return DiskDirectiveType }
 
-func MakeDiskDirective(mce *parser.MethodCallExpression) (*DiskDirective, error) {
+func MakeDiskDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

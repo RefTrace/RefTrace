@@ -14,7 +14,7 @@ type ClusterOptions struct {
 
 func (a ClusterOptions) Type() DirectiveType { return ClusterOptionsType }
 
-func MakeClusterOptions(mce *parser.MethodCallExpression) (*ClusterOptions, error) {
+func MakeClusterOptions(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		options := []string{}

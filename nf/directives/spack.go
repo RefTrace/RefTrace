@@ -13,7 +13,7 @@ type SpackDirective struct {
 
 func (a SpackDirective) Type() DirectiveType { return SpackDirectiveType }
 
-func MakeSpackDirective(mce *parser.MethodCallExpression) (*SpackDirective, error) {
+func MakeSpackDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

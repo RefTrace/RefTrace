@@ -14,7 +14,7 @@ type ScratchDirective struct {
 
 func (a ScratchDirective) Type() DirectiveType { return ScratchDirectiveType }
 
-func MakeScratchDirective(mce *parser.MethodCallExpression) (*ScratchDirective, error) {
+func MakeScratchDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	enabled := false
 	directory := ""
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

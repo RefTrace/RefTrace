@@ -13,7 +13,7 @@ type MemoryDirective struct {
 
 func (a MemoryDirective) Type() DirectiveType { return MemoryDirectiveType }
 
-func MakeMemoryDirective(mce *parser.MethodCallExpression) (*MemoryDirective, error) {
+func MakeMemoryDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

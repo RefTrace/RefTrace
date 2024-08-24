@@ -13,7 +13,7 @@ type ModuleDirective struct {
 
 func (a ModuleDirective) Type() DirectiveType { return ModuleDirectiveType }
 
-func MakeModuleDirective(mce *parser.MethodCallExpression) (*ModuleDirective, error) {
+func MakeModuleDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

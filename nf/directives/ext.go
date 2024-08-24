@@ -14,7 +14,7 @@ type ExtDirective struct {
 
 func (a ExtDirective) Type() DirectiveType { return ExtDirectiveType }
 
-func MakeExtDirective(mce *parser.MethodCallExpression) (*ExtDirective, error) {
+func MakeExtDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var version string = ""
 	var extArgs string = ""
 	if args, ok := mce.GetArguments().(*parser.TupleExpression); ok {
@@ -25,7 +25,6 @@ func MakeExtDirective(mce *parser.MethodCallExpression) (*ExtDirective, error) {
 		if namedArgListExpr, ok := expr.(*parser.NamedArgumentListExpression); ok {
 			exprs := namedArgListExpr.GetMapEntryExpressions()
 			for _, mapEntryExpr := range exprs {
-
 				key := mapEntryExpr.GetKeyExpression().GetText()
 				value := mapEntryExpr.GetValueExpression()
 				if key == "version" {
@@ -38,7 +37,6 @@ func MakeExtDirective(mce *parser.MethodCallExpression) (*ExtDirective, error) {
 						extArgs = constantExpr.GetText()
 					}
 				}
-
 			}
 		}
 	}

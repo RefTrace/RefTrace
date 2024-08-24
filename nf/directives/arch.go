@@ -14,7 +14,7 @@ type Arch struct {
 
 func (a Arch) Type() DirectiveType { return ArchType }
 
-func MakeArch(mce *parser.MethodCallExpression) (*Arch, error) {
+func MakeArch(mce *parser.MethodCallExpression) (Directive, error) {
 	var name string = ""
 	var target string = ""
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

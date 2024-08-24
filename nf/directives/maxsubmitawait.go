@@ -13,7 +13,7 @@ type MaxSubmitAwaitDirective struct {
 
 func (a MaxSubmitAwaitDirective) Type() DirectiveType { return MaxSubmitAwaitDirectiveType }
 
-func MakeMaxSubmitAwaitDirective(mce *parser.MethodCallExpression) (*MaxSubmitAwaitDirective, error) {
+func MakeMaxSubmitAwaitDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

@@ -13,7 +13,7 @@ type CpusDirective struct {
 
 func (a CpusDirective) Type() DirectiveType { return CpusDirectiveType }
 
-func MakeCpusDirective(mce *parser.MethodCallExpression) (*CpusDirective, error) {
+func MakeCpusDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

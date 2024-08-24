@@ -13,7 +13,7 @@ type ErrorStrategyDirective struct {
 
 func (a ErrorStrategyDirective) Type() DirectiveType { return ErrorStrategyDirectiveType }
 
-func MakeErrorStrategyDirective(mce *parser.MethodCallExpression) (*ErrorStrategyDirective, error) {
+func MakeErrorStrategyDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

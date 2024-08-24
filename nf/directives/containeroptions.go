@@ -5,15 +5,15 @@ import (
 	"reft-go/parser"
 )
 
-var _ Directive = (*Container)(nil)
+var _ Directive = (*ContainerOptions)(nil)
 
 type ContainerOptions struct {
 	Options string
 }
 
-func (a ContainerOptions) Type() DirectiveType { return ContainerType }
+func (a ContainerOptions) Type() DirectiveType { return ContainerOptionsType }
 
-func MakeContainerOptions(mce *parser.MethodCallExpression) (*ContainerOptions, error) {
+func MakeContainerOptions(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) == 1 {

@@ -18,7 +18,7 @@ type PublishDirDirective struct {
 
 func (a PublishDirDirective) Type() DirectiveType { return PublishDirDirectiveType }
 
-func MakePublishDirDirective(mce *parser.MethodCallExpression) (*PublishDirDirective, error) {
+func MakePublishDirDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var dir string = ""
 	var contentType *bool = nil
 	var enabled *bool = nil

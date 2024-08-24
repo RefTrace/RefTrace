@@ -13,7 +13,7 @@ type DebugDirective struct {
 
 func (a DebugDirective) Type() DirectiveType { return DebugDirectiveType }
 
-func MakeDebugDirective(mce *parser.MethodCallExpression) (*DebugDirective, error) {
+func MakeDebugDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

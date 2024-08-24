@@ -13,7 +13,7 @@ type StageInModeDirective struct {
 
 func (a StageInModeDirective) Type() DirectiveType { return StageInModeDirectiveType }
 
-func MakeStageInModeDirective(mce *parser.MethodCallExpression) (*StageInModeDirective, error) {
+func MakeStageInModeDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

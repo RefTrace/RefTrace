@@ -14,7 +14,7 @@ type Shell struct {
 
 func (a Shell) Type() DirectiveType { return ShellDirectiveType }
 
-func MakeShellDirective(mce *parser.MethodCallExpression) (*Shell, error) {
+func MakeShellDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		options := []string{}

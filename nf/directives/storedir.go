@@ -13,7 +13,7 @@ type StoreDirDirective struct {
 
 func (a StoreDirDirective) Type() DirectiveType { return StoreDirDirectiveType }
 
-func MakeStoreDirDirective(mce *parser.MethodCallExpression) (*StoreDirDirective, error) {
+func MakeStoreDirDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) != 1 {

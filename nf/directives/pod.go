@@ -14,7 +14,7 @@ type PodDirective struct {
 
 func (a PodDirective) Type() DirectiveType { return PodDirectiveType }
 
-func MakePodDirective(mce *parser.MethodCallExpression) (*PodDirective, error) {
+func MakePodDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var env string = ""
 	var val string = ""
 	if args, ok := mce.GetArguments().(*parser.TupleExpression); ok {
@@ -25,7 +25,6 @@ func MakePodDirective(mce *parser.MethodCallExpression) (*PodDirective, error) {
 		if namedArgListExpr, ok := expr.(*parser.NamedArgumentListExpression); ok {
 			exprs := namedArgListExpr.GetMapEntryExpressions()
 			for _, mapEntryExpr := range exprs {
-
 				key := mapEntryExpr.GetKeyExpression().GetText()
 				value := mapEntryExpr.GetValueExpression()
 				if key == "env" {
@@ -38,7 +37,6 @@ func MakePodDirective(mce *parser.MethodCallExpression) (*PodDirective, error) {
 						val = constantExpr.GetText()
 					}
 				}
-
 			}
 		}
 	}
