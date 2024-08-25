@@ -2,7 +2,11 @@ package parser
 
 import (
 	"fmt"
+	"io/fs"
+	"path/filepath"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"unicode"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -202,4 +206,53 @@ func BuildASTTest(filePath string) *ModuleNode {
 	ast := builder.Visit(parseResult.Tree).(*ModuleNode)
 
 	return ast
+}
+
+func processFile(filePath string) error {
+	_, err := BuildAST(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func processDirectory(dir string) (int64, error) {
+	var totalFiles int64
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errors []error
+
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() && filepath.Ext(path) == ".nf" {
+			wg.Add(1)
+			go func(path string) {
+				defer wg.Done()
+				err := processFile(path)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, fmt.Errorf("error processing file %s", path))
+					mu.Unlock()
+					return
+				}
+				atomic.AddInt64(&totalFiles, 1)
+			}(path)
+		}
+		return nil
+	})
+
+	wg.Wait()
+
+	if err != nil {
+		return totalFiles, err
+	}
+
+	if len(errors) > 0 {
+		return totalFiles, fmt.Errorf("encountered %d errors during processing: %v", len(errors), errors)
+	}
+
+	return totalFiles, nil
 }

@@ -698,17 +698,6 @@ func TestCreateIntervalsBed(t *testing.T) {
 }
 
 /*
-func TestParseSpeed(t *testing.T) {
-	debug.SetGCPercent(-1)
-	dir := filepath.Join("testdata", "sarek")
-	_, _, err := ProcessDirectory(dir)
-	if err != nil {
-		return
-	}
-}
-*/
-
-/*
 func getStatementsCount(ast *ModuleNode) int {
 	bs := ast.StatementBlock
 	if len(bs.statements) != 1 {
