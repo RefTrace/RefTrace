@@ -1022,6 +1022,14 @@ func TestDatasyncSync(t *testing.T) {
 	}
 }
 
+func TestVCFGenotypeAnnotator(t *testing.T) {
+	filePath := filepath.Join("testdata", "vcf_genotype_annotator.nf")
+	_, err := BuildAST(filePath)
+	if err == nil {
+		t.Fatalf("Failed to report AST building error")
+	}
+}
+
 func TestQiime2Intree(t *testing.T) {
 	filePath := filepath.Join("testdata", "qiime2_intree.nf")
 
