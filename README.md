@@ -5,6 +5,27 @@ go generate ./...
 go build
 ```
 
+You have to manually patch the generated parser:
+
+```
+var t *CommandExpressionContext = nil
+if localctx != nil {
+    t = localctx.(*CommandExpressionContext)
+}
+return p.CommandExpression_Sempred(t, predIndex)
+return p.CommandExpression_Sempred(localctx, predIndex)
+```
+
+and
+
+```
+if cmdExprCtx, ok := localctx.(*CommandExpressionContext); ok {
+    return !isFollowingArgumentsOrClosure(cmdExprCtx.Get_expression())
+}
+return !isFollowingArgumentsOrClosure(localctx)
+//return !isFollowingArgumentsOrClosure(localctx.(*CommandExpressionContext).Get_expression())
+```
+
 https://issues.apache.org/jira/browse/GROOVY-9232
 
 https://go.dev/doc/effective_go#embedding
