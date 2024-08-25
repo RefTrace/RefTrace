@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"reft-go/parser"
 	"sync"
-	"sync/atomic"
 	"testing"
 )
 
@@ -111,19 +110,8 @@ func TestChannelFromPath(t *testing.T) {
 	stcVisitor.VisitBlockStatement(ast.StatementBlock)
 }
 
-func processFile(filePath string) (int, error) {
-	ast, err := parser.BuildAST(filePath)
-	if err != nil {
-		return 0, err
-	}
-	processVisitor := NewProcessVisitor()
-	processVisitor.VisitBlockStatement(ast.StatementBlock)
-	processes := processVisitor.processes
-	return len(processes), nil
-}
-
-func processDirectory(dir string) (int64, int64, error) {
-	var totalFiles, totalProcesses int64
+func processDirectory(dir string) ([]*Module, error) {
+	var modules []*Module
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	var errors []error
@@ -137,15 +125,16 @@ func processDirectory(dir string) (int64, int64, error) {
 			wg.Add(1)
 			go func(path string) {
 				defer wg.Done()
-				nProcesses, err := processFile(path)
+				module, err := BuildModule(path)
 				if err != nil {
 					mu.Lock()
 					errors = append(errors, fmt.Errorf("error processing file %s: %v", path, err))
 					mu.Unlock()
 					return
 				}
-				atomic.AddInt64(&totalFiles, 1)
-				atomic.AddInt64(&totalProcesses, int64(nProcesses))
+				mu.Lock()
+				modules = append(modules, module)
+				mu.Unlock()
 			}(path)
 		}
 		return nil
@@ -154,21 +143,57 @@ func processDirectory(dir string) (int64, int64, error) {
 	wg.Wait()
 
 	if err != nil {
-		return totalFiles, totalProcesses, err
+		return nil, err
 	}
 
 	if len(errors) > 0 {
-		return totalFiles, totalProcesses, fmt.Errorf("encountered %d errors during processing: %v", len(errors), errors)
+		return nil, fmt.Errorf("encountered %d errors during processing: %v", len(errors), errors)
 	}
 
-	return totalFiles, totalProcesses, nil
+	return modules, nil
 }
 
 func TestCountProcesses(t *testing.T) {
-	filePath := filepath.Join("../parser/testdata", "nf-core", "sarek")
-	nFiles, nProcesses, err := processDirectory(filePath)
+	filePath := filepath.Join("../parser/testdata", "nf-core")
+	modules, err := processDirectory(filePath)
 	if err != nil {
 		t.Fatalf("Failed to process directory: %v", err)
 	}
-	t.Logf("Processed %d files and found %d processes", nFiles, nProcesses)
+
+	totalProcesses := 0
+	for _, module := range modules {
+		totalProcesses += len(module.Processes)
+	}
+
+	t.Logf("Found %d modules with a total of %d processes", len(modules), totalProcesses)
+}
+
+func TestCountProcessesAirrflow(t *testing.T) {
+	filePath := filepath.Join("../parser/testdata", "nf-core", "airrflow")
+	modules, err := processDirectory(filePath)
+	if err != nil {
+		t.Fatalf("Failed to process directory: %v", err)
+	}
+
+	totalProcesses := 0
+	for _, module := range modules {
+		totalProcesses += len(module.Processes)
+	}
+
+	t.Logf("Found %d modules with a total of %d processes", len(modules), totalProcesses)
+}
+
+func TestIfStatementProcess(t *testing.T) {
+	filePath := filepath.Join("../parser/testdata", "nf-core", "airrflow/modules/local/enchantr/report_file_size.nf")
+	module, err := BuildModule(filePath)
+	if err != nil {
+		t.Fatalf("Failed to process file: %v", err)
+	}
+	if len(module.Processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(module.Processes))
+	}
+	process := module.Processes[0]
+	if len(process.Directives) != 4 {
+		t.Fatalf("Expected 4 directives, got %d", len(process.Directives))
+	}
 }

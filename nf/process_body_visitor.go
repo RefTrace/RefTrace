@@ -75,6 +75,7 @@ var directiveSet = map[string]func(*parser.MethodCallExpression) (directives.Dir
 }
 
 func makeDirective(statement parser.Statement) (directives.Directive, error) {
+	// TODO: handle top-level if statements
 	if exprStmt, ok := statement.(*parser.ExpressionStatement); ok {
 		if mce, ok := exprStmt.GetExpression().(*parser.MethodCallExpression); ok {
 			methodName := mce.GetMethod().GetText()
@@ -97,8 +98,7 @@ func makeDirective(statement parser.Statement) (directives.Directive, error) {
 			return &directives.UnknownDirective{Name: methodName}, nil
 		}
 	}
-	panic("TAKE THIS OUT: unknown statement")
-	return nil, errors.New("unknown directive")
+	return nil, errors.New("unknown statement")
 }
 
 func makeDirectives(statements []parser.Statement) []directives.Directive {
