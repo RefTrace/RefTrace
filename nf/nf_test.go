@@ -1,8 +1,12 @@
 package nf
 
 import (
+	"fmt"
+	"io/fs"
 	"path/filepath"
 	"reft-go/parser"
+	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -105,4 +109,66 @@ func TestChannelFromPath(t *testing.T) {
 	cls := ast.GetClasses()[0]
 	stcVisitor := NewStcVisitor(cls)
 	stcVisitor.VisitBlockStatement(ast.StatementBlock)
+}
+
+func processFile(filePath string) (int, error) {
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		return 0, err
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	return len(processes), nil
+}
+
+func processDirectory(dir string) (int64, int64, error) {
+	var totalFiles, totalProcesses int64
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var errors []error
+
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() && filepath.Ext(path) == ".nf" {
+			wg.Add(1)
+			go func(path string) {
+				defer wg.Done()
+				nProcesses, err := processFile(path)
+				if err != nil {
+					mu.Lock()
+					errors = append(errors, fmt.Errorf("error processing file %s: %v", path, err))
+					mu.Unlock()
+					return
+				}
+				atomic.AddInt64(&totalFiles, 1)
+				atomic.AddInt64(&totalProcesses, int64(nProcesses))
+			}(path)
+		}
+		return nil
+	})
+
+	wg.Wait()
+
+	if err != nil {
+		return totalFiles, totalProcesses, err
+	}
+
+	if len(errors) > 0 {
+		return totalFiles, totalProcesses, fmt.Errorf("encountered %d errors during processing: %v", len(errors), errors)
+	}
+
+	return totalFiles, totalProcesses, nil
+}
+
+func TestCountProcesses(t *testing.T) {
+	filePath := filepath.Join("../parser/testdata", "nf-core", "sarek")
+	nFiles, nProcesses, err := processDirectory(filePath)
+	if err != nil {
+		t.Fatalf("Failed to process directory: %v", err)
+	}
+	t.Logf("Processed %d files and found %d processes", nFiles, nProcesses)
 }
