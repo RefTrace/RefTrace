@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"reft-go/nf"
 	"reft-go/parser"
 	"strconv"
+	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/spf13/cobra"
@@ -15,15 +17,15 @@ import (
 	"go.starlark.net/syntax"
 )
 
-var checkCmd = &cobra.Command{
-	Use:   "check [nf_file] [checks_file]",
-	Short: "Check a .nf file using rules from a checks.nf file",
+var lintCmd = &cobra.Command{
+	Use:   "lint [rules file] [directory]",
+	Short: "Lint a directory using rules from a rules.py file",
 	Args:  cobra.ExactArgs(2),
-	Run:   runCheck,
+	Run:   runLint,
 }
 
 func init() {
-	rootCmd.AddCommand(checkCmd)
+	rootCmd.AddCommand(lintCmd)
 }
 
 type StarlarkParamInfo struct {
@@ -147,25 +149,50 @@ func parse(filePath string) ([]nf.ParamInfo, []nf.IncludeInfo) {
 	return params, includes
 }
 
-func runCheck(cmd *cobra.Command, args []string) {
-	nfFile := args[0]
-	checksFile := args[1]
-
-	// Read the checks.nf file
-	checksContent, err := os.ReadFile(checksFile)
-	if err != nil {
-		log.Fatalf("Error reading checks.nf file: %v", err)
+// failnowFunc is the implementation of the failnow function for Starlark
+func failnowFunc(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+	sep := " "
+	if err := starlark.UnpackArgs("failnow", nil, kwargs, "sep?", &sep); err != nil {
+		return nil, err
+	}
+	buf := new(strings.Builder)
+	buf.WriteString("failnow: ")
+	for i, v := range args {
+		if i > 0 {
+			buf.WriteString(sep)
+		}
+		if s, ok := starlark.AsString(v); ok {
+			buf.WriteString(s)
+		} else {
+			buf.WriteString(v.String())
+		}
 	}
 
+	return nil, errors.New(buf.String())
+}
+
+func runLint(cmd *cobra.Command, args []string) {
+	rulesFile := args[0]
+	dir := args[1]
+
+	// Read the rules.py file
+	rulesContent, err := os.ReadFile(rulesFile)
+	if err != nil {
+		log.Fatalf("Error reading rules.py file: %v", err)
+	}
+
+	// Remove the 'fail' function from the Universe
+	delete(starlark.Universe, "fail")
+
 	// Create a new Starlark thread
-	thread := &starlark.Thread{Name: "check_thread"}
+	thread := &starlark.Thread{Name: "lint_thread"}
 
 	fo := &syntax.FileOptions{}
 
 	// Parse the Starlark code without executing it
-	f, err := fo.Parse(checksFile, checksContent, 0)
+	f, err := fo.Parse(rulesFile, rulesContent, 0)
 	if err != nil {
-		log.Fatalf("Error parsing checks program: %v", err)
+		log.Fatalf("Error parsing rules program: %v", err)
 	}
 
 	// Compile the parsed code
@@ -173,48 +200,67 @@ func runCheck(cmd *cobra.Command, args []string) {
 		return false
 	})
 	if err != nil {
-		log.Fatalf("Error compiling checks program: %v", err)
+		log.Fatalf("Error compiling rules program: %v", err)
 	}
 
 	// Create predefined variables for the Starlark environment
 	predefined := starlark.StringDict{
+		"failnow": starlark.NewBuiltin("failnow", failnowFunc),
 		// Add any other predefined variables or functions here
 	}
 
 	// Execute the compiled program
 	globals, err := prog.Init(thread, predefined)
 	if err != nil {
-		log.Fatalf("Error initializing checks program: %v", err)
+		log.Fatalf("Error initializing rules program: %v", err)
 	}
 
-	// Check if main function is defined
-	mainFunc, ok := globals["main"]
-	if !ok {
-		log.Fatal("main function not defined in checks program")
+	// Collect rules (functions starting with "rule_")
+	rules := make(map[string]starlark.Callable)
+	for name, value := range globals {
+		if strings.HasPrefix(name, "rule_") {
+			if callable, ok := value.(starlark.Callable); ok {
+				rules[name] = callable
+			}
+		}
 	}
 
 	// Create the params list
-	params, includes := parse(nfFile)
-	starlarkParams := make([]starlark.Value, len(params))
-	for i, param := range params {
-		starlarkParams[i] = NewStarlarkParamInfo(param)
-	}
-	starlarkParamsList := starlark.NewList(starlarkParams)
-
-	starlarkIncludes := make([]starlark.Value, len(includes))
-	for i, include := range includes {
-		starlarkIncludes[i] = NewStarlarkIncludeInfo(include)
-	}
-	starlarkIncludesList := starlark.NewList(starlarkIncludes)
-
-	// Call the main function
-	_, err = starlark.Call(thread, mainFunc, starlark.Tuple{starlarkParamsList, starlarkIncludesList}, nil)
-	if err != nil {
-		if evalErr, ok := err.(*starlark.EvalError); ok {
-			fmt.Printf("Execution failed: %s\n", evalErr.Msg)
-		} else {
-			log.Fatalf("Error calling main function: %v\n", err)
+	/*
+		params, includes := parse(rulesFile)
+		starlarkParams := make([]starlark.Value, len(params))
+		for i, param := range params {
+			starlarkParams[i] = NewStarlarkParamInfo(param)
 		}
-		return
+		_ = starlark.NewList(starlarkParams)
+	*/
+
+	/*
+		starlarkIncludes := make([]starlark.Value, len(includes))
+		for i, include := range includes {
+			starlarkIncludes[i] = NewStarlarkIncludeInfo(include)
+		}
+		_ = starlark.NewList(starlarkIncludes)
+	*/
+
+	// Parse the directory and get the modules
+	modules, err := nf.ProcessDirectory(dir)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+
+	// Execute each rule
+	for ruleName, ruleFunc := range rules {
+		for _, module := range modules {
+			starlarkModule := nf.ConvertToStarlarkModule(module)
+			_, err := starlark.Call(thread, ruleFunc, starlark.Tuple{starlarkModule}, nil)
+			if err != nil {
+				if evalErr, ok := err.(*starlark.EvalError); ok {
+					fmt.Printf("Rule %s execution failed: %s\n", ruleName, evalErr.Msg)
+				} else {
+					log.Fatalf("Error calling rule %s: %v\n", ruleName, err)
+				}
+			}
+		}
 	}
 }
