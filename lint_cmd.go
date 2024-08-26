@@ -15,6 +15,7 @@ import (
 	"sync"
 
 	"github.com/antlr4-go/antlr/v4"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"go.starlark.net/starlark"
 	"go.starlark.net/syntax"
@@ -344,21 +345,30 @@ func runLint(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	printGroupedOutput(groupedOutput)
+	hasErrors := printGroupedOutput(groupedOutput)
+	if hasErrors {
+		os.Exit(1)
+	}
 }
 
-func printGroupedOutput(groupedOutput GroupedOutput) {
-	// Get sorted rule names
+func printGroupedOutput(groupedOutput GroupedOutput) bool {
+	hasErrors := false
 	ruleNames := make([]string, 0, len(groupedOutput))
 	for ruleName := range groupedOutput {
 		ruleNames = append(ruleNames, ruleName)
 	}
 	sort.Strings(ruleNames)
 
-	for _, ruleName := range ruleNames {
-		fmt.Printf("Rule: %s\n", ruleName)
+	rulePrinter := color.New(color.FgCyan, color.Bold)
+	modulePrinter := color.New(color.FgYellow)
+	errorPrinter := color.New(color.FgRed)
+	outputPrinter := color.New(color.FgGreen)
 
-		// Get sorted module names for this rule
+	fmt.Println() // Start with a blank line
+
+	for _, ruleName := range ruleNames {
+		rulePrinter.Printf("Rule: %s\n", ruleName)
+
 		moduleNames := make([]string, 0, len(groupedOutput[ruleName]))
 		for moduleName := range groupedOutput[ruleName] {
 			moduleNames = append(moduleNames, moduleName)
@@ -366,15 +376,19 @@ func printGroupedOutput(groupedOutput GroupedOutput) {
 		sort.Strings(moduleNames)
 
 		for _, moduleName := range moduleNames {
-			fmt.Printf("  Module: %s\n", moduleName)
 			entry := groupedOutput[ruleName][moduleName]
-			for _, e := range entry.Errors {
-				fmt.Printf("    %s\n", e)
-			}
-			for _, o := range entry.Outputs {
-				fmt.Printf("    %s\n", o)
+			if len(entry.Errors) > 0 || len(entry.Outputs) > 0 {
+				modulePrinter.Printf("  Module: %s\n", moduleName)
+				for _, e := range entry.Errors {
+					hasErrors = true
+					errorPrinter.Printf("    Error: %s\n", e)
+				}
+				for _, o := range entry.Outputs {
+					outputPrinter.Printf("    Output: %s\n", o)
+				}
 			}
 		}
 		fmt.Println() // Add a blank line between rules
 	}
+	return hasErrors
 }

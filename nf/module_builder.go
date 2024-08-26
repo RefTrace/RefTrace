@@ -38,6 +38,9 @@ func ConvertToStarlarkModule(m *Module) *StarlarkModule {
 	}
 }
 
+var _ starlark.Value = (*StarlarkModule)(nil)
+var _ starlark.HasAttrs = (*StarlarkModule)(nil)
+
 type StarlarkModule struct {
 	Path      string
 	Processes []*StarlarkProcess

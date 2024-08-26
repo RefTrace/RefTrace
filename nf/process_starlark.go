@@ -107,10 +107,15 @@ func ConvertToStarlarkProcess(p Process) *StarlarkProcess {
 }
 
 var _ starlark.Value = (*StarlarkProcess)(nil)
+var _ starlark.HasAttrs = (*StarlarkProcess)(nil)
 
 type StarlarkProcess struct {
 	Name       string
 	Directives *StarlarkProcessDirectives
+}
+
+func (p *StarlarkProcess) AttrNames() []string {
+	return []string{"name", "directives"}
 }
 
 type StarlarkProcessDirectives struct {
@@ -189,6 +194,9 @@ func (p *StarlarkProcess) Attr(name string) (starlark.Value, error) {
 		return nil, fmt.Errorf("process has no attribute %q", name)
 	}
 }
+
+var _ starlark.Value = (*StarlarkProcessDirectivesWrapper)(nil)
+var _ starlark.HasAttrs = (*StarlarkProcessDirectivesWrapper)(nil)
 
 type StarlarkProcessDirectivesWrapper struct {
 	*StarlarkProcessDirectives
@@ -316,5 +324,52 @@ func (w *StarlarkProcessDirectivesWrapper) Attr(name string) (starlark.Value, er
 		return starlarkListFromDirectives(w.Unknown), nil
 	default:
 		return nil, fmt.Errorf("directives has no attribute %q", name)
+	}
+}
+
+func (w *StarlarkProcessDirectivesWrapper) AttrNames() []string {
+	return []string{
+		"accelerator",
+		"after_script",
+		"arch",
+		"array",
+		"before_script",
+		"cache",
+		"cluster_options",
+		"conda",
+		"container",
+		"container_options",
+		"cpus",
+		"debug",
+		"disk",
+		"echo",
+		"error_strategy",
+		"executor",
+		"ext",
+		"fair",
+		"label",
+		"machine_type",
+		"max_submit_await",
+		"max_errors",
+		"max_forks",
+		"max_retries",
+		"memory",
+		"module",
+		"penv",
+		"pod",
+		"publish_dir",
+		"queue",
+		"resource_labels",
+		"resource_limits",
+		"scratch",
+		"shell",
+		"spack",
+		"stage_in_mode",
+		"stage_out_mode",
+		"store_dir",
+		"tag",
+		"time",
+		"dynamic",
+		"unknown",
 	}
 }
