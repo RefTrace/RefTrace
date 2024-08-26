@@ -6,10 +6,13 @@ import (
 	"hash/fnv"
 	"log"
 	"os"
+	"path/filepath"
 	"reft-go/nf"
 	"reft-go/parser"
+	"sort"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/spf13/cobra"
@@ -17,15 +20,22 @@ import (
 	"go.starlark.net/syntax"
 )
 
+var (
+	rulesFile string
+	dir       string
+)
+
 var lintCmd = &cobra.Command{
-	Use:   "lint [rules file] [directory]",
+	Use:   "lint",
 	Short: "Lint a directory using rules from a rules.py file",
-	Args:  cobra.ExactArgs(2),
 	Run:   runLint,
 }
 
 func init() {
 	rootCmd.AddCommand(lintCmd)
+
+	lintCmd.Flags().StringVarP(&rulesFile, "rules", "r", "rules.py", "Path to the rules file")
+	lintCmd.Flags().StringVarP(&dir, "directory", "d", ".", "Directory to lint")
 }
 
 type StarlarkParamInfo struct {
@@ -150,13 +160,12 @@ func parse(filePath string) ([]nf.ParamInfo, []nf.IncludeInfo) {
 }
 
 // failnowFunc is the implementation of the failnow function for Starlark
-func failnowFunc(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+func fatalFunc(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
 	sep := " "
 	if err := starlark.UnpackArgs("failnow", nil, kwargs, "sep?", &sep); err != nil {
 		return nil, err
 	}
 	buf := new(strings.Builder)
-	buf.WriteString("failnow: ")
 	for i, v := range args {
 		if i > 0 {
 			buf.WriteString(sep)
@@ -171,9 +180,23 @@ func failnowFunc(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tup
 	return nil, errors.New(buf.String())
 }
 
+type RuleModuleOutput struct {
+	Errors  []string
+	Outputs []string
+}
+
+// rule -> module -> output
+type GroupedOutput map[string]map[string]RuleModuleOutput
+
 func runLint(cmd *cobra.Command, args []string) {
-	rulesFile := args[0]
-	dir := args[1]
+	// Check if rules file exists
+	if _, err := os.Stat(rulesFile); os.IsNotExist(err) {
+		log.Fatalf("Rules file not found: %s", rulesFile)
+	}
+
+	// Convert relative paths to absolute paths
+	rulesFile, _ = filepath.Abs(rulesFile)
+	dir, _ = filepath.Abs(dir)
 
 	// Read the rules.py file
 	rulesContent, err := os.ReadFile(rulesFile)
@@ -184,8 +207,24 @@ func runLint(cmd *cobra.Command, args []string) {
 	// Remove the 'fail' function from the Universe
 	delete(starlark.Universe, "fail")
 
-	// Create a new Starlark thread
-	thread := &starlark.Thread{Name: "lint_thread"}
+	var outputMutex sync.Mutex
+	groupedOutput := make(GroupedOutput)
+
+	// Create a new Starlark thread with a custom print function
+	thread := &starlark.Thread{
+		Name: "lint_thread",
+		Print: func(thread *starlark.Thread, msg string) {
+			outputMutex.Lock()
+			defer outputMutex.Unlock()
+
+			ruleName := thread.Local("current_rule").(string)
+			moduleName := thread.Local("current_module").(string)
+
+			entry := groupedOutput[ruleName][moduleName]
+			entry.Outputs = append(entry.Outputs, msg)
+			groupedOutput[ruleName][moduleName] = entry
+		},
+	}
 
 	fo := &syntax.FileOptions{}
 
@@ -197,6 +236,9 @@ func runLint(cmd *cobra.Command, args []string) {
 
 	// Compile the parsed code
 	prog, err := starlark.FileProgram(f, func(name string) bool {
+		if name == "fatal" || name == "error" {
+			return true
+		}
 		return false
 	})
 	if err != nil {
@@ -205,8 +247,36 @@ func runLint(cmd *cobra.Command, args []string) {
 
 	// Create predefined variables for the Starlark environment
 	predefined := starlark.StringDict{
-		"failnow": starlark.NewBuiltin("failnow", failnowFunc),
-		// Add any other predefined variables or functions here
+		"fatal": starlark.NewBuiltin("fatal", fatalFunc),
+		"error": starlark.NewBuiltin("error", func(thread *starlark.Thread, b *starlark.Builtin, args starlark.Tuple, kwargs []starlark.Tuple) (starlark.Value, error) {
+			sep := " "
+			if err := starlark.UnpackArgs("error", nil, kwargs, "sep?", &sep); err != nil {
+				return nil, err
+			}
+			buf := new(strings.Builder)
+			for i, v := range args {
+				if i > 0 {
+					buf.WriteString(sep)
+				}
+				if s, ok := starlark.AsString(v); ok {
+					buf.WriteString(s)
+				} else {
+					buf.WriteString(v.String())
+				}
+			}
+
+			outputMutex.Lock()
+			defer outputMutex.Unlock()
+
+			ruleName := thread.Local("current_rule").(string)
+			moduleName := thread.Local("current_module").(string)
+
+			entry := groupedOutput[ruleName][moduleName]
+			entry.Errors = append(entry.Errors, buf.String())
+			groupedOutput[ruleName][moduleName] = entry
+
+			return starlark.None, nil
+		}),
 	}
 
 	// Execute the compiled program
@@ -251,16 +321,60 @@ func runLint(cmd *cobra.Command, args []string) {
 
 	// Execute each rule
 	for ruleName, ruleFunc := range rules {
+		groupedOutput[ruleName] = make(map[string]RuleModuleOutput)
 		for _, module := range modules {
+			groupedOutput[ruleName][module.Path] = RuleModuleOutput{}
 			starlarkModule := nf.ConvertToStarlarkModule(module)
+
+			// Set the current rule and module context
+			thread.SetLocal("current_rule", ruleName)
+			thread.SetLocal("current_module", module.Path)
+
 			_, err := starlark.Call(thread, ruleFunc, starlark.Tuple{starlarkModule}, nil)
 			if err != nil {
 				if evalErr, ok := err.(*starlark.EvalError); ok {
-					fmt.Printf("Rule %s execution failed: %s\n", ruleName, evalErr.Msg)
+					entry := groupedOutput[ruleName][module.Path]
+					entry.Errors = append(entry.Errors, evalErr.Msg)
+					groupedOutput[ruleName][module.Path] = entry
+					//fmt.Printf("Rule %s execution failed: %s\n", ruleName, evalErr.Msg)
 				} else {
 					log.Fatalf("Error calling rule %s: %v\n", ruleName, err)
 				}
 			}
 		}
+	}
+
+	printGroupedOutput(groupedOutput)
+}
+
+func printGroupedOutput(groupedOutput GroupedOutput) {
+	// Get sorted rule names
+	ruleNames := make([]string, 0, len(groupedOutput))
+	for ruleName := range groupedOutput {
+		ruleNames = append(ruleNames, ruleName)
+	}
+	sort.Strings(ruleNames)
+
+	for _, ruleName := range ruleNames {
+		fmt.Printf("Rule: %s\n", ruleName)
+
+		// Get sorted module names for this rule
+		moduleNames := make([]string, 0, len(groupedOutput[ruleName]))
+		for moduleName := range groupedOutput[ruleName] {
+			moduleNames = append(moduleNames, moduleName)
+		}
+		sort.Strings(moduleNames)
+
+		for _, moduleName := range moduleNames {
+			fmt.Printf("  Module: %s\n", moduleName)
+			entry := groupedOutput[ruleName][moduleName]
+			for _, e := range entry.Errors {
+				fmt.Printf("    %s\n", e)
+			}
+			for _, o := range entry.Outputs {
+				fmt.Printf("    %s\n", o)
+			}
+		}
+		fmt.Println() // Add a blank line between rules
 	}
 }
