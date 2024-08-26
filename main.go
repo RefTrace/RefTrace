@@ -16,11 +16,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	version = "0.2.0"
+)
+
 var rootCmd = &cobra.Command{
-	Use:   "reft [directory]",
-	Short: "Process .nf files in a directory",
-	Args:  cobra.ExactArgs(1),
-	Run:   run,
+	Use:  "reft",
+	Long: `RefTrace - Static analysis for bioinformatics pipelines`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if versionFlag, _ := cmd.Flags().GetBool("version"); versionFlag {
+			fmt.Printf("reft version %s\n", version)
+			return
+		}
+		cmd.Help()
+	},
+}
+
+func init() {
+	rootCmd.Flags().BoolP("version", "v", false, "Print the version number")
 }
 
 func main() {
