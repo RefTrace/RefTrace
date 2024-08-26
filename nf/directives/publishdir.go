@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*PublishDirDirective)(nil)
@@ -16,7 +20,41 @@ type PublishDirDirective struct {
 	Overwrite   *bool
 }
 
-func (a PublishDirDirective) Type() DirectiveType { return PublishDirDirectiveType }
+func (p *PublishDirDirective) String() string {
+	return fmt.Sprintf("PublishDirDirective(Path: %q, ContentType: %v, Enabled: %v, FailOnError: %v, Mode: %q, Overwrite: %v)",
+		p.Path, boolPtrToString(p.ContentType), boolPtrToString(p.Enabled), boolPtrToString(p.FailOnError), p.Mode, boolPtrToString(p.Overwrite))
+}
+
+func (p *PublishDirDirective) Type() string {
+	return "publish_dir_directive"
+}
+
+func (p *PublishDirDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (p *PublishDirDirective) Truth() starlark.Bool {
+	return starlark.Bool(p.Path != "")
+}
+
+func (p *PublishDirDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(p.Path))
+	h.Write([]byte(boolPtrToString(p.ContentType)))
+	h.Write([]byte(boolPtrToString(p.Enabled)))
+	h.Write([]byte(boolPtrToString(p.FailOnError)))
+	h.Write([]byte(p.Mode))
+	h.Write([]byte(boolPtrToString(p.Overwrite)))
+	return h.Sum32(), nil
+}
+
+// Helper function to convert *bool to string
+func boolPtrToString(b *bool) string {
+	if b == nil {
+		return "nil"
+	}
+	return fmt.Sprintf("%t", *b)
+}
 
 func MakePublishDirDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var dir string = ""

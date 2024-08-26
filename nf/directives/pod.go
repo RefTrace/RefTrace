@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*PodDirective)(nil)
@@ -12,7 +16,28 @@ type PodDirective struct {
 	Value string
 }
 
-func (a PodDirective) Type() DirectiveType { return PodDirectiveType }
+func (p *PodDirective) String() string {
+	return fmt.Sprintf("PodDirective(Env: %q, Value: %q)", p.Env, p.Value)
+}
+
+func (p *PodDirective) Type() string {
+	return "pod_directive"
+}
+
+func (p *PodDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (p *PodDirective) Truth() starlark.Bool {
+	return starlark.Bool(p.Env != "" && p.Value != "")
+}
+
+func (p *PodDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(p.Env))
+	h.Write([]byte(p.Value))
+	return h.Sum32(), nil
+}
 
 func MakePodDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var env string = ""

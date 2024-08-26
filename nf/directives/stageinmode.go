@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*StageInModeDirective)(nil)
@@ -11,7 +15,27 @@ type StageInModeDirective struct {
 	Mode string
 }
 
-func (a StageInModeDirective) Type() DirectiveType { return StageInModeDirectiveType }
+func (s *StageInModeDirective) String() string {
+	return fmt.Sprintf("StageInModeDirective(Mode: %q)", s.Mode)
+}
+
+func (s *StageInModeDirective) Type() string {
+	return "stage_in_mode_directive"
+}
+
+func (s *StageInModeDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (s *StageInModeDirective) Truth() starlark.Bool {
+	return starlark.Bool(s.Mode != "")
+}
+
+func (s *StageInModeDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(s.Mode))
+	return h.Sum32(), nil
+}
 
 func MakeStageInModeDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

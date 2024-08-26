@@ -1,6 +1,11 @@
 package directives
 
-import "go.starlark.net/starlark"
+import (
+	"fmt"
+	"hash/fnv"
+
+	"go.starlark.net/starlark"
+)
 
 type DirectiveType int
 
@@ -59,7 +64,27 @@ type DynamicDirective struct {
 	Name string
 }
 
-func (a DynamicDirective) DirectiveType() DirectiveType { return DynamicDirectiveType }
+func (d *DynamicDirective) String() string {
+	return fmt.Sprintf("DynamicDirective(Name: %q)", d.Name)
+}
+
+func (d *DynamicDirective) Type() string {
+	return "dynamic_directive"
+}
+
+func (d *DynamicDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (d *DynamicDirective) Truth() starlark.Bool {
+	return starlark.Bool(d.Name != "")
+}
+
+func (d *DynamicDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(d.Name))
+	return h.Sum32(), nil
+}
 
 var _ Directive = (*UnknownDirective)(nil)
 
@@ -67,4 +92,24 @@ type UnknownDirective struct {
 	Name string
 }
 
-func (a UnknownDirective) DirectiveType() DirectiveType { return UnknownDirectiveType }
+func (u *UnknownDirective) String() string {
+	return fmt.Sprintf("UnknownDirective(Name: %q)", u.Name)
+}
+
+func (u *UnknownDirective) Type() string {
+	return "unknown_directive"
+}
+
+func (u *UnknownDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (u *UnknownDirective) Truth() starlark.Bool {
+	return starlark.Bool(u.Name != "")
+}
+
+func (u *UnknownDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(u.Name))
+	return h.Sum32(), nil
+}

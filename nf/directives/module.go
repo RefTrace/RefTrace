@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*ModuleDirective)(nil)
@@ -11,7 +15,27 @@ type ModuleDirective struct {
 	Name string
 }
 
-func (a ModuleDirective) Type() DirectiveType { return ModuleDirectiveType }
+func (m *ModuleDirective) String() string {
+	return fmt.Sprintf("ModuleDirective(Name: %q)", m.Name)
+}
+
+func (m *ModuleDirective) Type() string {
+	return "module_directive"
+}
+
+func (m *ModuleDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (m *ModuleDirective) Truth() starlark.Bool {
+	return starlark.Bool(m.Name != "")
+}
+
+func (m *ModuleDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(m.Name))
+	return h.Sum32(), nil
+}
 
 func MakeModuleDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

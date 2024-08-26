@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*TimeDirective)(nil)
@@ -11,7 +15,27 @@ type TimeDirective struct {
 	Duration string
 }
 
-func (a TimeDirective) Type() DirectiveType { return TimeDirectiveType }
+func (t *TimeDirective) String() string {
+	return fmt.Sprintf("TimeDirective(Duration: %q)", t.Duration)
+}
+
+func (t *TimeDirective) Type() string {
+	return "time_directive"
+}
+
+func (t *TimeDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (t *TimeDirective) Truth() starlark.Bool {
+	return starlark.Bool(t.Duration != "")
+}
+
+func (t *TimeDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(t.Duration))
+	return h.Sum32(), nil
+}
 
 func MakeTimeDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

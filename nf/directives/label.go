@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*LabelDirective)(nil)
@@ -11,7 +15,27 @@ type LabelDirective struct {
 	Label string
 }
 
-func (a LabelDirective) Type() DirectiveType { return LabelDirectiveType }
+func (l *LabelDirective) String() string {
+	return fmt.Sprintf("LabelDirective(Label: %q)", l.Label)
+}
+
+func (l *LabelDirective) Type() string {
+	return "label_directive"
+}
+
+func (l *LabelDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (l *LabelDirective) Truth() starlark.Bool {
+	return starlark.Bool(l.Label != "")
+}
+
+func (l *LabelDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(l.Label))
+	return h.Sum32(), nil
+}
 
 func MakeLabelDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

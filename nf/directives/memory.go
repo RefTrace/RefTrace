@@ -2,7 +2,11 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*MemoryDirective)(nil)
@@ -11,7 +15,27 @@ type MemoryDirective struct {
 	Memory string
 }
 
-func (a MemoryDirective) Type() DirectiveType { return MemoryDirectiveType }
+func (m *MemoryDirective) String() string {
+	return fmt.Sprintf("MemoryDirective(Memory: %q)", m.Memory)
+}
+
+func (m *MemoryDirective) Type() string {
+	return "memory_directive"
+}
+
+func (m *MemoryDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (m *MemoryDirective) Truth() starlark.Bool {
+	return starlark.Bool(m.Memory != "")
+}
+
+func (m *MemoryDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(m.Memory))
+	return h.Sum32(), nil
+}
 
 func MakeMemoryDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
