@@ -1,5 +1,7 @@
 package directives
 
+import "go.starlark.net/starlark"
+
 type DirectiveType int
 
 const (
@@ -48,7 +50,7 @@ const (
 )
 
 type Directive interface {
-	Type() DirectiveType
+	starlark.Value
 }
 
 var _ Directive = (*DynamicDirective)(nil)
@@ -57,7 +59,7 @@ type DynamicDirective struct {
 	Name string
 }
 
-func (a DynamicDirective) Type() DirectiveType { return DynamicDirectiveType }
+func (a DynamicDirective) DirectiveType() DirectiveType { return DynamicDirectiveType }
 
 var _ Directive = (*UnknownDirective)(nil)
 
@@ -65,4 +67,4 @@ type UnknownDirective struct {
 	Name string
 }
 
-func (a UnknownDirective) Type() DirectiveType { return UnknownDirectiveType }
+func (a UnknownDirective) DirectiveType() DirectiveType { return UnknownDirectiveType }

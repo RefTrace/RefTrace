@@ -2,16 +2,40 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*ExecutorDirective)(nil)
 
+func (e *ExecutorDirective) String() string {
+	return fmt.Sprintf("ExecutorDirective(Executor: %q)", e.Executor)
+}
+
+func (e *ExecutorDirective) Type() string {
+	return "executor_directive"
+}
+
+func (e *ExecutorDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (e *ExecutorDirective) Truth() starlark.Bool {
+	return starlark.Bool(e.Executor != "")
+}
+
+func (e *ExecutorDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(e.Executor))
+	return h.Sum32(), nil
+}
+
 type ExecutorDirective struct {
 	Executor string
 }
-
-func (a ExecutorDirective) Type() DirectiveType { return ExecutorDirectiveType }
 
 func MakeExecutorDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

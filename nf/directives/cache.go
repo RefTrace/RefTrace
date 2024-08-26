@@ -2,18 +2,42 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*CacheDirective)(nil)
+
+func (c *CacheDirective) String() string {
+	return fmt.Sprintf("CacheDirective(Enabled: %t, Deep: %t, Lenient: %t)", c.Enabled, c.Deep, c.Lenient)
+}
+
+func (c *CacheDirective) Type() string {
+	return "cache_directive"
+}
+
+func (c *CacheDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (c *CacheDirective) Truth() starlark.Bool {
+	return starlark.Bool(c.Enabled)
+}
+
+func (c *CacheDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(fmt.Sprintf("%t%t%t", c.Enabled, c.Deep, c.Lenient)))
+	return h.Sum32(), nil
+}
 
 type CacheDirective struct {
 	Enabled bool
 	Deep    bool
 	Lenient bool
 }
-
-func (a CacheDirective) Type() DirectiveType { return CacheDirectiveType }
 
 func MakeCacheDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

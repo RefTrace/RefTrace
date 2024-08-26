@@ -2,16 +2,40 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*BeforeScript)(nil)
 
+func (b *BeforeScript) String() string {
+	return fmt.Sprintf("BeforeScript(%q)", b.Script)
+}
+
+func (b *BeforeScript) Type() string {
+	return "before_script"
+}
+
+func (b *BeforeScript) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (b *BeforeScript) Truth() starlark.Bool {
+	return starlark.Bool(b.Script != "")
+}
+
+func (b *BeforeScript) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(b.Script))
+	return h.Sum32(), nil
+}
+
 type BeforeScript struct {
 	Script string
 }
-
-func (a BeforeScript) Type() DirectiveType { return BeforeScriptType }
 
 func MakeBeforeScript(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

@@ -2,17 +2,41 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*Accelerator)(nil)
+
+func (a *Accelerator) String() string {
+	return fmt.Sprintf("Accelerator(NumGPUs: %d, GPUType: %q)", a.NumGPUs, a.GPUType)
+}
+
+func (a *Accelerator) Type() string {
+	return "accelerator"
+}
+
+func (a *Accelerator) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (a *Accelerator) Truth() starlark.Bool {
+	return starlark.Bool(a.NumGPUs > 0)
+}
+
+func (a *Accelerator) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(fmt.Sprintf("%d%s", a.NumGPUs, a.GPUType)))
+	return h.Sum32(), nil
+}
 
 type Accelerator struct {
 	NumGPUs int
 	GPUType string
 }
-
-func (a Accelerator) Type() DirectiveType { return AcceleratorType }
 
 func MakeAccelerator(mce *parser.MethodCallExpression) (Directive, error) {
 	var numGPUs int = -1

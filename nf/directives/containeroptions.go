@@ -2,16 +2,40 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*ContainerOptions)(nil)
 
+func (c *ContainerOptions) String() string {
+	return fmt.Sprintf("ContainerOptions(%q)", c.Options)
+}
+
+func (c *ContainerOptions) Type() string {
+	return "container_options"
+}
+
+func (c *ContainerOptions) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (c *ContainerOptions) Truth() starlark.Bool {
+	return starlark.Bool(c.Options != "")
+}
+
+func (c *ContainerOptions) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(c.Options))
+	return h.Sum32(), nil
+}
+
 type ContainerOptions struct {
 	Options string
 }
-
-func (a ContainerOptions) Type() DirectiveType { return ContainerOptionsType }
 
 func MakeContainerOptions(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {

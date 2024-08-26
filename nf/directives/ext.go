@@ -2,17 +2,42 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*ExtDirective)(nil)
+
+func (e *ExtDirective) String() string {
+	return fmt.Sprintf("ExtDirective(Version: %q, Args: %q)", e.Version, e.Args)
+}
+
+func (e *ExtDirective) Type() string {
+	return "ext_directive"
+}
+
+func (e *ExtDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (e *ExtDirective) Truth() starlark.Bool {
+	return starlark.Bool(e.Version != "" || e.Args != "")
+}
+
+func (e *ExtDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(e.Version))
+	h.Write([]byte(e.Args))
+	return h.Sum32(), nil
+}
 
 type ExtDirective struct {
 	Version string
 	Args    string
 }
-
-func (a ExtDirective) Type() DirectiveType { return ExtDirectiveType }
 
 func MakeExtDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	var version string = ""

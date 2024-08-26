@@ -2,16 +2,40 @@ package directives
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
+
+	"go.starlark.net/starlark"
 )
 
 var _ Directive = (*DebugDirective)(nil)
 
+func (d *DebugDirective) String() string {
+	return fmt.Sprintf("DebugDirective(Enabled: %t)", d.Enabled)
+}
+
+func (d *DebugDirective) Type() string {
+	return "debug_directive"
+}
+
+func (d *DebugDirective) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (d *DebugDirective) Truth() starlark.Bool {
+	return starlark.Bool(d.Enabled)
+}
+
+func (d *DebugDirective) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(fmt.Sprintf("%t", d.Enabled)))
+	return h.Sum32(), nil
+}
+
 type DebugDirective struct {
 	Enabled bool
 }
-
-func (a DebugDirective) Type() DirectiveType { return DebugDirectiveType }
 
 func MakeDebugDirective(mce *parser.MethodCallExpression) (Directive, error) {
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
