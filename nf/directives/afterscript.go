@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*AfterScript)(nil)
+var _ starlark.Value = (*AfterScript)(nil)
+var _ starlark.HasAttrs = (*AfterScript)(nil)
+
+func (a *AfterScript) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "script":
+		return starlark.String(a.Script), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("afterscript directive has no attribute %q", name))
+	}
+}
+
+func (a *AfterScript) AttrNames() []string {
+	return []string{"script"}
+}
 
 func (a *AfterScript) String() string {
 	return fmt.Sprintf("AfterScript(%q)", a.Script)

@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MaxErrorsDirective)(nil)
+var _ starlark.Value = (*MaxErrorsDirective)(nil)
+var _ starlark.HasAttrs = (*MaxErrorsDirective)(nil)
+
+func (m *MaxErrorsDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "num":
+		return starlark.MakeInt(m.Num), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("max errors directive has no attribute %q", name))
+	}
+}
+
+func (m *MaxErrorsDirective) AttrNames() []string {
+	return []string{"num"}
+}
 
 type MaxErrorsDirective struct {
 	Num int

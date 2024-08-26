@@ -33,6 +33,22 @@ func (c *CpusDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*CpusDirective)(nil)
+var _ starlark.HasAttrs = (*CpusDirective)(nil)
+
+func (c *CpusDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "num":
+		return starlark.MakeInt(c.Num), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("cpus directive has no attribute %q", name))
+	}
+}
+
+func (c *CpusDirective) AttrNames() []string {
+	return []string{"num"}
+}
+
 type CpusDirective struct {
 	Num int
 }

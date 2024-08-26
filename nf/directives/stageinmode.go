@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*StageInModeDirective)(nil)
+var _ starlark.Value = (*StageInModeDirective)(nil)
+var _ starlark.HasAttrs = (*StageInModeDirective)(nil)
+
+func (s *StageInModeDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "mode":
+		return starlark.String(s.Mode), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("stage_in_mode directive has no attribute %q", name))
+	}
+}
+
+func (s *StageInModeDirective) AttrNames() []string {
+	return []string{"mode"}
+}
 
 type StageInModeDirective struct {
 	Mode string

@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MaxForksDirective)(nil)
+var _ starlark.Value = (*MaxForksDirective)(nil)
+var _ starlark.HasAttrs = (*MaxForksDirective)(nil)
+
+func (m *MaxForksDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "num":
+		return starlark.MakeInt(m.Num), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("max forks directive has no attribute %q", name))
+	}
+}
+
+func (m *MaxForksDirective) AttrNames() []string {
+	return []string{"num"}
+}
 
 type MaxForksDirective struct {
 	Num int

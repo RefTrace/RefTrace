@@ -10,6 +10,23 @@ import (
 )
 
 var _ Directive = (*ScratchDirective)(nil)
+var _ starlark.Value = (*ScratchDirective)(nil)
+var _ starlark.HasAttrs = (*ScratchDirective)(nil)
+
+func (s *ScratchDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "enabled":
+		return starlark.Bool(s.Enabled), nil
+	case "directory":
+		return starlark.String(s.Directory), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("scratch directive has no attribute %q", name))
+	}
+}
+
+func (s *ScratchDirective) AttrNames() []string {
+	return []string{"enabled", "directory"}
+}
 
 type ScratchDirective struct {
 	Enabled   bool

@@ -33,6 +33,22 @@ func (e *ErrorStrategyDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*ErrorStrategyDirective)(nil)
+var _ starlark.HasAttrs = (*ErrorStrategyDirective)(nil)
+
+func (e *ErrorStrategyDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "strategy":
+		return starlark.String(e.Strategy), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("error strategy directive has no attribute %q", name))
+	}
+}
+
+func (e *ErrorStrategyDirective) AttrNames() []string {
+	return []string{"strategy"}
+}
+
 type ErrorStrategyDirective struct {
 	Strategy string
 }

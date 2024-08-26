@@ -34,6 +34,24 @@ func (e *ExtDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*ExtDirective)(nil)
+var _ starlark.HasAttrs = (*ExtDirective)(nil)
+
+func (e *ExtDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "version":
+		return starlark.String(e.Version), nil
+	case "args":
+		return starlark.String(e.Args), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("ext directive has no attribute %q", name))
+	}
+}
+
+func (e *ExtDirective) AttrNames() []string {
+	return []string{"version", "args"}
+}
+
 type ExtDirective struct {
 	Version string
 	Args    string

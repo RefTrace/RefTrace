@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*StoreDirDirective)(nil)
+var _ starlark.Value = (*StoreDirDirective)(nil)
+var _ starlark.HasAttrs = (*StoreDirDirective)(nil)
+
+func (s *StoreDirDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "directory":
+		return starlark.String(s.Directory), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("store_dir directive has no attribute %q", name))
+	}
+}
+
+func (s *StoreDirDirective) AttrNames() []string {
+	return []string{"directory"}
+}
 
 type StoreDirDirective struct {
 	Directory string

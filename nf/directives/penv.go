@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*PenvDirective)(nil)
+var _ starlark.Value = (*PenvDirective)(nil)
+var _ starlark.HasAttrs = (*PenvDirective)(nil)
+
+func (p *PenvDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "environment":
+		return starlark.String(p.Environment), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("penv directive has no attribute %q", name))
+	}
+}
+
+func (p *PenvDirective) AttrNames() []string {
+	return []string{"environment"}
+}
 
 type PenvDirective struct {
 	Environment string

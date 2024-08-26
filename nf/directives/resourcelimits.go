@@ -45,6 +45,40 @@ func ptrToString(v interface{}) string {
 	return fmt.Sprintf("%v", v)
 }
 
+var _ starlark.Value = (*ResourceLimitsDirective)(nil)
+var _ starlark.HasAttrs = (*ResourceLimitsDirective)(nil)
+
+func (r *ResourceLimitsDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "cpus":
+		if r.Cpus != nil {
+			return starlark.MakeInt64(int64(*r.Cpus)), nil
+		}
+		return starlark.None, nil
+	case "disk":
+		if r.Disk != nil {
+			return starlark.String(*r.Disk), nil
+		}
+		return starlark.None, nil
+	case "memory":
+		if r.Memory != nil {
+			return starlark.String(*r.Memory), nil
+		}
+		return starlark.None, nil
+	case "time":
+		if r.Time != nil {
+			return starlark.String(*r.Time), nil
+		}
+		return starlark.None, nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("resource_limits directive has no attribute %q", name))
+	}
+}
+
+func (r *ResourceLimitsDirective) AttrNames() []string {
+	return []string{"cpus", "disk", "memory", "time"}
+}
+
 type ResourceLimitsDirective struct {
 	Cpus   *int
 	Disk   *string

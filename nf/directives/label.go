@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*LabelDirective)(nil)
+var _ starlark.Value = (*LabelDirective)(nil)
+var _ starlark.HasAttrs = (*LabelDirective)(nil)
+
+func (l *LabelDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "label":
+		return starlark.String(l.Label), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("label directive has no attribute %q", name))
+	}
+}
+
+func (l *LabelDirective) AttrNames() []string {
+	return []string{"label"}
+}
 
 type LabelDirective struct {
 	Label string

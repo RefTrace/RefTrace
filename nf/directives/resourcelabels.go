@@ -10,6 +10,25 @@ import (
 )
 
 var _ Directive = (*ResourceLabelsDirective)(nil)
+var _ starlark.Value = (*ResourceLabelsDirective)(nil)
+var _ starlark.HasAttrs = (*ResourceLabelsDirective)(nil)
+
+func (r *ResourceLabelsDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "keys":
+		starlarkKeys := make([]starlark.Value, len(r.Keys))
+		for i, key := range r.Keys {
+			starlarkKeys[i] = starlark.String(key)
+		}
+		return starlark.NewList(starlarkKeys), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("resource_labels directive has no attribute %q", name))
+	}
+}
+
+func (r *ResourceLabelsDirective) AttrNames() []string {
+	return []string{"keys"}
+}
 
 type ResourceLabelsDirective struct {
 	Keys []string

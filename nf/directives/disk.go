@@ -33,6 +33,22 @@ func (d *DiskDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*DiskDirective)(nil)
+var _ starlark.HasAttrs = (*DiskDirective)(nil)
+
+func (d *DiskDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "space":
+		return starlark.String(d.Space), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("disk directive has no attribute %q", name))
+	}
+}
+
+func (d *DiskDirective) AttrNames() []string {
+	return []string{"space"}
+}
+
 type DiskDirective struct {
 	Space string
 }

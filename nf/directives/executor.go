@@ -33,6 +33,22 @@ func (e *ExecutorDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*ExecutorDirective)(nil)
+var _ starlark.HasAttrs = (*ExecutorDirective)(nil)
+
+func (e *ExecutorDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "executor":
+		return starlark.String(e.Executor), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("executor directive has no attribute %q", name))
+	}
+}
+
+func (e *ExecutorDirective) AttrNames() []string {
+	return []string{"executor"}
+}
+
 type ExecutorDirective struct {
 	Executor string
 }

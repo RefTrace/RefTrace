@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*TimeDirective)(nil)
+var _ starlark.Value = (*TimeDirective)(nil)
+var _ starlark.HasAttrs = (*TimeDirective)(nil)
+
+func (t *TimeDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "duration":
+		return starlark.String(t.Duration), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("time directive has no attribute %q", name))
+	}
+}
+
+func (t *TimeDirective) AttrNames() []string {
+	return []string{"duration"}
+}
 
 type TimeDirective struct {
 	Duration string

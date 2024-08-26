@@ -10,6 +10,23 @@ import (
 )
 
 var _ Directive = (*Accelerator)(nil)
+var _ starlark.Value = (*Accelerator)(nil)
+var _ starlark.HasAttrs = (*Accelerator)(nil)
+
+func (a *Accelerator) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "num_gpus":
+		return starlark.MakeInt(a.NumGPUs), nil
+	case "gpu_type":
+		return starlark.String(a.GPUType), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("accelerator directive has no attribute %q", name))
+	}
+}
+
+func (a *Accelerator) AttrNames() []string {
+	return []string{"num_gpus", "gpu_type"}
+}
 
 func (a *Accelerator) String() string {
 	return fmt.Sprintf("Accelerator(NumGPUs: %d, GPUType: %q)", a.NumGPUs, a.GPUType)

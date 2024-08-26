@@ -11,6 +11,21 @@ import (
 )
 
 var _ Directive = (*Shell)(nil)
+var _ starlark.Value = (*Shell)(nil)
+var _ starlark.HasAttrs = (*Shell)(nil)
+
+func (s *Shell) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "command":
+		return starlark.String(s.Command), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("shell directive has no attribute %q", name))
+	}
+}
+
+func (s *Shell) AttrNames() []string {
+	return []string{"command"}
+}
 
 type Shell struct {
 	Command string

@@ -33,6 +33,22 @@ func (c *Container) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*Container)(nil)
+var _ starlark.HasAttrs = (*Container)(nil)
+
+func (c *Container) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(c.Name), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("container directive has no attribute %q", name))
+	}
+}
+
+func (c *Container) AttrNames() []string {
+	return []string{"name"}
+}
+
 type Container struct {
 	Name string
 }

@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*SpackDirective)(nil)
+var _ starlark.Value = (*SpackDirective)(nil)
+var _ starlark.HasAttrs = (*SpackDirective)(nil)
+
+func (s *SpackDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "dependencies":
+		return starlark.String(s.Dependencies), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("spack directive has no attribute %q", name))
+	}
+}
+
+func (s *SpackDirective) AttrNames() []string {
+	return []string{"dependencies"}
+}
 
 type SpackDirective struct {
 	Dependencies string

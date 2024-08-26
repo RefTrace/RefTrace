@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*TagDirective)(nil)
+var _ starlark.Value = (*TagDirective)(nil)
+var _ starlark.HasAttrs = (*TagDirective)(nil)
+
+func (t *TagDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "tag":
+		return starlark.String(t.Tag), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("tag directive has no attribute %q", name))
+	}
+}
+
+func (t *TagDirective) AttrNames() []string {
+	return []string{"tag"}
+}
 
 type TagDirective struct {
 	Tag string

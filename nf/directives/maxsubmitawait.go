@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MaxSubmitAwaitDirective)(nil)
+var _ starlark.Value = (*MaxSubmitAwaitDirective)(nil)
+var _ starlark.HasAttrs = (*MaxSubmitAwaitDirective)(nil)
+
+func (m *MaxSubmitAwaitDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "max_submit_await":
+		return starlark.String(m.MaxSubmitAwait), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("max submit await directive has no attribute %q", name))
+	}
+}
+
+func (m *MaxSubmitAwaitDirective) AttrNames() []string {
+	return []string{"max_submit_await"}
+}
 
 type MaxSubmitAwaitDirective struct {
 	MaxSubmitAwait string

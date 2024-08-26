@@ -33,6 +33,26 @@ func (c *CacheDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*CacheDirective)(nil)
+var _ starlark.HasAttrs = (*CacheDirective)(nil)
+
+func (c *CacheDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "enabled":
+		return starlark.Bool(c.Enabled), nil
+	case "deep":
+		return starlark.Bool(c.Deep), nil
+	case "lenient":
+		return starlark.Bool(c.Lenient), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("cache directive has no attribute %q", name))
+	}
+}
+
+func (c *CacheDirective) AttrNames() []string {
+	return []string{"enabled", "deep", "lenient"}
+}
+
 type CacheDirective struct {
 	Enabled bool
 	Deep    bool

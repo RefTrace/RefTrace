@@ -33,6 +33,22 @@ func (e *EchoDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*EchoDirective)(nil)
+var _ starlark.HasAttrs = (*EchoDirective)(nil)
+
+func (e *EchoDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "enabled":
+		return starlark.Bool(e.Enabled), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("echo directive has no attribute %q", name))
+	}
+}
+
+func (e *EchoDirective) AttrNames() []string {
+	return []string{"enabled"}
+}
+
 type EchoDirective struct {
 	Enabled bool
 }

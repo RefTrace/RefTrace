@@ -10,6 +10,43 @@ import (
 )
 
 var _ Directive = (*PublishDirDirective)(nil)
+var _ starlark.Value = (*PublishDirDirective)(nil)
+var _ starlark.HasAttrs = (*PublishDirDirective)(nil)
+
+func (p *PublishDirDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "path":
+		return starlark.String(p.Path), nil
+	case "contentType":
+		if p.ContentType != nil {
+			return starlark.Bool(*p.ContentType), nil
+		}
+		return starlark.None, nil
+	case "enabled":
+		if p.Enabled != nil {
+			return starlark.Bool(*p.Enabled), nil
+		}
+		return starlark.None, nil
+	case "failOnError":
+		if p.FailOnError != nil {
+			return starlark.Bool(*p.FailOnError), nil
+		}
+		return starlark.None, nil
+	case "mode":
+		return starlark.String(p.Mode), nil
+	case "overwrite":
+		if p.Overwrite != nil {
+			return starlark.Bool(*p.Overwrite), nil
+		}
+		return starlark.None, nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("publish_dir directive has no attribute %q", name))
+	}
+}
+
+func (p *PublishDirDirective) AttrNames() []string {
+	return []string{"path", "contentType", "enabled", "failOnError", "mode", "overwrite"}
+}
 
 type PublishDirDirective struct {
 	Path        string

@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*QueueDirective)(nil)
+var _ starlark.Value = (*QueueDirective)(nil)
+var _ starlark.HasAttrs = (*QueueDirective)(nil)
+
+func (q *QueueDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(q.Name), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("queue directive has no attribute %q", name))
+	}
+}
+
+func (q *QueueDirective) AttrNames() []string {
+	return []string{"name"}
+}
 
 type QueueDirective struct {
 	Name string

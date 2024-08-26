@@ -87,6 +87,21 @@ func (d *DynamicDirective) Hash() (uint32, error) {
 }
 
 var _ Directive = (*UnknownDirective)(nil)
+var _ starlark.Value = (*UnknownDirective)(nil)
+var _ starlark.HasAttrs = (*UnknownDirective)(nil)
+
+func (u *UnknownDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(u.Name), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("unknown directive has no attribute %q", name))
+	}
+}
+
+func (u *UnknownDirective) AttrNames() []string {
+	return []string{"name"}
+}
 
 type UnknownDirective struct {
 	Name string

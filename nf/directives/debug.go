@@ -33,6 +33,22 @@ func (d *DebugDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*DebugDirective)(nil)
+var _ starlark.HasAttrs = (*DebugDirective)(nil)
+
+func (d *DebugDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "enabled":
+		return starlark.Bool(d.Enabled), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("debug directive has no attribute %q", name))
+	}
+}
+
+func (d *DebugDirective) AttrNames() []string {
+	return []string{"enabled"}
+}
+
 type DebugDirective struct {
 	Enabled bool
 }

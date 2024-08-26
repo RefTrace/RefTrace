@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*ArrayDirective)(nil)
+var _ starlark.Value = (*ArrayDirective)(nil)
+var _ starlark.HasAttrs = (*ArrayDirective)(nil)
+
+func (a *ArrayDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "size":
+		return starlark.MakeInt(a.Size), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("array directive has no attribute %q", name))
+	}
+}
+
+func (a *ArrayDirective) AttrNames() []string {
+	return []string{"size"}
+}
 
 func (a *ArrayDirective) String() string {
 	return fmt.Sprintf("ArrayDirective(Size: %d)", a.Size)

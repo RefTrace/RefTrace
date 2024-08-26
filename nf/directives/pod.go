@@ -10,6 +10,23 @@ import (
 )
 
 var _ Directive = (*PodDirective)(nil)
+var _ starlark.Value = (*PodDirective)(nil)
+var _ starlark.HasAttrs = (*PodDirective)(nil)
+
+func (p *PodDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "env":
+		return starlark.String(p.Env), nil
+	case "value":
+		return starlark.String(p.Value), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("pod directive has no attribute %q", name))
+	}
+}
+
+func (p *PodDirective) AttrNames() []string {
+	return []string{"env", "value"}
+}
 
 type PodDirective struct {
 	Env   string

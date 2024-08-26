@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MaxRetriesDirective)(nil)
+var _ starlark.Value = (*MaxRetriesDirective)(nil)
+var _ starlark.HasAttrs = (*MaxRetriesDirective)(nil)
+
+func (m *MaxRetriesDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "num":
+		return starlark.MakeInt(m.Num), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("max retries directive has no attribute %q", name))
+	}
+}
+
+func (m *MaxRetriesDirective) AttrNames() []string {
+	return []string{"num"}
+}
 
 type MaxRetriesDirective struct {
 	Num int

@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MemoryDirective)(nil)
+var _ starlark.Value = (*MemoryDirective)(nil)
+var _ starlark.HasAttrs = (*MemoryDirective)(nil)
+
+func (m *MemoryDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "memory":
+		return starlark.String(m.Memory), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("memory directive has no attribute %q", name))
+	}
+}
+
+func (m *MemoryDirective) AttrNames() []string {
+	return []string{"memory"}
+}
 
 type MemoryDirective struct {
 	Memory string

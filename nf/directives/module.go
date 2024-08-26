@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*ModuleDirective)(nil)
+var _ starlark.Value = (*ModuleDirective)(nil)
+var _ starlark.HasAttrs = (*ModuleDirective)(nil)
+
+func (m *ModuleDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(m.Name), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("module directive has no attribute %q", name))
+	}
+}
+
+func (m *ModuleDirective) AttrNames() []string {
+	return []string{"name"}
+}
 
 type ModuleDirective struct {
 	Name string

@@ -33,6 +33,22 @@ func (c *Conda) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*Conda)(nil)
+var _ starlark.HasAttrs = (*Conda)(nil)
+
+func (c *Conda) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "dependencies":
+		return starlark.String(c.Dependencies), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("conda directive has no attribute %q", name))
+	}
+}
+
+func (c *Conda) AttrNames() []string {
+	return []string{"dependencies"}
+}
+
 type Conda struct {
 	Dependencies string
 }

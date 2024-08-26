@@ -10,6 +10,21 @@ import (
 )
 
 var _ Directive = (*MachineTypeDirective)(nil)
+var _ starlark.Value = (*MachineTypeDirective)(nil)
+var _ starlark.HasAttrs = (*MachineTypeDirective)(nil)
+
+func (m *MachineTypeDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "machine_type":
+		return starlark.String(m.MachineType), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("machine type directive has no attribute %q", name))
+	}
+}
+
+func (m *MachineTypeDirective) AttrNames() []string {
+	return []string{"machine_type"}
+}
 
 type MachineTypeDirective struct {
 	MachineType string

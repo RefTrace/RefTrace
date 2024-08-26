@@ -33,6 +33,22 @@ func (f *FairDirective) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*FairDirective)(nil)
+var _ starlark.HasAttrs = (*FairDirective)(nil)
+
+func (f *FairDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "enabled":
+		return starlark.Bool(f.Enabled), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("fair directive has no attribute %q", name))
+	}
+}
+
+func (f *FairDirective) AttrNames() []string {
+	return []string{"enabled"}
+}
+
 type FairDirective struct {
 	Enabled bool
 }

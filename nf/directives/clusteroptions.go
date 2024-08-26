@@ -34,6 +34,22 @@ func (c *ClusterOptions) Hash() (uint32, error) {
 	return h.Sum32(), nil
 }
 
+var _ starlark.Value = (*ClusterOptions)(nil)
+var _ starlark.HasAttrs = (*ClusterOptions)(nil)
+
+func (c *ClusterOptions) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "options":
+		return starlark.String(c.Options), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("cluster_options directive has no attribute %q", name))
+	}
+}
+
+func (c *ClusterOptions) AttrNames() []string {
+	return []string{"options"}
+}
+
 type ClusterOptions struct {
 	Options string
 }
