@@ -59,6 +59,21 @@ type Directive interface {
 }
 
 var _ Directive = (*DynamicDirective)(nil)
+var _ starlark.Value = (*DynamicDirective)(nil)
+var _ starlark.HasAttrs = (*DynamicDirective)(nil)
+
+func (d *DynamicDirective) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(d.Name), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("dynamic directive has no attribute %q", name))
+	}
+}
+
+func (d *DynamicDirective) AttrNames() []string {
+	return []string{"name"}
+}
 
 type DynamicDirective struct {
 	Name string
