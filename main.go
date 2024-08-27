@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"embed"
 	"fmt"
 	"io/fs"
 	"os"
@@ -20,6 +21,35 @@ var (
 	version = "0.2.0"
 )
 
+//go:embed licenses/*
+var folder embed.FS
+
+//go:embed LICENSE
+var licenseFile string
+
+func showLicense() {
+	fmt.Println(licenseFile)
+	err := fs.WalkDir(folder, "licenses", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			content, err := folder.ReadFile(path)
+			if err != nil {
+				return fmt.Errorf("error reading file %s: %w", path, err)
+			}
+			fmt.Printf("--- %s ---\n", path)
+			fmt.Println(string(content))
+			fmt.Println() // Add a blank line between files
+		}
+		return nil
+	})
+
+	if err != nil {
+		fmt.Printf("Error showing licenses: %v\n", err)
+	}
+}
+
 var rootCmd = &cobra.Command{
 	Use:  "reft",
 	Long: `RefTrace - Static analysis for bioinformatics pipelines`,
@@ -28,12 +58,17 @@ var rootCmd = &cobra.Command{
 			fmt.Printf("reft version %s\n", version)
 			return
 		}
+		if licenseFlag, _ := cmd.Flags().GetBool("license"); licenseFlag {
+			showLicense()
+			return
+		}
 		cmd.Help()
 	},
 }
 
 func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print the version number")
+	rootCmd.Flags().BoolP("license", "l", false, "Show the software license")
 }
 
 func main() {
