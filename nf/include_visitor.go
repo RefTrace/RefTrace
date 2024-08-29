@@ -2,26 +2,111 @@ package nf
 
 import (
 	"errors"
+	"fmt"
+	"hash/fnv"
 	"reft-go/parser"
 	"sort"
+
+	"go.starlark.net/starlark"
 )
 
 var _ parser.GroovyCodeVisitor = (*IncludeVisitor)(nil)
 
-type IncludeInfo struct {
-	//TODO: add alias
-	Name       string
-	From       string
+var _ starlark.Value = (*IncludedItem)(nil)
+var _ starlark.HasAttrs = (*IncludedItem)(nil)
+
+type IncludedItem struct {
+	Name  string
+	Alias string
+}
+
+// Implement starlark.Value interface
+func (i *IncludedItem) String() string {
+	if i.Alias != "" {
+		return fmt.Sprintf("%s as %s", i.Name, i.Alias)
+	}
+	return i.Name
+}
+func (i *IncludedItem) Type() string         { return "IncludedItem" }
+func (i *IncludedItem) Freeze()              {} // No-op
+func (i *IncludedItem) Truth() starlark.Bool { return starlark.Bool(i.Name != "") }
+func (i *IncludedItem) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(i.Name))
+	h.Write([]byte(i.Alias))
+	return h.Sum32(), nil
+}
+
+// Implement starlark.HasAttrs interface
+func (i *IncludedItem) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "name":
+		return starlark.String(i.Name), nil
+	case "alias":
+		return starlark.String(i.Alias), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("IncludedItem has no attribute %q", name))
+	}
+}
+
+func (i *IncludedItem) AttrNames() []string {
+	return []string{"name", "alias"}
+}
+
+type IncludeStatement struct {
+	Items      []IncludedItem
+	ModulePath string
 	LineNumber int
 }
 
+func (is IncludeStatement) String() string {
+	return fmt.Sprintf("IncludeStatement(ModulePath: %q, Items: %v)", is.ModulePath, is.Items)
+}
+
+func (is IncludeStatement) Type() string         { return "IncludeStatement" }
+func (is IncludeStatement) Freeze()              {} // No-op
+func (is IncludeStatement) Truth() starlark.Bool { return starlark.Bool(len(is.Items) > 0) }
+
+func (is IncludeStatement) Hash() (uint32, error) {
+	h := fnv.New32()
+	h.Write([]byte(is.ModulePath))
+	for _, item := range is.Items {
+		itemHash, err := item.Hash()
+		if err != nil {
+			return 0, err
+		}
+		h.Write([]byte(fmt.Sprintf("%d", itemHash)))
+	}
+	return h.Sum32(), nil
+}
+
+// Implement starlark.HasAttrs interface
+func (is IncludeStatement) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "items":
+		items := make([]starlark.Value, len(is.Items))
+		for i, item := range is.Items {
+			items[i] = &item
+		}
+		return starlark.NewList(items), nil
+	case "module_path":
+		return starlark.String(is.ModulePath), nil
+	default:
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("IncludeStatement has no attribute %q", name))
+	}
+}
+
+func (is IncludeStatement) AttrNames() []string {
+	return []string{"items", "module_path"}
+}
+
 type IncludeVisitor struct {
-	includes map[string]IncludeInfo
+	includes []IncludeStatement
 }
 
 func NewIncludeVisitor() *IncludeVisitor {
 	return &IncludeVisitor{
-		includes: make(map[string]IncludeInfo),
+		includes: make([]IncludeStatement, 0),
 	}
 }
 
@@ -113,24 +198,29 @@ func (v *IncludeVisitor) VisitStatement(statement parser.Statement) {
 	statement.Visit(v)
 }
 
-func (v *IncludeVisitor) getFromClosure(closure *parser.ClosureExpression) (string, error) {
+func (v *IncludeVisitor) getFromClosure(closure *parser.ClosureExpression) ([]IncludedItem, error) {
+	var items []IncludedItem
 	code, ok := closure.GetCode().(*parser.BlockStatement)
 	if !ok {
-		return "", errors.New("closure code is not a block statement")
+		return items, errors.New("closure code is not a block statement")
 	}
-	if len(code.GetStatements()) != 1 {
-		return "", errors.New("closure code has more than one statement")
+	for _, statement := range code.GetStatements() {
+		exprStmt, ok := statement.(*parser.ExpressionStatement)
+		if !ok {
+			return items, errors.New("closure code statement is not an expression statement")
+		}
+		if varExpr, ok := exprStmt.GetExpression().(*parser.VariableExpression); ok {
+			items = append(items, IncludedItem{Name: varExpr.GetName()})
+		}
+		if castExpr, ok := exprStmt.GetExpression().(*parser.CastExpression); ok {
+			if nameExpr, ok := castExpr.GetExpression().(*parser.VariableExpression); ok {
+				name := nameExpr.GetName()
+				alias := nameExpr.BaseExpression.GetType().GetName()
+				items = append(items, IncludedItem{Name: name, Alias: alias})
+			}
+		}
 	}
-	statement := code.GetStatements()[0]
-	exprStmt, ok := statement.(*parser.ExpressionStatement)
-	if !ok {
-		return "", errors.New("closure code statement is not an expression statement")
-	}
-	varExpr, ok := exprStmt.GetExpression().(*parser.VariableExpression)
-	if !ok {
-		return "", errors.New("closure code statement is not a variable expression")
-	}
-	return varExpr.GetName(), nil
+	return items, nil
 }
 
 // Expressions
@@ -160,14 +250,14 @@ func (v *IncludeVisitor) VisitMethodCallExpression(call *parser.MethodCallExpres
 	if !ok {
 		return
 	}
-	if len(args.GetExpressions()) != 1 {
+	if len(args.GetExpressions()) == 0 {
 		return
 	}
 	closure, ok := args.GetExpressions()[0].(*parser.ClosureExpression)
 	if !ok {
 		return
 	}
-	name, err := v.getFromClosure(closure)
+	items, err := v.getFromClosure(closure)
 	if err != nil {
 		return
 	}
@@ -182,11 +272,11 @@ func (v *IncludeVisitor) VisitMethodCallExpression(call *parser.MethodCallExpres
 	if !ok {
 		return
 	}
-	v.includes[name] = IncludeInfo{
-		Name:       name,
-		From:       arg.GetText(),
+	v.includes = append(v.includes, IncludeStatement{
+		Items:      items,
+		ModulePath: arg.GetText(),
 		LineNumber: mce.GetLineNumber(),
-	}
+	})
 }
 
 func (v *IncludeVisitor) VisitStaticMethodCallExpression(call *parser.StaticMethodCallExpression) {
@@ -356,9 +446,9 @@ func (v *IncludeVisitor) VisitExpression(expression parser.Expression) {
 	expression.Visit(v)
 }
 
-// GetSortedIncludes returns a slice of IncludeInfo sorted by line number in ascending order
-func (v *IncludeVisitor) GetSortedIncludes() []IncludeInfo {
-	sortedIncludes := make([]IncludeInfo, 0, len(v.includes))
+// GetSortedIncludes returns a slice of IncludeStatement sorted by line number in ascending order
+func (v *IncludeVisitor) GetSortedIncludes() []IncludeStatement {
+	sortedIncludes := make([]IncludeStatement, 0, len(v.includes))
 	for _, info := range v.includes {
 		sortedIncludes = append(sortedIncludes, info)
 	}

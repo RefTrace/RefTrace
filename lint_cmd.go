@@ -83,54 +83,7 @@ func NewStarlarkParamInfo(p nf.ParamInfo) *StarlarkParamInfo {
 	return &StarlarkParamInfo{paramInfo: p}
 }
 
-type StarlarkIncludeInfo struct {
-	includeInfo nf.IncludeInfo
-}
-
-func (i *StarlarkIncludeInfo) String() string {
-	return fmt.Sprintf("Include(name=%s, from_=%s, line=%d)", i.includeInfo.Name, i.includeInfo.From, i.includeInfo.LineNumber)
-}
-
-func (i *StarlarkIncludeInfo) Type() string {
-	return "Include"
-}
-
-func (i *StarlarkIncludeInfo) Freeze() {}
-
-func (i *StarlarkIncludeInfo) Truth() starlark.Bool {
-	return starlark.Bool(true)
-}
-
-func (i *StarlarkIncludeInfo) Hash() (uint32, error) {
-	h := fnv.New32()
-	h.Write([]byte(i.includeInfo.Name))
-	h.Write([]byte(i.includeInfo.From))
-	h.Write([]byte(strconv.Itoa(i.includeInfo.LineNumber)))
-	return h.Sum32(), nil
-}
-
-func (i *StarlarkIncludeInfo) Attr(name string) (starlark.Value, error) {
-	switch name {
-	case "name":
-		return starlark.String(i.includeInfo.Name), nil
-	case "from_":
-		return starlark.String(i.includeInfo.From), nil
-	case "line":
-		return starlark.MakeInt(i.includeInfo.LineNumber), nil
-	default:
-		return nil, nil
-	}
-}
-
-func (i *StarlarkIncludeInfo) AttrNames() []string {
-	return []string{"name", "from_", "line"}
-}
-
-func NewStarlarkIncludeInfo(i nf.IncludeInfo) *StarlarkIncludeInfo {
-	return &StarlarkIncludeInfo{includeInfo: i}
-}
-
-func parse(filePath string) ([]nf.ParamInfo, []nf.IncludeInfo) {
+func parse(filePath string) ([]nf.ParamInfo, []nf.IncludeStatement) {
 	//debug.SetGCPercent(-1)
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
