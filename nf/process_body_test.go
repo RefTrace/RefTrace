@@ -2,6 +2,7 @@ package nf
 
 import (
 	"path/filepath"
+	"reft-go/nf/inputs"
 	"reft-go/parser"
 	"testing"
 )
@@ -19,11 +20,13 @@ func TestProcessInputs(t *testing.T) {
 	if len(processes) != 1 {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
-	inputs := processes[0].Inputs
-	if len(inputs) != 1 {
-		t.Fatalf("Expected 1 input, got %d", len(inputs))
+	pinputs := processes[0].Inputs
+	if len(pinputs) != 1 {
+		t.Fatalf("Expected 1 input, got %d", len(pinputs))
 	}
-	if each, ok := inputs[0].(*inputs.Each); !ok {
-		t.Fatalf("Expected each input, got %v", inputs[0])
+	each, ok := pinputs[0].(*inputs.Each)
+	if !ok {
+		t.Fatalf("Expected each input, got %v", pinputs[0])
 	}
+	_ = each
 }
