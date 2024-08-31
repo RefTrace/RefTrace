@@ -19,4 +19,11 @@ func TestProcessInputs(t *testing.T) {
 	if len(processes) != 1 {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
+	inputs := processes[0].Inputs
+	if len(inputs) != 1 {
+		t.Fatalf("Expected 1 input, got %d", len(inputs))
+	}
+	if each, ok := inputs[0].(*inputs.Each); !ok {
+		t.Fatalf("Expected each input, got %v", inputs[0])
+	}
 }

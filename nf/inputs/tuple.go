@@ -33,6 +33,18 @@ func MakeTuple(mce *parser.MethodCallExpression) (Input, error) {
 						continue
 					}
 				}
+				if methodName == "env" {
+					if input, err := MakeEnv(mce); err == nil {
+						values = append(values, input)
+						continue
+					}
+				}
+				if methodName == "stdin" {
+					if input, err := MakeStdin(mce); err == nil {
+						values = append(values, input)
+						continue
+					}
+				}
 			}
 		}
 		return &Tuple{Values: values}, nil

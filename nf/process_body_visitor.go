@@ -127,6 +127,18 @@ func makeInput(statement parser.Statement) (inputs.Input, error) {
 			if methodName == "val" {
 				return inputs.MakeVal(mce)
 			}
+			if methodName == "env" {
+				return inputs.MakeEnv(mce)
+			}
+			if methodName == "stdin" {
+				return inputs.MakeStdin(mce)
+			}
+			if methodName == "file" {
+				return inputs.MakeFile(mce)
+			}
+			if methodName == "each" {
+				return inputs.MakeEach(mce)
+			}
 		}
 	}
 	return nil, errors.New("unknown statement")

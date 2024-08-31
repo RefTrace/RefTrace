@@ -8,15 +8,15 @@ import (
 	"go.starlark.net/starlark"
 )
 
-var _ Input = (*Path)(nil)
+var _ Input = (*File)(nil)
 
-type Path struct {
+type File struct {
 	Path    string
 	Arity   string
 	StageAs string
 }
 
-func (v *Path) Attr(name string) (starlark.Value, error) {
+func (v *File) Attr(name string) (starlark.Value, error) {
 	switch name {
 	case "path":
 		return starlark.String(v.Path), nil
@@ -25,56 +25,52 @@ func (v *Path) Attr(name string) (starlark.Value, error) {
 	case "stage_as":
 		return starlark.String(v.StageAs), nil
 	default:
-		return nil, starlark.NoSuchAttrError(fmt.Sprintf("Path has no attribute %q", name))
+		return nil, starlark.NoSuchAttrError(fmt.Sprintf("File has no attribute %q", name))
 	}
 }
 
-func (v *Path) AttrNames() []string {
+func (v *File) AttrNames() []string {
 	return []string{"path", "arity", "stage_as"}
 }
 
-// Implement other starlark.Pathue methods
-func (v *Path) String() string {
-	return fmt.Sprintf("Path(path=%s, arity=%s, stage_as=%s)", v.Path, v.Arity, v.StageAs)
+// Implement other starlark.Value methods
+func (v *File) String() string {
+	return fmt.Sprintf("File(path=%s, arity=%s, stage_as=%s)", v.Path, v.Arity, v.StageAs)
 }
 
-func (v *Path) Type() string         { return "Path" }
-func (v *Path) Freeze()              {} // No-op, as Path is immutable
-func (v *Path) Truth() starlark.Bool { return starlark.Bool(v.Path != "") }
-func (v *Path) Hash() (uint32, error) {
+func (v *File) Type() string         { return "File" }
+func (v *File) Freeze()              {} // No-op, as File is immutable
+func (v *File) Truth() starlark.Bool { return starlark.Bool(v.Path != "") }
+func (v *File) Hash() (uint32, error) {
 	return starlark.String(v.Path).Hash()
 }
 
-func MakePath(mce *parser.MethodCallExpression) (Input, error) {
-	if mce.GetMethod().GetText() != "path" {
-		return nil, errors.New("invalid path directive")
+func MakeFile(mce *parser.MethodCallExpression) (Input, error) {
+	if mce.GetMethod().GetText() != "file" {
+		return nil, errors.New("invalid file directive")
 	}
 	if args, ok := mce.GetArguments().(*parser.ArgumentListExpression); ok {
 		exprs := args.GetExpressions()
 		if len(exprs) < 1 || len(exprs) > 2 {
-			return nil, errors.New("invalid path directive: expected 1 to 3 arguments")
+			return nil, errors.New("invalid file directive: expected 1 to 3 arguments")
 		}
 
-		path := &Path{}
+		file := &File{}
 
 		if len(exprs) == 1 {
 			if ce, ok := exprs[0].(*parser.ConstantExpression); ok {
-				path.Path = ce.GetText()
-			} else if ge, ok := exprs[0].(*parser.GStringExpression); ok {
-				path.Path = ge.GetText()
-			} else if ve, ok := exprs[0].(*parser.VariableExpression); ok {
-				path.Path = ve.GetText()
+				file.Path = ce.GetText()
 			} else {
-				return nil, errors.New("invalid path argument")
+				return nil, errors.New("invalid file argument")
 			}
 		}
 
 		for _, expr := range exprs {
 			if ve, ok := expr.(*parser.VariableExpression); ok {
-				path.Path = ve.GetText()
+				file.Path = ve.GetText()
 			}
 			if ce, ok := expr.(*parser.ConstantExpression); ok {
-				path.Path = ce.GetText()
+				file.Path = ce.GetText()
 			}
 			if me, ok := expr.(*parser.MapExpression); ok {
 				entries := me.GetMapEntryExpressions()
@@ -83,13 +79,13 @@ func MakePath(mce *parser.MethodCallExpression) (Input, error) {
 						if key.GetText() == "arity" {
 							valueExpr := entry.GetValueExpression()
 							if value, ok := valueExpr.(*parser.ConstantExpression); ok {
-								path.Arity = value.GetText()
+								file.Arity = value.GetText()
 							}
 						}
 						if key.GetText() == "stageAs" {
 							valueExpr := entry.GetValueExpression()
 							if value, ok := valueExpr.(*parser.ConstantExpression); ok {
-								path.StageAs = value.GetText()
+								file.StageAs = value.GetText()
 							}
 						}
 					}
@@ -97,9 +93,9 @@ func MakePath(mce *parser.MethodCallExpression) (Input, error) {
 			}
 		}
 
-		if path.Path != "" {
-			return path, nil
+		if file.Path != "" {
+			return file, nil
 		}
 	}
-	return nil, errors.New("invalid path directive")
+	return nil, errors.New("invalid file directive")
 }
