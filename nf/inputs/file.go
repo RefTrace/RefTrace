@@ -60,6 +60,8 @@ func MakeFile(mce *parser.MethodCallExpression) (Input, error) {
 		if len(exprs) == 1 {
 			if ce, ok := exprs[0].(*parser.ConstantExpression); ok {
 				file.Path = ce.GetText()
+			} else if ve, ok := exprs[0].(*parser.VariableExpression); ok {
+				file.Path = ve.GetText()
 			} else {
 				return nil, errors.New("invalid file argument")
 			}

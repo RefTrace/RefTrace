@@ -21,8 +21,8 @@ func TestProcessInputs(t *testing.T) {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
 	pinputs := processes[0].Inputs
-	if len(pinputs) != 20 {
-		t.Fatalf("Expected 20 inputs, got %d", len(pinputs))
+	if len(pinputs) != 21 {
+		t.Fatalf("Expected 21 inputs, got %d", len(pinputs))
 	}
 	each, ok := pinputs[0].(*inputs.Each)
 	if !ok {
@@ -50,9 +50,8 @@ func TestProcessInputs(t *testing.T) {
 	if !ok {
 		t.Fatalf("Expected path input, got %v", pinputs[2])
 	}
-	// TODO: check gstring parsing
-	if path.Path != "${x}fa\"" {
-		t.Fatalf("Expected path to be ${x}.fa, got %s", path.Path)
+	if path.Path != "$x.fa" {
+		t.Fatalf("Expected path to be $x.fa, got %s", path.Path)
 	}
 	path, ok = pinputs[3].(*inputs.Path)
 	if !ok {
@@ -110,18 +109,44 @@ func TestProcessInputs(t *testing.T) {
 	if path.Arity != "1..*" {
 		t.Fatalf("Expected arity to be 1..*, got %s", path.Arity)
 	}
-	env, ok := pinputs[15].(*inputs.Env)
+	env, ok := pinputs[16].(*inputs.Env)
 	if !ok {
 		t.Fatalf("Expected env input, got %v", pinputs[15])
 	}
 	if env.Var != "HELLO" {
 		t.Fatalf("Expected var to be HELLO, got %s", env.Var)
 	}
-	stdin, ok := pinputs[17].(*inputs.Stdin)
+	stdin, ok := pinputs[18].(*inputs.Stdin)
 	if !ok {
 		t.Fatalf("Expected stdin input, got %v", pinputs[17])
 	}
 	if stdin.Var != "str" {
 		t.Fatalf("Expected var to be str, got %s", stdin.Var)
+	}
+}
+
+func TestProcessFileInputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_file_inputs.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	pinputs := processes[0].Inputs
+	if len(pinputs) != 1 {
+		t.Fatalf("Expected 1 input, got %d", len(pinputs))
+	}
+	finput, ok := pinputs[0].(*inputs.File)
+	if !ok {
+		t.Fatalf("Expected file input, got %v", pinputs[0])
+	}
+	if finput.Path != "proteins" {
+		t.Fatalf("Expected path to be proteins, got %s", finput.Path)
 	}
 }

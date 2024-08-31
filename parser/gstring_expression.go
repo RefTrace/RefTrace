@@ -15,21 +15,25 @@ type GStringExpression struct {
 }
 
 func NewGStringExpression(verbatimText string) *GStringExpression {
-	return &GStringExpression{
+	expr := &GStringExpression{
 		BaseExpression: NewBaseExpression(),
 		verbatimText:   verbatimText,
 		strings:        make([]*ConstantExpression, 0),
 		values:         make([]Expression, 0),
 	}
+	expr.SetType(GSTRING_TYPE)
+	return expr
 }
 
 func NewGStringExpressionWithValues(verbatimText string, strings []*ConstantExpression, values []Expression) *GStringExpression {
-	return &GStringExpression{
+	expr := &GStringExpression{
 		BaseExpression: NewBaseExpression(),
 		verbatimText:   verbatimText,
 		strings:        strings,
 		values:         values,
 	}
+	expr.SetType(GSTRING_TYPE)
+	return expr
 }
 
 func (g *GStringExpression) Visit(visitor GroovyCodeVisitor) {

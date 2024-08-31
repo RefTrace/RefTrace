@@ -735,7 +735,24 @@ func (v *ASTBuilder) VisitResourceList(ctx *ResourceListContext) interface{} {
 }
 
 func IsInstanceOf(obj interface{}, targetType interface{}) bool {
-	return reflect.TypeOf(obj) == reflect.TypeOf(targetType).Elem()
+	objType := reflect.TypeOf(obj)
+	targetTypeType := reflect.TypeOf(targetType)
+
+	if objType == nil || targetTypeType == nil {
+		return objType == targetTypeType
+	}
+
+	// If obj is a pointer, get its element type
+	if objType.Kind() == reflect.Ptr {
+		objType = objType.Elem()
+	}
+
+	// If targetType is a pointer to a type, get its element type
+	if targetTypeType.Kind() == reflect.Ptr {
+		targetTypeType = targetTypeType.Elem()
+	}
+
+	return objType.AssignableTo(targetTypeType)
 }
 
 func (v *ASTBuilder) VisitResource(ctx *ResourceContext) interface{} {
@@ -4245,10 +4262,12 @@ func hasArrow(e *GstringValueContext) bool {
 
 func (v *ASTBuilder) parseGStringEnd(ctx *GstringContext, beginQuotation string) string {
 	text := strings.Builder{}
-	text.WriteString(ctx.GStringEnd().GetText())
+	endText := ctx.GStringEnd().GetText()
 	text.WriteString(beginQuotation)
+	text.WriteString(endText)
+	s := text.String()
 
-	return v.parseStringLiteral(text.String())
+	return v.parseStringLiteral(s)
 }
 
 func (v *ASTBuilder) parseGStringPart(e antlr.TerminalNode, beginQuotation string) string {
