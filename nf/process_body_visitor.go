@@ -170,6 +170,9 @@ func makeOutput(statement parser.Statement) (outputs.Output, error) {
 			if methodName == "file" {
 				return outputs.MakeFile(mce)
 			}
+			if methodName == "env" {
+				return outputs.MakeEnv(mce)
+			}
 		}
 	}
 	return nil, errors.New("unknown statement")

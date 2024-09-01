@@ -333,3 +333,52 @@ func TestProcessPathOutputs(t *testing.T) {
 		t.Errorf("Expected optional to be true, got false")
 	}
 }
+
+func TestProcessEnvOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_env_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 2 {
+		t.Fatalf("Expected 2 outputs, got %d", len(poutputs))
+	}
+
+	// Test the first env output
+	envOutput1, ok := poutputs[0].(*outputs.Env)
+	if !ok {
+		t.Fatalf("Expected env output, got %T", poutputs[0])
+	}
+	if envOutput1.Var != "VER" {
+		t.Errorf("Expected var to be 'VER', got %s", envOutput1.Var)
+	}
+	if envOutput1.Emit != "tool_version" {
+		t.Errorf("Expected emit to be 'tool_version', got %s", envOutput1.Emit)
+	}
+
+	// Test the second env output
+	envOutput2, ok := poutputs[1].(*outputs.Env)
+	if !ok {
+		t.Fatalf("Expected env output, got %T", poutputs[1])
+	}
+	if envOutput2.Var != "DBVER" {
+		t.Errorf("Expected var to be 'DBVER', got %s", envOutput2.Var)
+	}
+	if envOutput2.Emit != "db_version" {
+		t.Errorf("Expected emit to be 'db_version', got %s", envOutput2.Emit)
+	}
+	if !envOutput2.Optional {
+		t.Errorf("Expected optional to be true, got false")
+	}
+	if envOutput2.Topic != "report" {
+		t.Errorf("Expected topic to be 'report', got %s", envOutput2.Topic)
+	}
+}
