@@ -382,3 +382,43 @@ func TestProcessEnvOutputs(t *testing.T) {
 		t.Errorf("Expected topic to be 'report', got %s", envOutput2.Topic)
 	}
 }
+
+func TestProcessStdoutOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_stdout_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 1 {
+		t.Fatalf("Expected 1 output, got %d", len(poutputs))
+	}
+
+	// Test the stdout output
+	stdoutOutput, ok := poutputs[0].(*outputs.Stdout)
+	if !ok {
+		t.Fatalf("Expected stdout output, got %T", poutputs[0])
+	}
+
+	// Check Emit
+	if stdoutOutput.Emit != "hello" {
+		t.Errorf("Expected Emit to be 'hello', got %s", stdoutOutput.Emit)
+	}
+
+	// Check Optional
+	if !stdoutOutput.Optional {
+		t.Errorf("Expected Optional to be true, got false")
+	}
+
+	// Check Topic
+	if stdoutOutput.Topic != "report" {
+		t.Errorf("Expected Topic to be 'report', got %s", stdoutOutput.Topic)
+	}
+}
