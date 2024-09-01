@@ -191,9 +191,47 @@ func TestProcessValOutputs(t *testing.T) {
 
 func TestProcessFileOutputs(t *testing.T) {
 	filePath := filepath.Join("./testdata", "process_file_output.nf")
-	_, err := parser.BuildAST(filePath)
+	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
+	}
+
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 2 {
+		t.Fatalf("Expected 2 outputs, got %d", len(poutputs))
+	}
+
+	// Test the first file output
+	foutput1, ok := poutputs[0].(*outputs.File)
+	if !ok {
+		t.Fatalf("Expected file output, got %T", poutputs[0])
+	}
+	if foutput1.Path != "proteins" {
+		t.Errorf("Expected path to be 'proteins', got %s", foutput1.Path)
+	}
+
+	// Test the second file output
+	foutput2, ok := poutputs[1].(*outputs.File)
+	if !ok {
+		t.Fatalf("Expected file output, got %T", poutputs[1])
+	}
+	if foutput2.Path != "foo.txt" {
+		t.Errorf("Expected path to be 'foo.txt', got %s", foutput2.Path)
+	}
+	if foutput2.Emit != "hello" {
+		t.Errorf("Expected emit to be 'hello', got %s", foutput2.Emit)
+	}
+	if !foutput2.Optional {
+		t.Errorf("Expected optional to be true, got false")
+	}
+	if foutput2.Topic != "report" {
+		t.Errorf("Expected topic to be 'report', got %s", foutput2.Topic)
 	}
 }
 

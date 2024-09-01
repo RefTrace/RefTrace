@@ -167,6 +167,9 @@ func makeOutput(statement parser.Statement) (outputs.Output, error) {
 			if methodName == "path" {
 				return outputs.MakePath(mce)
 			}
+			if methodName == "file" {
+				return outputs.MakeFile(mce)
+			}
 		}
 	}
 	return nil, errors.New("unknown statement")
