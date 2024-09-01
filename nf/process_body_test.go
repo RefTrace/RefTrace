@@ -210,8 +210,8 @@ func TestProcessPathOutputs(t *testing.T) {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
 	poutputs := processes[0].Outputs
-	if len(poutputs) != 7 {
-		t.Fatalf("Expected 7 outputs, got %d", len(poutputs))
+	if len(poutputs) != 8 {
+		t.Fatalf("Expected 8 outputs, got %d", len(poutputs))
 	}
 	poutput := poutputs[0].(*outputs.Path)
 
@@ -281,4 +281,17 @@ func TestProcessPathOutputs(t *testing.T) {
 		t.Errorf("Expected PathType to be dir, got %s", poutput.PathType)
 	}
 
+	poutput = poutputs[7].(*outputs.Path)
+	if poutput.Path != "foo.txt" {
+		t.Errorf("Expected path to be foo.txt, got %s", poutput.Path)
+	}
+	if poutput.Emit != "hello" {
+		t.Errorf("Expected emit to be hello, got %s", poutput.Emit)
+	}
+	if poutput.Topic != "report" {
+		t.Errorf("Expected topic to be report, got %s", poutput.Topic)
+	}
+	if !poutput.Optional {
+		t.Errorf("Expected optional to be true, got false")
+	}
 }

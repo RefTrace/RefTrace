@@ -19,6 +19,9 @@ type Path struct {
 	IncludeInputs bool
 	MaxDepth      int
 	PathType      string
+	Emit          string
+	Optional      bool
+	Topic         string
 }
 
 func (v *Path) Attr(name string) (starlark.Value, error) {
@@ -39,6 +42,12 @@ func (v *Path) Attr(name string) (starlark.Value, error) {
 		return starlark.MakeInt(v.MaxDepth), nil
 	case "path_type":
 		return starlark.String(v.PathType), nil
+	case "emit":
+		return starlark.String(v.Emit), nil
+	case "optional":
+		return starlark.Bool(v.Optional), nil
+	case "topic":
+		return starlark.String(v.Topic), nil
 	default:
 		return nil, starlark.NoSuchAttrError(fmt.Sprintf("Path has no attribute %q", name))
 	}
@@ -54,13 +63,16 @@ func (v *Path) AttrNames() []string {
 		"include_inputs",
 		"max_depth",
 		"path_type",
+		"emit",
+		"optional",
+		"topic",
 	}
 }
 
 // Implement other starlark.Value methods
 func (v *Path) String() string {
-	return fmt.Sprintf("Path(path=%q, arity=%q, follow_links=%v, glob=%v, hidden=%v, include_inputs=%v, max_depth=%d, path_type=%q)",
-		v.Path, v.Arity, v.FollowLinks, v.Glob, v.Hidden, v.IncludeInputs, v.MaxDepth, v.PathType)
+	return fmt.Sprintf("Path(path=%q, arity=%q, follow_links=%v, glob=%v, hidden=%v, include_inputs=%v, max_depth=%d, path_type=%q, emit=%q, optional=%v, topic=%q)",
+		v.Path, v.Arity, v.FollowLinks, v.Glob, v.Hidden, v.IncludeInputs, v.MaxDepth, v.PathType, v.Emit, v.Optional, v.Topic)
 }
 
 func (v *Path) Type() string         { return "Path" }
@@ -68,8 +80,8 @@ func (v *Path) Freeze()              {} // No-op, as Path is immutable
 func (v *Path) Truth() starlark.Bool { return starlark.Bool(v.Path != "") }
 func (v *Path) Hash() (uint32, error) {
 	// Include all fields in the hash calculation
-	h := starlark.String(fmt.Sprintf("%s:%s:%v:%v:%v:%v:%d:%s",
-		v.Path, v.Arity, v.FollowLinks, v.Glob, v.Hidden, v.IncludeInputs, v.MaxDepth, v.PathType))
+	h := starlark.String(fmt.Sprintf("%s:%s:%v:%v:%v:%v:%d:%s:%s:%v:%s",
+		v.Path, v.Arity, v.FollowLinks, v.Glob, v.Hidden, v.IncludeInputs, v.MaxDepth, v.PathType, v.Emit, v.Optional, v.Topic))
 	return h.Hash()
 }
 
@@ -138,6 +150,20 @@ func MakePath(mce *parser.MethodCallExpression) (Output, error) {
 						case "type":
 							if value, ok := valueExpr.(*parser.ConstantExpression); ok {
 								path.PathType = value.GetText()
+							}
+						case "emit":
+							if value, ok := valueExpr.(*parser.VariableExpression); ok {
+								path.Emit = value.GetText()
+							}
+						case "optional":
+							if value, ok := valueExpr.(*parser.ConstantExpression); ok {
+								if boolVal, err := value.GetValue().(bool); err {
+									path.Optional = boolVal
+								}
+							}
+						case "topic":
+							if value, ok := valueExpr.(*parser.ConstantExpression); ok {
+								path.Topic = value.GetText()
 							}
 						}
 					}
