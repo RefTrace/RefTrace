@@ -3,6 +3,7 @@ package nf
 import (
 	"path/filepath"
 	"reft-go/nf/inputs"
+	"reft-go/nf/outputs"
 	"reft-go/parser"
 	"testing"
 )
@@ -148,5 +149,42 @@ func TestProcessFileInputs(t *testing.T) {
 	}
 	if finput.Path != "proteins" {
 		t.Fatalf("Expected path to be proteins, got %s", finput.Path)
+	}
+}
+
+func TestProcessValOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_val_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 3 {
+		t.Fatalf("Expected 3 outputs, got %d", len(poutputs))
+	}
+	poutput := poutputs[0].(*outputs.Val)
+	if poutput.Var != "x" {
+		t.Fatalf("Expected var to be x, got %s", poutput.Var)
+	}
+	if poutput.Emit != "hello" {
+		t.Fatalf("Expected emit to be hello, got %s", poutput.Emit)
+	}
+	if poutput.Topic != "report" {
+		t.Fatalf("Expected topic to be report, got %s", poutput.Topic)
+	}
+	poutput = poutputs[1].(*outputs.Val)
+	if poutput.Var != "BB11" {
+		t.Fatalf("Expected var to be BB11, got %s", poutput.Var)
+	}
+	poutput = poutputs[2].(*outputs.Val)
+	if poutput.Var != "${infile.baseName}.out" {
+		t.Fatalf("Expected var to be ${infile.baseName}.out, got %s", poutput.Var)
 	}
 }

@@ -5,6 +5,7 @@ import (
 
 	"reft-go/nf/directives"
 	"reft-go/nf/inputs"
+	"reft-go/nf/outputs"
 )
 
 var _ parser.GroovyCodeVisitor = (*ProcessVisitor)(nil)
@@ -12,7 +13,7 @@ var _ parser.GroovyCodeVisitor = (*ProcessVisitor)(nil)
 type Process struct {
 	Name       string
 	Inputs     []inputs.Input
-	NumOutputs int
+	Outputs    []outputs.Output
 	Directives []directives.Directive
 	Closure    *parser.ClosureExpression
 }
@@ -153,7 +154,7 @@ func makeProcess(name string, closure *parser.ClosureExpression) Process {
 	return Process{
 		Name:       name,
 		Inputs:     visitor.inputs,
-		NumOutputs: len(visitor.outputs),
+		Outputs:    visitor.outputs,
 		Directives: visitor.directives,
 		Closure:    closure,
 	}

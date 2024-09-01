@@ -6,6 +6,7 @@ import (
 
 	"reft-go/nf/directives"
 	"reft-go/nf/inputs"
+	"reft-go/nf/outputs"
 )
 
 var _ parser.GroovyCodeVisitor = (*ProcessBodyVisitor)(nil)
@@ -23,7 +24,7 @@ type ProcessBodyVisitor struct {
 	mode         ProcessMode
 	hitDeclBlock bool
 	inputs       []inputs.Input
-	outputs      []parser.Statement
+	outputs      []outputs.Output
 	directives   []directives.Directive
 }
 
@@ -155,12 +156,37 @@ func makeInputs(statements []parser.Statement) []inputs.Input {
 	return inputs
 }
 
+func makeOutput(statement parser.Statement) (outputs.Output, error) {
+	if exprStmt, ok := statement.(*parser.ExpressionStatement); ok {
+		expr := exprStmt.GetExpression()
+		if mce, ok := expr.(*parser.MethodCallExpression); ok {
+			methodName := mce.GetMethod().GetText()
+			if methodName == "val" {
+				return outputs.MakeVal(mce)
+			}
+		}
+	}
+	return nil, errors.New("unknown statement")
+}
+
+func makeOutputs(statements []parser.Statement) []outputs.Output {
+	var outputs []outputs.Output
+	for _, statement := range statements {
+		output, err := makeOutput(statement)
+		if err == nil {
+			outputs = append(outputs, output)
+		}
+	}
+	return outputs
+}
+
 // Statements
 func (v *ProcessBodyVisitor) VisitBlockStatement(block *parser.BlockStatement) {
 	stmts := block.GetStatements()
 	possibleInputs := findInputs(stmts)
 	v.inputs = makeInputs(possibleInputs)
-	v.outputs = findOutputs(stmts)
+	possibleOutputs := findOutputs(stmts)
+	v.outputs = makeOutputs(possibleOutputs)
 	possibleDirectives := findPossibleDirectives(stmts)
 	v.directives = makeDirectives(possibleDirectives)
 	/*
