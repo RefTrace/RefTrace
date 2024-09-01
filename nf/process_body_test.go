@@ -188,3 +188,97 @@ func TestProcessValOutputs(t *testing.T) {
 		t.Fatalf("Expected var to be ${infile.baseName}.out, got %s", poutput.Var)
 	}
 }
+
+func TestProcessFileOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_file_output.nf")
+	_, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+}
+
+func TestProcessPathOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_path_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 7 {
+		t.Fatalf("Expected 7 outputs, got %d", len(poutputs))
+	}
+	poutput := poutputs[0].(*outputs.Path)
+
+	if poutput.Path != "foo.txt" {
+		t.Fatalf("Expected path to be foo.txt, got %s", poutput.Path)
+	}
+
+	poutput = poutputs[1].(*outputs.Path)
+	if poutput.Path != "one.txt" {
+		t.Fatalf("Expected path to be one.txt, got %s", poutput.Path)
+	}
+	if poutput.Arity != "1" {
+		t.Fatalf("Expected arity to be 1, got %s", poutput.Arity)
+	}
+
+	// Test case for 'pair_*.txt'
+	poutput = poutputs[2].(*outputs.Path)
+	if poutput.Path != "pair_*.txt" {
+		t.Errorf("Expected path to be pair_*.txt, got %s", poutput.Path)
+	}
+	if poutput.Arity != "2" {
+		t.Errorf("Expected arity to be 2, got %s", poutput.Arity)
+	}
+
+	// Test case for 'many_*.txt'
+	poutput = poutputs[3].(*outputs.Path)
+	if poutput.Path != "many_*.txt" {
+		t.Errorf("Expected path to be many_*.txt, got %s", poutput.Path)
+	}
+	if poutput.Arity != "1..*" {
+		t.Errorf("Expected arity to be 1..*, got %s", poutput.Arity)
+	}
+
+	// Test case for "${species}.aln"
+	poutput = poutputs[4].(*outputs.Path)
+	if poutput.Path != "$species.aln" {
+		t.Errorf("Expected path to be $species.aln, got %s", poutput.Path)
+	}
+
+	// Test case for 'blah.txt'
+	poutput = poutputs[5].(*outputs.Path)
+	if poutput.Path != "blah.txt" {
+		t.Errorf("Expected path to be blah.txt, got %s", poutput.Path)
+	}
+	if poutput.FollowLinks {
+		t.Errorf("Expected FollowLinks to be false, got true")
+	}
+	if poutput.Glob {
+		t.Errorf("Expected Glob to be false, got true")
+	}
+	if !poutput.Hidden {
+		t.Errorf("Expected Hidden to be true, got false")
+	}
+
+	// Test case for '*.txt'
+	poutput = poutputs[6].(*outputs.Path)
+	if poutput.Path != "*.txt" {
+		t.Errorf("Expected path to be *.txt, got %s", poutput.Path)
+	}
+	if !poutput.IncludeInputs {
+		t.Errorf("Expected IncludeInputs to be true, got false")
+	}
+	if poutput.MaxDepth != 1 {
+		t.Errorf("Expected MaxDepth to be 1, got %d", poutput.MaxDepth)
+	}
+	if poutput.PathType != "dir" {
+		t.Errorf("Expected PathType to be dir, got %s", poutput.PathType)
+	}
+
+}
