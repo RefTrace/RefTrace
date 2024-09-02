@@ -422,3 +422,126 @@ func TestProcessStdoutOutputs(t *testing.T) {
 		t.Errorf("Expected Topic to be 'report', got %s", stdoutOutput.Topic)
 	}
 }
+
+func TestProcessEvalOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_eval_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 2 {
+		t.Fatalf("Expected 2 outputs, got %d", len(poutputs))
+	}
+
+	// Test the first eval output
+	evalOutput1, ok := poutputs[0].(*outputs.Eval)
+	if !ok {
+		t.Fatalf("Expected eval output, got %T", poutputs[0])
+	}
+	if evalOutput1.Command != "bash --version" {
+		t.Errorf("Expected command to be 'bash --version', got %s", evalOutput1.Command)
+	}
+
+	// Test the second eval output
+	evalOutput2, ok := poutputs[1].(*outputs.Eval)
+	if !ok {
+		t.Fatalf("Expected eval output, got %T", poutputs[1])
+	}
+	if evalOutput2.Command != "echo \"foo\"" {
+		t.Errorf("Expected command to be 'echo \"foo\"', got %s", evalOutput2.Command)
+	}
+	if evalOutput2.Emit != "hello" {
+		t.Errorf("Expected emit to be 'hello', got %s", evalOutput2.Emit)
+	}
+	if !evalOutput2.Optional {
+		t.Errorf("Expected optional to be true, got false")
+	}
+	if evalOutput2.Topic != "report" {
+		t.Errorf("Expected topic to be 'report', got %s", evalOutput2.Topic)
+	}
+}
+
+func TestProcessTupleOutputs(t *testing.T) {
+	filePath := filepath.Join("./testdata", "process_tuple_output.nf")
+	ast, err := parser.BuildAST(filePath)
+	if err != nil {
+		t.Fatalf("Failed to build AST: %v", err)
+	}
+	processVisitor := NewProcessVisitor()
+	processVisitor.VisitBlockStatement(ast.StatementBlock)
+
+	processes := processVisitor.processes
+	if len(processes) != 1 {
+		t.Fatalf("Expected 1 process, got %d", len(processes))
+	}
+	poutputs := processes[0].Outputs
+	if len(poutputs) != 2 {
+		t.Fatalf("Expected 2 outputs, got %d", len(poutputs))
+	}
+
+	// Test the first tuple output
+	tupleOutput1, ok := poutputs[0].(*outputs.Tuple)
+	if !ok {
+		t.Fatalf("Expected tuple output, got %T", poutputs[0])
+	}
+	if len(tupleOutput1.Values) != 2 {
+		t.Errorf("Expected 2 values in tuple, got %d", len(tupleOutput1.Values))
+	}
+	val1, ok := tupleOutput1.Values[0].(*outputs.Val)
+	if !ok {
+		t.Errorf("Expected first value to be Val, got %T", tupleOutput1.Values[0])
+	}
+	if val1.Var != "meta" {
+		t.Errorf("Expected Val var to be 'meta', got %s", val1.Var)
+	}
+	path1, ok := tupleOutput1.Values[1].(*outputs.Path)
+	if !ok {
+		t.Errorf("Expected second value to be Path, got %T", tupleOutput1.Values[1])
+	}
+	if path1.Path != "$prefix.tsv" {
+		t.Errorf("Expected Path path to be '$prefix.tsv', got %s", path1.Path)
+	}
+	if tupleOutput1.Emit != "report" {
+		t.Errorf("Expected emit to be 'report', got %s", tupleOutput1.Emit)
+	}
+	if tupleOutput1.Topic != "report" {
+		t.Errorf("Expected topic to be 'report', got %s", tupleOutput1.Topic)
+	}
+
+	// Test the second tuple output
+	tupleOutput2, ok := poutputs[1].(*outputs.Tuple)
+	if !ok {
+		t.Fatalf("Expected tuple output, got %T", poutputs[1])
+	}
+	if len(tupleOutput2.Values) != 2 {
+		t.Errorf("Expected 2 values in tuple, got %d", len(tupleOutput2.Values))
+	}
+	val2, ok := tupleOutput2.Values[0].(*outputs.Val)
+	if !ok {
+		t.Errorf("Expected first value to be Val, got %T", tupleOutput2.Values[0])
+	}
+	if val2.Var != "meta" {
+		t.Errorf("Expected Val var to be 'meta', got %s", val2.Var)
+	}
+	path2, ok := tupleOutput2.Values[1].(*outputs.Path)
+	if !ok {
+		t.Errorf("Expected second value to be Path, got %T", tupleOutput2.Values[1])
+	}
+	if path2.Path != "$prefix-mutations.tsv" {
+		t.Errorf("Expected Path path to be '$prefix-mutations.tsv', got %s", path2.Path)
+	}
+	if tupleOutput2.Emit != "mutation_report" {
+		t.Errorf("Expected emit to be 'mutation_report', got %s", tupleOutput2.Emit)
+	}
+	if !tupleOutput2.Optional {
+		t.Errorf("Expected optional to be true, got false")
+	}
+}

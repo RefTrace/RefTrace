@@ -176,6 +176,12 @@ func makeOutput(statement parser.Statement) (outputs.Output, error) {
 			if methodName == "stdout" {
 				return outputs.MakeStdout(mce)
 			}
+			if methodName == "eval" {
+				return outputs.MakeEval(mce)
+			}
+			if methodName == "tuple" {
+				return outputs.MakeTuple(mce)
+			}
 		}
 	}
 	return nil, errors.New("unknown statement")
