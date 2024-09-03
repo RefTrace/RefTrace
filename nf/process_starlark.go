@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"reft-go/nf/directives"
+	"reft-go/nf/inputs"
+	"reft-go/nf/outputs"
 
 	"go.starlark.net/starlark"
 )
@@ -12,6 +14,44 @@ func ConvertToStarlarkProcess(p Process) *StarlarkProcess {
 	sp := &StarlarkProcess{
 		Name:       p.Name,
 		Directives: &StarlarkProcessDirectives{},
+		Inputs:     &StarlarkProcessInputs{},
+		Outputs:    &StarlarkProcessOutputs{},
+	}
+
+	// Handle inputs
+	for _, input := range p.Inputs {
+		switch i := input.(type) {
+		case *inputs.Val:
+			sp.Inputs.Vals = append(sp.Inputs.Vals, i)
+		case *inputs.File:
+			sp.Inputs.Files = append(sp.Inputs.Files, i)
+		case *inputs.Path:
+			sp.Inputs.Paths = append(sp.Inputs.Paths, i)
+		case *inputs.Env:
+			sp.Inputs.Envs = append(sp.Inputs.Envs, i)
+		case *inputs.Stdin:
+			sp.Inputs.Stdins = append(sp.Inputs.Stdins, i)
+		case *inputs.Tuple:
+			sp.Inputs.Tuples = append(sp.Inputs.Tuples, i)
+		}
+	}
+
+	// Handle outputs
+	for _, output := range p.Outputs {
+		switch o := output.(type) {
+		case *outputs.Val:
+			sp.Outputs.Vals = append(sp.Outputs.Vals, o)
+		case *outputs.File:
+			sp.Outputs.Files = append(sp.Outputs.Files, o)
+		case *outputs.Path:
+			sp.Outputs.Paths = append(sp.Outputs.Paths, o)
+		case *outputs.Env:
+			sp.Outputs.Envs = append(sp.Outputs.Envs, o)
+		case *outputs.Stdout:
+			sp.Outputs.Stdouts = append(sp.Outputs.Stdouts, o)
+		case *outputs.Tuple:
+			sp.Outputs.Tuples = append(sp.Outputs.Tuples, o)
+		}
 	}
 
 	for _, directive := range p.Directives {
@@ -112,10 +152,154 @@ var _ starlark.HasAttrs = (*StarlarkProcess)(nil)
 type StarlarkProcess struct {
 	Name       string
 	Directives *StarlarkProcessDirectives
+	Inputs     *StarlarkProcessInputs
+	Outputs    *StarlarkProcessOutputs
 }
 
 func (p *StarlarkProcess) AttrNames() []string {
-	return []string{"name", "directives"}
+	return []string{"name", "directives", "inputs"}
+}
+
+var _ starlark.Value = (*StarlarkProcessInputs)(nil)
+var _ starlark.HasAttrs = (*StarlarkProcessInputs)(nil)
+
+type StarlarkProcessInputs struct {
+	Vals   []*inputs.Val
+	Files  []*inputs.File
+	Paths  []*inputs.Path
+	Envs   []*inputs.Env
+	Stdins []*inputs.Stdin
+	Tuples []*inputs.Tuple
+}
+
+func (i *StarlarkProcessInputs) String() string {
+	return fmt.Sprintf("ProcessInputs(%d vals, %d files, %d paths, %d envs, %d stdins, %d tuples)",
+		len(i.Vals), len(i.Files), len(i.Paths), len(i.Envs), len(i.Stdins), len(i.Tuples))
+}
+
+func (i *StarlarkProcessInputs) Type() string {
+	return "process_inputs"
+}
+
+func (i *StarlarkProcessInputs) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (i *StarlarkProcessInputs) Truth() starlark.Bool {
+	return starlark.Bool(len(i.Vals) > 0 || len(i.Files) > 0 || len(i.Paths) > 0 ||
+		len(i.Envs) > 0 || len(i.Stdins) > 0 || len(i.Tuples) > 0)
+}
+
+func (i *StarlarkProcessInputs) Hash() (uint32, error) {
+	return 0, fmt.Errorf("unhashable type: process_inputs")
+}
+
+func (i *StarlarkProcessInputs) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "vals":
+		return starlarkListFromInputs(i.Vals), nil
+	case "files":
+		return starlarkListFromInputs(i.Files), nil
+	case "paths":
+		return starlarkListFromInputs(i.Paths), nil
+	case "envs":
+		return starlarkListFromInputs(i.Envs), nil
+	case "stdins":
+		return starlarkListFromInputs(i.Stdins), nil
+	case "tuples":
+		return starlarkListFromInputs(i.Tuples), nil
+	default:
+		return nil, fmt.Errorf("process_inputs has no attribute %q", name)
+	}
+}
+
+func (i *StarlarkProcessInputs) AttrNames() []string {
+	return []string{"vals", "files", "paths", "envs", "stdins", "tuples"}
+}
+
+var _ starlark.Value = (*StarlarkProcessOutputs)(nil)
+var _ starlark.HasAttrs = (*StarlarkProcessOutputs)(nil)
+
+type StarlarkProcessOutputs struct {
+	Vals    []*outputs.Val
+	Files   []*outputs.File
+	Paths   []*outputs.Path
+	Envs    []*outputs.Env
+	Stdouts []*outputs.Stdout
+	Tuples  []*outputs.Tuple
+}
+
+func (o *StarlarkProcessOutputs) String() string {
+	return fmt.Sprintf("ProcessOutputs(%d vals, %d files, %d paths, %d envs, %d stdouts, %d tuples)",
+		len(o.Vals), len(o.Files), len(o.Paths), len(o.Envs), len(o.Stdouts), len(o.Tuples))
+}
+
+func (o *StarlarkProcessOutputs) Type() string {
+	return "process_outputs"
+}
+
+func (o *StarlarkProcessOutputs) Freeze() {
+	// No mutable fields, so no action needed
+}
+
+func (o *StarlarkProcessOutputs) Truth() starlark.Bool {
+	return starlark.Bool(len(o.Vals) > 0 || len(o.Files) > 0 || len(o.Paths) > 0 ||
+		len(o.Envs) > 0 || len(o.Stdouts) > 0 || len(o.Tuples) > 0)
+}
+
+func (o *StarlarkProcessOutputs) Hash() (uint32, error) {
+	return 0, fmt.Errorf("unhashable type: process_outputs")
+}
+
+func (o *StarlarkProcessOutputs) Attr(name string) (starlark.Value, error) {
+	switch name {
+	case "vals":
+		return starlarkListFromOutputs(o.Vals), nil
+	case "files":
+		return starlarkListFromOutputs(o.Files), nil
+	case "paths":
+		return starlarkListFromOutputs(o.Paths), nil
+	case "envs":
+		return starlarkListFromOutputs(o.Envs), nil
+	case "stdouts":
+		return starlarkListFromOutputs(o.Stdouts), nil
+	case "tuples":
+		return starlarkListFromOutputs(o.Tuples), nil
+	default:
+		return nil, fmt.Errorf("process_outputs has no attribute %q", name)
+	}
+}
+
+func (o *StarlarkProcessOutputs) AttrNames() []string {
+	return []string{"vals", "files", "paths", "envs", "stdouts", "tuples"}
+}
+
+func starlarkListFromOutputs(outputs interface{}) *starlark.List {
+	v := reflect.ValueOf(outputs)
+	if v.Kind() != reflect.Slice {
+		return starlark.NewList(nil)
+	}
+
+	elements := make([]starlark.Value, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		elements[i] = v.Index(i).Interface().(starlark.Value)
+	}
+
+	return starlark.NewList(elements)
+}
+
+func starlarkListFromInputs(inputs interface{}) *starlark.List {
+	v := reflect.ValueOf(inputs)
+	if v.Kind() != reflect.Slice {
+		return starlark.NewList(nil)
+	}
+
+	elements := make([]starlark.Value, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		elements[i] = v.Index(i).Interface().(starlark.Value)
+	}
+
+	return starlark.NewList(elements)
 }
 
 type StarlarkProcessDirectives struct {
