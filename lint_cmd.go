@@ -24,6 +24,7 @@ import (
 var (
 	rulesFile string
 	dir       string
+	ruleToRun string
 )
 
 var lintCmd = &cobra.Command{
@@ -37,6 +38,7 @@ func init() {
 
 	lintCmd.Flags().StringVarP(&rulesFile, "rules", "r", "rules.py", "Path to the rules file")
 	lintCmd.Flags().StringVarP(&dir, "directory", "d", ".", "Directory to lint")
+	lintCmd.Flags().StringVarP(&ruleToRun, "name", "n", "", "Name of a single rule to run")
 }
 
 type StarlarkParamInfo struct {
@@ -244,7 +246,8 @@ func runLint(cmd *cobra.Command, args []string) {
 	for name, value := range globals {
 		if strings.HasPrefix(name, "rule_") {
 			if callable, ok := value.(starlark.Callable); ok {
-				rules[name] = callable
+				strippedRuleName := strings.TrimPrefix(name, "rule_")
+				rules[strippedRuleName] = callable
 			}
 		}
 	}
@@ -275,6 +278,9 @@ func runLint(cmd *cobra.Command, args []string) {
 
 	// Execute each rule
 	for ruleName, ruleFunc := range rules {
+		if ruleToRun != "" && ruleName != ruleToRun {
+			continue
+		}
 		groupedOutput[ruleName] = make(map[string]RuleModuleOutput)
 		for _, module := range modules {
 			groupedOutput[ruleName][module.Path] = RuleModuleOutput{}

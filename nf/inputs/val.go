@@ -28,7 +28,7 @@ func (v *Val) AttrNames() []string {
 }
 
 // Implement other starlark.Value methods
-func (v *Val) String() string       { return fmt.Sprintf("val(%s)", v.Var) }
+func (v *Val) String() string       { return fmt.Sprintf("Val(%s)", v.Var) }
 func (v *Val) Type() string         { return "val" }
 func (v *Val) Freeze()              {} // No-op, as Val is immutable
 func (v *Val) Truth() starlark.Bool { return starlark.Bool(v.Var != "") }

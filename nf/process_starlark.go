@@ -157,7 +157,7 @@ type StarlarkProcess struct {
 }
 
 func (p *StarlarkProcess) AttrNames() []string {
-	return []string{"name", "directives", "inputs"}
+	return []string{"name", "directives", "inputs", "outputs"}
 }
 
 var _ starlark.Value = (*StarlarkProcessInputs)(nil)
@@ -374,6 +374,10 @@ func (p *StarlarkProcess) Attr(name string) (starlark.Value, error) {
 		return starlark.String(p.Name), nil
 	case "directives":
 		return &StarlarkProcessDirectivesWrapper{p.Directives}, nil
+	case "inputs":
+		return p.Inputs, nil
+	case "outputs":
+		return p.Outputs, nil
 	default:
 		return nil, fmt.Errorf("process has no attribute %q", name)
 	}

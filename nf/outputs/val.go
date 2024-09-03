@@ -21,17 +21,23 @@ func (v *Val) Attr(name string) (starlark.Value, error) {
 	switch name {
 	case "var":
 		return starlark.String(v.Var), nil
+	case "emit":
+		return starlark.String(v.Emit), nil
+	case "optional":
+		return starlark.Bool(v.Optional), nil
+	case "topic":
+		return starlark.String(v.Topic), nil
 	default:
 		return nil, starlark.NoSuchAttrError(fmt.Sprintf("val has no attribute %q", name))
 	}
 }
 
 func (v *Val) AttrNames() []string {
-	return []string{"var"}
+	return []string{"var", "emit", "optional", "topic"}
 }
 
 // Implement other starlark.Value methods
-func (v *Val) String() string       { return fmt.Sprintf("val(%s)", v.Var) }
+func (v *Val) String() string       { return fmt.Sprintf("Val(%s)", v.Var) }
 func (v *Val) Type() string         { return "val" }
 func (v *Val) Freeze()              {} // No-op, as Val is immutable
 func (v *Val) Truth() starlark.Bool { return starlark.Bool(v.Var != "") }
