@@ -36751,20 +36751,10 @@ func (p *GroovyParser) Expression_Sempred(localctx antlr.RuleContext, predIndex 
 func (p *GroovyParser) CommandExpression_Sempred(localctx antlr.RuleContext, predIndex int) bool {
 	switch predIndex {
 	case 20:
-		/*
-		if pctx, ok := localctx.(*PathExpressionContext); ok {
-			t := pctx.GetT()
-			return t == 2 || t == 3
-		}
-		if pctx, ok := localctx.(*PostfixExprAltContext); ok {
-			return !isFollowingArgumentsOrClosure(pctx)
-		}
-		 */
 		if cmdExprCtx, ok := localctx.(*CommandExpressionContext); ok {
 			return !isFollowingArgumentsOrClosure(cmdExprCtx.Get_expression())
 		}
 		return !isFollowingArgumentsOrClosure(localctx)
-		//return !isFollowingArgumentsOrClosure(localctx.(*CommandExpressionContext).Get_expression())
 
 	default:
 		panic("No predicate with index: " + fmt.Sprint(predIndex))

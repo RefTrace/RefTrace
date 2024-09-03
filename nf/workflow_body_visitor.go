@@ -1,6 +1,7 @@
 package nf
 
 import (
+	"fmt"
 	"reft-go/parser"
 )
 
@@ -10,37 +11,62 @@ var _ parser.GroovyCodeVisitor = (*WorkflowBodyVisitor)(nil)
 type WorkflowMode int
 
 const (
+	// InitialMode represents the initial mode before any labels
+	InitialMode WorkflowMode = iota
 	// TakeMode represents the 'take' mode of a workflow
-	TakeMode WorkflowMode = iota
+	TakeMode
 	// MainMode represents the 'main' mode of a workflow
-	WFMainMode
+	MainMode
 	// EmitMode represents the 'emit' mode of a workflow
 	EmitMode
 )
 
 type WorkflowBodyVisitor struct {
-	mode  WorkflowMode
-	Takes []string
-	Emits []string
+	mode    WorkflowMode
+	Takes   []string
+	Emits   []string
+	hasMain bool
+	hasTake bool
+	errors  []string
 }
 
 // NewWorkflowBodyVisitor creates a new WorkflowBodyVisitor
 func NewWorkflowBodyVisitor() *WorkflowBodyVisitor {
-	return &WorkflowBodyVisitor{mode: WFMainMode}
+	return &WorkflowBodyVisitor{mode: InitialMode}
 }
 
 // Statements
 func (v *WorkflowBodyVisitor) VisitBlockStatement(block *parser.BlockStatement) {
 	for _, statement := range block.GetStatements() {
 		label := statement.GetStatementLabel()
-		if label == "take" {
+		switch label {
+		case "take":
+			if v.mode != InitialMode {
+				v.errors = append(v.errors, "take: must be the first section in the workflow")
+			}
 			v.mode = TakeMode
-		} else if label == "emit" {
+			v.hasTake = true
+		case "main":
+			if v.mode == EmitMode {
+				v.errors = append(v.errors, "main: cannot come after emit:")
+			}
+			v.mode = MainMode
+			v.hasMain = true
+		case "emit":
 			v.mode = EmitMode
-		} else if label == "main" {
-			v.mode = WFMainMode
+		case "":
+			if v.mode == InitialMode {
+				v.mode = MainMode
+			}
+		default:
+			v.errors = append(v.errors, fmt.Sprintf("Unknown label: %s", label))
 		}
 		v.VisitStatement(statement)
+	}
+
+	// Validate workflow structure
+	if v.hasTake && !v.hasMain {
+		v.errors = append(v.errors, "When take: is used, main: must also be present")
 	}
 }
 
@@ -96,6 +122,10 @@ func (v *WorkflowBodyVisitor) VisitExpressionStatement(statement *parser.Express
 		}
 	}
 	v.VisitExpression(statement.GetExpression())
+}
+
+func (v *WorkflowBodyVisitor) GetErrors() []string {
+	return v.errors
 }
 
 func (v *WorkflowBodyVisitor) VisitReturnStatement(statement *parser.ReturnStatement) {

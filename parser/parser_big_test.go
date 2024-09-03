@@ -6,7 +6,7 @@ import (
 )
 
 func TestParseSpeed(t *testing.T) {
-	dir := filepath.Join("testdata", "nf-core")
+	dir := filepath.Join(getTestDataDir(), "nf-core")
 	lines, err := processDirectory(dir)
 	if err != nil {
 		t.Fatalf("Error processing directory: %v", err)

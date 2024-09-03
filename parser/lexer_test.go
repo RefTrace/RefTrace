@@ -59,7 +59,7 @@ func TestGroovyLexer2(t *testing.T) {
 }
 
 func TestGStringFile(t *testing.T) {
-	filePath := filepath.Join("testdata", "gstring.groovy")
+	filePath := filepath.Join(getTestDataDir(), "gstring.groovy")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		t.Fatalf("Failed to open file %s: %s", filePath, err)
@@ -79,7 +79,7 @@ func TestGStringFile(t *testing.T) {
 }
 
 func TestBWAMem2File(t *testing.T) {
-	filePath := filepath.Join("testdata", "bwamem2_mem.nf")
+	filePath := filepath.Join(getTestDataDir(), "bwamem2_mem.nf")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		t.Fatalf("Failed to open file %s: %s", filePath, err)
@@ -99,7 +99,7 @@ func TestBWAMem2File(t *testing.T) {
 }
 
 func TestGroovyLexerFromFile(t *testing.T) {
-	filePath := filepath.Join("testdata", "utils_nfcore_pipeline.nf")
+	filePath := filepath.Join(getTestDataDir(), "utils_nfcore_pipeline.nf")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		t.Fatalf("Failed to open file %s: %s", filePath, err)
@@ -119,7 +119,7 @@ func TestGroovyLexerFromFile(t *testing.T) {
 }
 
 func TestIncludeLexer(t *testing.T) {
-	filePath := filepath.Join("testdata", "include.nf")
+	filePath := filepath.Join(getTestDataDir(), "include.nf")
 	input, err := antlr.NewFileStream(filePath)
 	if err != nil {
 		t.Fatalf("Failed to open file %s: %s", filePath, err)

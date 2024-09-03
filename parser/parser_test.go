@@ -10,8 +10,22 @@ import (
 	"testing"
 )
 
+func getTestDataDir() string {
+	if dir := os.Getenv("NF_CORE_TEST_DATA"); dir != "" {
+		return dir
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		// If we can't get the home directory, fall back to "testdata"
+		return "testdata"
+	}
+
+	return filepath.Join(homeDir, "reft-testdata")
+}
+
 func TestGroovyParserGStringFile(t *testing.T) {
-	filePath := filepath.Join("testdata", "gstring.groovy")
+	filePath := filepath.Join(getTestDataDir(), "gstring.groovy")
 	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -19,7 +33,7 @@ func TestGroovyParserGStringFile(t *testing.T) {
 }
 
 func TestGroovyParserUtils(t *testing.T) {
-	filePath := filepath.Join("testdata", "utils_nfcore_pipeline.nf")
+	filePath := filepath.Join(getTestDataDir(), "utils_nfcore_pipeline.nf")
 	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -27,7 +41,7 @@ func TestGroovyParserUtils(t *testing.T) {
 }
 
 func TestGroovyParserExpression(t *testing.T) {
-	filePath := filepath.Join("testdata", "expression", "01.groovy")
+	filePath := filepath.Join(getTestDataDir(), "expression", "01.groovy")
 	_, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -35,7 +49,7 @@ func TestGroovyParserExpression(t *testing.T) {
 }
 
 func TestGroovyParserCommandExpr(t *testing.T) {
-	filePath := filepath.Join("testdata", "cnvkit_batch_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "cnvkit_batch_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -50,7 +64,7 @@ func TestGroovyParserCommandExpr(t *testing.T) {
 }
 
 func TestInclude(t *testing.T) {
-	filePath := filepath.Join("testdata", "include.nf")
+	filePath := filepath.Join(getTestDataDir(), "include.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -117,7 +131,7 @@ func TestInclude(t *testing.T) {
 }
 
 func TestParams(t *testing.T) {
-	filePath := filepath.Join("testdata", "params.nf")
+	filePath := filepath.Join(getTestDataDir(), "params.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -179,7 +193,7 @@ func TestParams(t *testing.T) {
 }
 
 func TestElvis(t *testing.T) {
-	filePath := filepath.Join("testdata", "elvis.nf")
+	filePath := filepath.Join(getTestDataDir(), "elvis.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -231,7 +245,7 @@ func TestElvis(t *testing.T) {
 }
 
 func TestTernary(t *testing.T) {
-	filePath := filepath.Join("testdata", "ternary.nf")
+	filePath := filepath.Join(getTestDataDir(), "ternary.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -296,7 +310,7 @@ func TestTernary(t *testing.T) {
 }
 
 func TestTernaryClosure(t *testing.T) {
-	filePath := filepath.Join("testdata", "ternary_closure.nf")
+	filePath := filepath.Join(getTestDataDir(), "ternary_closure.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -377,7 +391,7 @@ func TestTernaryClosure(t *testing.T) {
 }
 
 func TestTopLevelIf(t *testing.T) {
-	filePath := filepath.Join("testdata", "top_level_if.nf")
+	filePath := filepath.Join(getTestDataDir(), "top_level_if.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -400,7 +414,7 @@ func TestTopLevelIf(t *testing.T) {
 
 func TestSimpleWorkflow(t *testing.T) {
 	debug.SetGCPercent(-1)
-	filePath := filepath.Join("testdata", "simple_workflow.nf")
+	filePath := filepath.Join(getTestDataDir(), "simple_workflow.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -427,7 +441,7 @@ func TestSimpleWorkflow(t *testing.T) {
 }
 
 func TestFunction(t *testing.T) {
-	filePath := filepath.Join("testdata", "function.nf")
+	filePath := filepath.Join(getTestDataDir(), "function.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -444,7 +458,7 @@ func TestFunction(t *testing.T) {
 }
 
 func TestSarekMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "sarek_main_workflow.nf")
+	filePath := filepath.Join(getTestDataDir(), "sarek_main_workflow.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -475,7 +489,7 @@ func TestSarekMain(t *testing.T) {
 }
 
 func TestSarekMain2(t *testing.T) {
-	filePath := filepath.Join("testdata", "sarek_main_workflow2.nf")
+	filePath := filepath.Join(getTestDataDir(), "sarek_main_workflow2.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -492,7 +506,7 @@ func TestSarekMain2(t *testing.T) {
 }
 
 func TestCnvKitBatchMain2(t *testing.T) {
-	filePath := filepath.Join("testdata", "cnvkit_batch_main2.nf")
+	filePath := filepath.Join(getTestDataDir(), "cnvkit_batch_main2.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -509,7 +523,7 @@ func TestCnvKitBatchMain2(t *testing.T) {
 }
 
 func TestVarcalMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "varcal_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "varcal_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -526,7 +540,7 @@ func TestVarcalMain(t *testing.T) {
 }
 
 func TestPrepareIntervalsMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "prepare_intervals_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "prepare_intervals_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -543,7 +557,7 @@ func TestPrepareIntervalsMain(t *testing.T) {
 }
 
 func TestSamplesheetToChannelMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "samplesheet_to_channel_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "samplesheet_to_channel_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -560,7 +574,7 @@ func TestSamplesheetToChannelMain(t *testing.T) {
 }
 
 func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "utils_nfcore_sarek_pipeline_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "utils_nfcore_sarek_pipeline_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -577,7 +591,7 @@ func TestUtilsNFcoreSarekPipelineMain(t *testing.T) {
 }
 
 func TestUtilsNFPipelineMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "utils_nextflow_pipeline_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "utils_nextflow_pipeline_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -594,7 +608,7 @@ func TestUtilsNFPipelineMain(t *testing.T) {
 }
 
 func TestUtilsNFCorePipelineMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "utils_nfcore_pipeline_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "utils_nfcore_pipeline_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -611,7 +625,7 @@ func TestUtilsNFCorePipelineMain(t *testing.T) {
 }
 
 func TestEagerMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "eager_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "eager_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -628,7 +642,7 @@ func TestEagerMain(t *testing.T) {
 }
 
 func TestPathInProcess(t *testing.T) {
-	filePath := filepath.Join("testdata", "path_in_process.nf")
+	filePath := filepath.Join(getTestDataDir(), "path_in_process.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -645,7 +659,7 @@ func TestPathInProcess(t *testing.T) {
 }
 
 func TestSarekEntireMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "sarek_entire_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "sarek_entire_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -670,7 +684,7 @@ func TestSarekEntireMain(t *testing.T) {
 }
 
 func TestDeepVariantMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "deepvariant_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "deepvariant_main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -684,7 +698,7 @@ func TestDeepVariantMain(t *testing.T) {
 }
 
 func TestCreateIntervalsBed(t *testing.T) {
-	filePath := filepath.Join("testdata", "sarek/modules/local/create_intervals_bed", "main.nf")
+	filePath := filepath.Join(getTestDataDir(), "sarek/modules/local/create_intervals_bed", "main.nf")
 	result, err := BuildCST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build CST: %v", err)
@@ -765,7 +779,7 @@ func getStatementsCount(ast *ModuleNode) int {
 /*
 func TestParseAllSarekFiles(t *testing.T) {
 	debug.SetGCPercent(-1)
-	dir := filepath.Join("testdata", "sarek")
+	dir := filepath.Join(getTestDataDir(), "sarek")
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -812,10 +826,10 @@ func TestParseAllSarekFiles(t *testing.T) {
 */
 
 func TestSarekGoldMapping(t *testing.T) {
-	dir := filepath.Join("testdata", "sarek")
+	dir := filepath.Join(getTestDataDir(), "sarek")
 
 	// Load the gold mapping
-	goldFile, err := os.Open(filepath.Join("testdata", "sarek_gold_mapping.json"))
+	goldFile, err := os.Open(filepath.Join(getTestDataDir(), "sarek_gold_mapping.json"))
 	if err != nil {
 		t.Fatalf("Failed to open gold mapping file: %v", err)
 	}
@@ -884,7 +898,7 @@ func TestSarekGoldMapping(t *testing.T) {
 /*
 func TestGenerateGoldMapping(t *testing.T) {
 	debug.SetGCPercent(-1)
-	dir := filepath.Join("testdata", "sarek")
+	dir := filepath.Join(getTestDataDir(), "sarek")
 	goldMapping := make(map[string]int)
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -919,7 +933,7 @@ func TestGenerateGoldMapping(t *testing.T) {
 	}
 
 	// Save the gold mapping to a JSON file
-	goldFile, err := os.Create(filepath.Join("testdata", "sarek_gold_mapping.json"))
+	goldFile, err := os.Create(filepath.Join(getTestDataDir(), "sarek_gold_mapping.json"))
 	if err != nil {
 		t.Fatalf("Failed to create gold mapping file: %v", err)
 	}
@@ -936,13 +950,13 @@ func TestGenerateGoldMapping(t *testing.T) {
 */
 
 func TestAmpliseqPipelineMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "ampliseq_pipeline_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "ampliseq_pipeline_main.nf")
 	ast := BuildASTTest(filePath)
 	_ = ast
 }
 
 func TestCrisprseqScreening(t *testing.T) {
-	filePath := filepath.Join("testdata", "crisprseq_screening.nf")
+	filePath := filepath.Join(getTestDataDir(), "crisprseq_screening.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -950,7 +964,7 @@ func TestCrisprseqScreening(t *testing.T) {
 }
 
 func TestCrisprseqTargeted(t *testing.T) {
-	filePath := filepath.Join("testdata", "crisprseq_targeted.nf")
+	filePath := filepath.Join(getTestDataDir(), "crisprseq_targeted.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -958,7 +972,7 @@ func TestCrisprseqTargeted(t *testing.T) {
 }
 
 func TestChannelEdgeCase(t *testing.T) {
-	filePath := filepath.Join("testdata", "channel_edge_case.nf")
+	filePath := filepath.Join(getTestDataDir(), "channel_edge_case.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -966,7 +980,7 @@ func TestChannelEdgeCase(t *testing.T) {
 }
 
 func TestRead2TreeMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "read2tree_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "read2tree_main.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -974,37 +988,37 @@ func TestRead2TreeMain(t *testing.T) {
 }
 
 func TestOncoanalyzerMRD(t *testing.T) {
-	filePath := filepath.Join("testdata", "mrd.nf")
+	filePath := filepath.Join(getTestDataDir(), "mrd.nf")
 	ast := BuildASTTest(filePath)
 	_ = ast
 }
 
 func TestFastqFastaContigExtensionCobraMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "fastq_fasta_contig_extension_cobra_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "fastq_fasta_contig_extension_cobra_main.nf")
 	ast := BuildASTTest(filePath)
 	_ = ast
 }
 
 func TestQuantMSCreateInputChannel(t *testing.T) {
-	filePath := filepath.Join("testdata", "create_input_channel.nf")
+	filePath := filepath.Join(getTestDataDir(), "create_input_channel.nf")
 	ast := BuildASTTest(filePath)
 	_ = ast
 }
 
 func TestVCFChrExtractMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "vcfchrextract_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "vcfchrextract_main.nf")
 	ast, _ := BuildAST(filePath)
 	_ = ast
 }
 
 func TestPreprocessRnaseqMain(t *testing.T) {
-	filePath := filepath.Join("testdata", "preprocess_rnaseq_main.nf")
+	filePath := filepath.Join(getTestDataDir(), "preprocess_rnaseq_main.nf")
 	ast := BuildASTTest(filePath)
 	_ = ast
 }
 
 func TestDatasyncSync(t *testing.T) {
-	filePath := filepath.Join("testdata", "datasync_sync.nf")
+	filePath := filepath.Join(getTestDataDir(), "datasync_sync.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -1012,7 +1026,7 @@ func TestDatasyncSync(t *testing.T) {
 }
 
 func TestVCFGenotypeAnnotator(t *testing.T) {
-	filePath := filepath.Join("testdata", "vcf_genotype_annotator.nf")
+	filePath := filepath.Join(getTestDataDir(), "vcf_genotype_annotator.nf")
 	_, err := BuildAST(filePath)
 	if err == nil {
 		t.Fatalf("Failed to report AST building error")
@@ -1020,7 +1034,7 @@ func TestVCFGenotypeAnnotator(t *testing.T) {
 }
 
 func TestQiime2Intree(t *testing.T) {
-	filePath := filepath.Join("testdata", "qiime2_intree.nf")
+	filePath := filepath.Join(getTestDataDir(), "qiime2_intree.nf")
 
 	// Capture stdout and stderr
 	oldStdout := os.Stdout

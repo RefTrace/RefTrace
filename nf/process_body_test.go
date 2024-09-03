@@ -9,7 +9,7 @@ import (
 )
 
 func TestProcessInputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_inputs.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_inputs.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -127,7 +127,7 @@ func TestProcessInputs(t *testing.T) {
 }
 
 func TestProcessFileInputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_file_inputs.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_file_inputs.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -140,8 +140,8 @@ func TestProcessFileInputs(t *testing.T) {
 		t.Fatalf("Expected 1 process, got %d", len(processes))
 	}
 	pinputs := processes[0].Inputs
-	if len(pinputs) != 1 {
-		t.Fatalf("Expected 1 input, got %d", len(pinputs))
+	if len(pinputs) != 2 {
+		t.Fatalf("Expected 2 inputs, got %d", len(pinputs))
 	}
 	finput, ok := pinputs[0].(*inputs.File)
 	if !ok {
@@ -150,10 +150,17 @@ func TestProcessFileInputs(t *testing.T) {
 	if finput.Path != "proteins" {
 		t.Fatalf("Expected path to be proteins, got %s", finput.Path)
 	}
+	finput, ok = pinputs[1].(*inputs.File)
+	if !ok {
+		t.Fatalf("Expected file input, got %v", pinputs[0])
+	}
+	if finput.Path != "foo.txt" {
+		t.Fatalf("Expected path to be foo.txt, got %s", finput.Path)
+	}
 }
 
 func TestProcessValOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_val_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_val_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -190,7 +197,7 @@ func TestProcessValOutputs(t *testing.T) {
 }
 
 func TestProcessFileOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_file_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_file_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -236,7 +243,7 @@ func TestProcessFileOutputs(t *testing.T) {
 }
 
 func TestProcessPathOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_path_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_path_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -335,7 +342,7 @@ func TestProcessPathOutputs(t *testing.T) {
 }
 
 func TestProcessEnvOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_env_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_env_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -384,7 +391,7 @@ func TestProcessEnvOutputs(t *testing.T) {
 }
 
 func TestProcessStdoutOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_stdout_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_stdout_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -424,7 +431,7 @@ func TestProcessStdoutOutputs(t *testing.T) {
 }
 
 func TestProcessEvalOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_eval_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_eval_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)
@@ -470,7 +477,7 @@ func TestProcessEvalOutputs(t *testing.T) {
 }
 
 func TestProcessTupleOutputs(t *testing.T) {
-	filePath := filepath.Join("./testdata", "process_tuple_output.nf")
+	filePath := filepath.Join(getTestDataDir(), "nf-testdata", "process_tuple_output.nf")
 	ast, err := parser.BuildAST(filePath)
 	if err != nil {
 		t.Fatalf("Failed to build AST: %v", err)

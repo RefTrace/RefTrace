@@ -1,47 +1,134 @@
-# RefTrace (Go Version)
+# RefTrace
+
+Code analysis tool for bioinformatics pipelines.
+Currently supports linting for Nextflow pipelines. See https://reftrace.com for more information.
+
+## Features
+
+- Write custom linting rules in a Python-like language.
+- Deploy as a static binary.
+
+## Download
+
+Download the latest version for your OS from the [Releases](https://github.com/reftrace/reftrace/releases) page. Put it in your `PATH` so that you can run it as `reft`.
+
+## Quick Example
+
+```bash
+./reft lint -d example_linting_rules/example_process.nf -r example_linting_rules/min_max_cpus.py
+```
+
+Outputs:
+
+```
+Rule: check_cpu_directive
+  Module: /home/andrew/reft-pub/example_linting_rules/example_process.nf
+    Error: Process FOO has an invalid CPU value. It should be >= 2 and <= 96, but it is 100
+
+``` 
+
+## Usage
+
+[Watch a video tutorial](https://customer-rmcf6d3u09leya5y.cloudflarestream.com/eec7ef6db680b66733045242c9d1cb43/watch)
+
+### Command
+
+The primary command for this tool is `lint`, which can be used as follows:
+
+```bash
+reft lint [flags]
+```
+
+### Flags
+
+- `-r, --rules`: Path to the rules file (default is `rules.py`).
+- `-d, --directory`: Directory to lint (default is the current directory `.`).
+- `-n, --name`: Name of a single rule to run (optional).
+
+### Example
+
+To lint the current directory using the default `rules.py` file:
+
+```bash
+reft lint
+```
+
+To lint a specific directory with a custom rules file:
+
+```bash
+reft lint -d /path/to/dir -r /path/to/custom_rules.py
+```
+
+To run a specific rule by name:
+
+```bash
+reft lint -n rule_name
+```
+
+### Example rules.py
+
+```python
+# This file should exist in the root of your pipeline directory
+def has_label(directives):
+    return len(directives.label) > 0
+
+def has_cpus(directives):
+    return len(directives.cpus) > 0
+
+def rule_has_label_or_cpus(module):
+    for process in module.processes:
+        if not (has_label(process.directives) or has_cpus(process.directives)):
+            fatal("process %s has no label or cpus directive" % process.name)
+```
+
+## Example Linting Rules
+
+See the [example linting rules](example_linting_rules) directory. See the [API reference](https://reftrace.com/reference/linting_api/). A small tutorial can be found [here](https://reftrace.com/guides/nextflow_linting_examples).  
+
+## Building
 
 ```
 go generate ./...
-go build
+go build -o reft
 ```
 
-You have to manually patch the generated parser:
+Dependencies are vendored. The Go ANTLR target is patched to fix a bug. The ANTLR-generated parser is also patched by [generate_parser.go](cmd/generate_parser.go).
+
+Getting licenses of dependencies:
 
 ```
-var t *CommandExpressionContext = nil
-if localctx != nil {
-    t = localctx.(*CommandExpressionContext)
-}
-return p.CommandExpression_Sempred(t, predIndex)
-return p.CommandExpression_Sempred(localctx, predIndex)
+go-licenses save . --save_path="licenses"
 ```
 
-and
+## Limitations
+
+- Not all parts of the Nextflow DSL are yet exposed. Specifically, only processes are handled. Only directives, process inputs, and process outputs are exposed to linting rules.
+
+- The parser is not perfect. It doesn't seek to handle all of Groovy, but enough to work in practice. Even so, test coverage could be better. If you encounter a
+parsing bug, please open an issue.
+
+## Testing
+
+The test data is in a separate repository: [reftrace/reft-testdata](https://github.com/reftrace/reft-testdata).
+The Go tests assume you've cloned that to `~/reft-testdata`.
 
 ```
-if cmdExprCtx, ok := localctx.(*CommandExpressionContext); ok {
-    return !isFollowingArgumentsOrClosure(cmdExprCtx.Get_expression())
-}
-return !isFollowingArgumentsOrClosure(localctx)
-//return !isFollowingArgumentsOrClosure(localctx.(*CommandExpressionContext).Get_expression())
+go test ./...
 ```
 
-https://issues.apache.org/jira/browse/GROOVY-9232
+There are two sets of tests: `reft-go/nf` tests the exposing of the Nextflow DSL to linting rules. `reft-go/parser` tests the underlying Groovy parser.
 
-https://go.dev/doc/effective_go#embedding
-https://eli.thegreenplace.net/2020/embedding-in-go-part-3-interfaces-in-structs
-https://gobyexample.com/struct-embedding
-https://preslav.me/2023/02/06/golang-do-we-need-struct-pointers-everywhere/
+## Acknowledgements
 
-```
-type T struct{}
-var _ I = T{}       // Verify that T implements I.
-var _ I = (*T)(nil) // Verify that *T implements I.
-```
+We would like to express our gratitude to the following:
 
-https://github.com/hugheaves/scadformat/blob/018681900884365676409ae2fddef814d76bf60e/internal/parser/openscad_base_visitor.go.patch
-https://github.com/antlr/antlr4/issues/2504#issuecomment-1274146887
+- The [Apache Groovy](https://groovy-lang.org/) project.
+- The [ANTLR](https://www.antlr.org/) project, for providing the parser generator used in this tool.
+- The [Starlark](https://github.com/google/starlark-go) project, for the embedded scripting language used in our linting rules.
+- The Go programming language and its standard library.
+- The [Nextflow](https://www.nextflow.io/) project and community, for being so welcoming and helpful.
 
-```
-rg "struct \{\n\s+Expression\s" --multiline
-```
+## License
+
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details. You may use the `reft --license` command to view the license.
+
