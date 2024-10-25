@@ -12,6 +12,22 @@ Currently supports linting for Nextflow pipelines. See https://reftrace.com for 
 
 Download the latest version for your OS from the [Releases](https://github.com/reftrace/reftrace/releases) page. Put it in your `PATH` so that you can run it as `reft`.
 
+If you're on a Mac:
+
+```bash
+curl -LO https://github.com/reftrace/reftrace/releases/latest/download/reft-darwin-arm64
+chmod +x reft-darwin-arm64
+sudo mv reft-darwin-arm64 /usr/local/bin/reft
+```
+
+or on Linux:
+
+```bash
+curl -LO https://github.com/reftrace/reftrace/releases/latest/download/reft-linux-amd64
+chmod +x reft-linux-amd64
+sudo mv reft-linux-amd64 /usr/local/bin/reft
+```
+
 ## Quick Example
 
 ```bash

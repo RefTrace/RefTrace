@@ -11,3 +11,4 @@ reft
 reft-linux-x86_64
 reft-mac-m1
 nf/__debug*
+releases/*
